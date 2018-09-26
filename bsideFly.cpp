@@ -58,25 +58,25 @@ void initStar(GameState* gameState, ScreenBuff* screenBuff, Star* star, bool all
 	while (x > gameState->STARMINVELOCITY) x = 1 + rand() % gameState->STARMINVELOCITY;
 	star->velocity = x;
 
-	x = 3 + 1;
-	while (x > 3) x = 1 + rand() % 3;
+  x = gameState->STARTYPES + 1;
+	while (x > gameState->STARTYPES) x = 1 + rand() % gameState->STARTYPES;
 	switch (x) {
-	case 0: star->colour = 128 - 16; break;
-	case 1: star->colour = 128; break;
-	case 2: star->colour = 256; star->collider = true; break;
-	case 3: star->colour = 256 - 16;  break;
+    case 1: 
+      star->dim.width = 30; 
+      star->dim.height = 11; 
+      break;
+    case 2: 
+      star->dim.width = 20; 
+      star->dim.height = 6; 
+      break;
+    case 3: 
+      star->dim.width = 10; 
+      star->dim.height = 4;
+      break;
 	}
   
   star->collider = true;
   
-	x = gameState->STARMAXSIZE + 1;
-	while (x > gameState->STARMAXSIZE) x = 1 + rand() % gameState->STARMAXSIZE;
-	star->dim.width = x;
-
-	x = gameState->STARMAXSIZE + 1;
-	while (x > gameState->STARMAXSIZE) x = 1 + rand() % gameState->STARMAXSIZE;
-	star->dim.height = x;
-
 	x = gameState->STARMAXSPAWNDELAY + 1;
 	while (x > gameState->STARMAXSPAWNDELAY) x = 1 + rand() % gameState->STARMAXSPAWNDELAY;
 	star->spawnDelay = x;
@@ -105,15 +105,17 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 
 	gameState->frameCounter += 1;
 
-	bool collision = false;
+	gameState->collision = false;
 
 	// StarField
 	if (gameState->starField = true) {
 		for (int i = 0; i < gameState->STARCOUNT; i++) {
 			updateStar(gameState, screenBuff, &gameState->stars[i]);
-			if (!collision && gameState->stars[i].collider) {
+			if (!gameState->collision && gameState->stars[i].collider) {
 				if (rectCollisionCheck(gameState->player1.dim, gameState->stars[i].dim)) {
-					collision = true;
+					//pixelCollisionDetection
+					gameState->collision = true;
+          break; // Only single collision needed / supported
 				}
 			}
 		}
@@ -122,9 +124,10 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 	// Background Colour
 	int completion = (gameState->frameCounter * 100 / gameState->DISTANCE_TARGET) / 25;
 
-	if (collision) {
+	if (gameState->collision) {
 		if (gameState->player1.dim.y + gameState->player1.dim.height >= screenBuff->HEIGHT) {
 			gameState->player1.inPlay = false;
+      gameState->running = false;
 			gameState->win = false;
 		}
 	}
@@ -135,11 +138,13 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
   }
 
 	// Player movement
-	if (collision) {
+	if (gameState->collision) {
 		gameState->player1.dim.y += 1;
 		gameState->player1.dim.x += 1;
 		if (gameState->player1.dim.y >= screenBuff->HEIGHT) {
 			gameState->player1.inPlay = false;
+      gameState->running = false;
+      gameState->win = false;
 		}
 	}
 	else {
@@ -163,40 +168,62 @@ void displayClear(ScreenBuff* screenBuff, int frameMod, bool colour) {
 			screenBuff->consoleBuffer[x + screenBuff->WIDTH * y] = colour;
 }
 
-void displayNoise(ScreenBuff* screenBuff, int frameMod) {
-		for (int y = 0; y < screenBuff->HEIGHT; ++y)
-			for (int x = 0; x < screenBuff->WIDTH; ++x)
-        screenBuff->consoleBuffer[x + screenBuff->WIDTH * y] = rand() % 2;
+void displayInvert(ScreenBuff* screenBuff) 
+{
+    int pixel = 0;
+    for (int y = 0; y < screenBuff->HEIGHT; ++y)
+      for (int x = 0; x < screenBuff->WIDTH; ++x) {
+          pixel = x + screenBuff->WIDTH * y;
+          screenBuff->consoleBuffer[pixel] = !screenBuff->consoleBuffer[pixel]; 
+        }
 }
 
-void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y) {
-	int counter = 0;
-	bool* character = font(charPos);
-	for (int i = x; i < x + 8; i++) {
-		for (int j = y; j < y + 8; j++) {
-			int pixel = i + screenBuff->WIDTH * j;
-			if (character[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL) {
-				screenBuff->consoleBuffer[pixel] = 1;
-			}
+void displayNoise(ScreenBuff* screenBuff, int amountInverse = 0) {
+		for (int y = 0; y < screenBuff->HEIGHT; ++y)
+			for (int x = 0; x < screenBuff->WIDTH; ++x)
+        if (amountInverse == 0 || x * y % amountInverse == 0) {
+          screenBuff->consoleBuffer[x + screenBuff->WIDTH * y] = rand() % 2; 
+        }
+}
+
+void drawObject(ScreenBuff* screenBuff, Dimensions dim, const bool* objectArray) {
+  int counter = 0;
+  for (int j = dim.y; j < dim.y + dim.height; j++) {
+    int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
+    for (int i = dim.x; i < dim.x + dim.width; i++) {
+      int pixel = i + screenBuff->WIDTH * j;
+      if (objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
+        screenBuff->consoleBuffer[pixel] = 1;
+      }
       counter++;
-		}
-	}
-  
-  free(character);
+    }
+  }
 }
 
 void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray) {
-	int counter = 0;
-	for (int j = dim.y; j < dim.y + dim.height; j++) {
-		int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
-		for (int i = dim.x; i < dim.x + dim.width; i++) {
-			int pixel = i + screenBuff->WIDTH * j;
-			if (objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
-				screenBuff->consoleBuffer[pixel] = 1;
-			}
-			counter++;
-		}
-	}
+  int counter = 0;
+  for (int j = dim.y; j < dim.y + dim.height; j++) {
+    int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
+    for (int i = dim.x; i < dim.x + dim.width; i++) {
+      int pixel = i + screenBuff->WIDTH * j;
+      if (objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
+        screenBuff->consoleBuffer[pixel] = 1;
+      }
+      counter++;
+    }
+  }
+}
+
+void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y) {
+  bool* character = font(charPos);
+  Dimensions dim;
+  dim.x = x;
+  dim.y = y;
+  dim.width = 8;
+  dim.height = 8;
+  
+  drawObject(screenBuff, dim, character);
+  free(character);
 }
 
 void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
@@ -211,6 +238,18 @@ void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
 	}
 }
 
+
+void drawHalo(ScreenBuff* screenBuff, Dim ) {
+  int originalpixel = x + screenBuff->WIDTH * y;
+  for (int i = -1 * HaloSizeX; i <= HaloSizeX; i++) {
+    for (int j = -1 * HaloSizeY; j <= HaloSizeY; j++) {
+      int pixel = originalpixel + i + screenBuff->WIDTH * j;
+      if (pixel >= 0 && pixel < screenBuff->MAXPIXEL) {
+        screenBuff->consoleBuffer[pixel] = colour;
+      }
+    }
+  }
+}
 void drawHalo(ScreenBuff* screenBuff, int HaloSizeX, int HaloSizeY, bool colour, int x, int y) {
 	int originalpixel = x + screenBuff->WIDTH * y;
 	for (int i = -1 * HaloSizeX; i <= HaloSizeX; i++) {
@@ -224,30 +263,21 @@ void drawHalo(ScreenBuff* screenBuff, int HaloSizeX, int HaloSizeY, bool colour,
 }
 
 void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
+	if (gameState->running == false) return;
+ 
 	displayClear(screenBuff, 1, 0);
+  drawObject(screenBuff, gameState->player1.dim, player);
   
-	// Draw Player
-  bool player[192] = {
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-    1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1,
-    1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0
-  };
-
-	drawObject(screenBuff, gameState->player1.dim, player);
-  
-	// Star field
 	if (gameState->starField = true) {
+		
 		for (int i = 0; i < gameState->STARCOUNT; i++) {
-			drawBlock(screenBuff, gameState->stars[i].dim, 1);
+			// drawBlock(screenBuff, gameState->stars[i].dim, 1);
+      if (gameState->stars[i].dim.width == 30)
+          drawObject(screenBuff, gameState->stars[i].dim, star30x11);
+      else if (gameState->stars[i].dim.width == 20)
+          drawObject(screenBuff, gameState->stars[i].dim, star20x6);
+      else // (gameState->stars[i].dim.width == 10)
+          drawObject(screenBuff, gameState->stars[i].dim, star10x4);
 		}
 	}
 
@@ -273,6 +303,11 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
 			}
 		}
 	}
+
+  if (gameState->running && gameState->collision) { 
+    displayNoise(screenBuff,9);  
+    displayInvert(screenBuff);  
+  }
 }
 
 void resetGameState(ScreenBuff* screenBuff) {

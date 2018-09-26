@@ -19,7 +19,7 @@ bool* font(int x) {
 	else {
 		for (int i = col; i < col + 8; i++) {
 			for (int j = line; j < line + 8; j++) {
-				int pixel = i + j * width;
+				int pixel = j + i * width;
 				character[counter++] = fontData[pixel];
 			}
 		}
