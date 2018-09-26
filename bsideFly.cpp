@@ -101,7 +101,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
   }
 
 	// Screen Logic
-	if (!gameState->player1.inPlay) return;
+	if (!gameState->player1.inPlay || !gameState->running) return;
 
 	gameState->frameCounter += 1;
 
@@ -121,7 +121,6 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 		}
 	}
 
-	// Background Colour
 	int completion = (gameState->frameCounter * 100 / gameState->DISTANCE_TARGET) / 25;
 
 	if (gameState->collision) {
@@ -200,7 +199,7 @@ void drawObject(ScreenBuff* screenBuff, Dimensions dim, const bool* objectArray)
   }
 }
 
-void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray) {
+void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray, bool backFill = true) {
   int counter = 0;
   for (int j = dim.y; j < dim.y + dim.height; j++) {
     int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
@@ -208,13 +207,16 @@ void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray) {
       int pixel = i + screenBuff->WIDTH * j;
       if (objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
         screenBuff->consoleBuffer[pixel] = 1;
+      } else if (backFill) {
+        screenBuff->consoleBuffer[pixel] = 0;
       }
+
       counter++;
     }
   }
 }
 
-void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y) {
+void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y, bool backFill = true) {
   bool* character = font(charPos);
   Dimensions dim;
   dim.x = x;
@@ -222,7 +224,7 @@ void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y) {
   dim.width = 8;
   dim.height = 8;
   
-  drawObject(screenBuff, dim, character);
+  drawObject(screenBuff, dim, character, backFill);
   free(character);
 }
 
@@ -238,28 +240,54 @@ void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
 	}
 }
 
+static bool haloCheck(ScreenBuff* screenBuff, const bool* Object, int pixelObject, int pixelScreen) {
+   if (
+      pixelScreen < screenBuff->MAXPIXEL && pixelScreen > 0 && 
+      ((pixelObject > 0 && pixelObject < sizeof(pixelObject) && !Object[pixelObject]) || (pixelObject < 0 || pixelObject > sizeof(pixelObject)))
+    )
+    {
+      screenBuff->consoleBuffer[pixelScreen] = 0;
+    }
+}
 
-void drawHalo(ScreenBuff* screenBuff, Dim ) {
-  int originalpixel = x + screenBuff->WIDTH * y;
-  for (int i = -1 * HaloSizeX; i <= HaloSizeX; i++) {
-    for (int j = -1 * HaloSizeY; j <= HaloSizeY; j++) {
-      int pixel = originalpixel + i + screenBuff->WIDTH * j;
-      if (pixel >= 0 && pixel < screenBuff->MAXPIXEL) {
-        screenBuff->consoleBuffer[pixel] = colour;
+void drawHalo(ScreenBuff* screenBuff, Dimensions dim, const bool* Object) {
+  // TODO WIP
+  int startPixel = dim.x + dim.y * screenBuff->WIDTH;
+  for (int i = -1 + dim.x; i <= dim.width + 1; i++) {
+    for (int j = -1 + dim.y; j <= dim.height + 1; j++) {
+      int pixelScreen = i + screenBuff->WIDTH * j;
+      int pixelObject = i + dim.width * j;
+      
+      if (Object[pixelObject] == 1 && pixelScreen >= 0 && pixelScreen < screenBuff->MAXPIXEL) {
+        int leftObject = pixelObject - 1;
+        int rightObject = pixelObject + 1;
+        int upObject = pixelObject - dim.width;
+        int downObject = pixelObject + dim.width;
+        int upleftObject = upObject - 1;
+        int uprightObject = upObject + 1;
+        int downleftObject = downObject - 1;
+        int downrightObject = downObject + 1;
+
+        int leftScreen = pixelScreen - 1;
+        int rightScreen = pixelScreen + 1;
+        int upScreen = pixelScreen - screenBuff->WIDTH;
+        int downScreen = pixelScreen + screenBuff->WIDTH;
+        int upleftScreen = upScreen - 1;
+        int uprightScreen = upScreen + 1;
+        int downleftScreen = downScreen - 1;
+        int downrightScreen = downScreen + 1;
+
+        haloCheck(screenBuff, Object, upleftObject, upleftScreen);
+        haloCheck(screenBuff, Object, upObject, upScreen);
+        haloCheck(screenBuff, Object, uprightObject, uprightScreen);
+        haloCheck(screenBuff, Object, leftObject, leftScreen);
+        haloCheck(screenBuff, Object, rightObject, rightScreen);
+        haloCheck(screenBuff, Object, downObject, downScreen);
+        haloCheck(screenBuff, Object, downleftObject, downleftScreen);
+        haloCheck(screenBuff, Object, downrightObject, downrightScreen);
       }
     }
   }
-}
-void drawHalo(ScreenBuff* screenBuff, int HaloSizeX, int HaloSizeY, bool colour, int x, int y) {
-	int originalpixel = x + screenBuff->WIDTH * y;
-	for (int i = -1 * HaloSizeX; i <= HaloSizeX; i++) {
-		for (int j = -1 * HaloSizeY; j <= HaloSizeY; j++) {
-			int pixel = originalpixel + i + screenBuff->WIDTH * j;
-			if (pixel >= 0 && pixel < screenBuff->MAXPIXEL) {
-				screenBuff->consoleBuffer[pixel] = colour;
-			}
-		}
-	}
 }
 
 void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
@@ -303,6 +331,8 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
 			}
 		}
 	}
+
+  //drawHalo(screenBuff, gameState->player1.dim, player);
 
   if (gameState->running && gameState->collision) { 
     displayNoise(screenBuff,9);  
