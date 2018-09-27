@@ -1,4 +1,5 @@
 /* LCD */
+
 #include "bsideFly.h"
 #include <ESP8266WiFi.h>
 
@@ -10,6 +11,7 @@ const int pinStcp = 0; //Latch
 const int pinDataIn = 16; // Data
 
 ScreenBuff screenBuff;
+byte buttonVals;
 
 byte readShift()
 {
@@ -56,18 +58,9 @@ void sendToScreen() {
 }
 
 void startBFlight() {
-  display.clear();
-  display.drawString(30, 20, "bFlight!");
+  display.drawXbm(0, 0, bFlightStartupLogo_width, bFlightStartupLogo_height, bFlightStartupLogo_bits);
   display.display();
-  Serial.println("bFlight!");
-  delay(1000);
-
-  display.clear();
-  display.drawString(30, 20, "Startup!");
-  display.display();
-  Serial.println("Startup!");
-  delay(1000);
-  display.clear();
+  delay(2000);
   
   flyGameSetup(&screenBuff);
 }
@@ -95,7 +88,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  byte buttonVals = readShift();
+  buttonVals = readShift();
   flyGameLoop(&screenBuff,buttonVals);
   sendToScreen();
 }

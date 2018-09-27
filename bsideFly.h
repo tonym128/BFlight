@@ -6,6 +6,7 @@
 #include <time.h>
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
+#include "images.h"
 
 static unsigned long currTime = 0;
 static unsigned long lastDebounceTime = 0;
