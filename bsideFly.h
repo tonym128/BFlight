@@ -60,8 +60,9 @@ struct Player {
 struct GameState {
   static const int STARTYPES = 3;
   static const int STARMAXSPAWNDELAY = 300;
-  int scene = 3;
+  int scene = 1;
   int lastscene = 0;
+  time_t frameTimer = time(nullptr);
 
   int distanceTarget = 2000;
   int starCount = 10;

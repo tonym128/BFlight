@@ -265,6 +265,12 @@ void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y, bool back
   free(character);
 }
 
+void drawString(ScreenBuff* screenBuff, char* scrollText, int x, int y, bool backFill = true) {
+  for (int i = 0; i < static_cast<int>(strlen(scrollText)); i++) {
+    drawCharacter(screenBuff, scrollText[i], x + 8 * i, y, backFill);
+  }
+}
+
 void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
   for (int j = dim.y; j <= dim.y + dim.height; j++) {
     int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
@@ -327,6 +333,132 @@ void drawHalo(ScreenBuff* screenBuff, Dimensions dim, const bool* Object) {
       }
     }
   }
+}
+bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
+  time_t currentFrameTime = time(nullptr);
+  if (currentFrameTime - gameState->frameTimer <  50) {
+    delay(50 - (currentFrameTime - gameState->frameTimer));
+  }
+
+  gameState->frameTimer = currentFrameTime;
+  return true;
+}
+
+bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
+  gameState->frameCounter += 1;
+  
+  displayClear(screenBuff, 1, 0);
+
+  bool writeString = true;
+  int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "The journey to";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "DefCon starts";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "with a single ";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "step.";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "Fly To Vegas";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "& Good Luck!";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (1 == 1) {
+    char scroller[17] = " -= dFlight =- ";
+    drawString(screenBuff, scroller, 0, 2, true);
+  }
+
+  if (y < -8) return false;
+  return true;
+}
+
+bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
+  time_t currentFrameTime = time(nullptr);
+  if (currentFrameTime - gameState->frameTimer < 50) {
+    delay(50 - (currentFrameTime - gameState->frameTimer));
+  }
+
+  gameState->frameTimer = currentFrameTime;
+  return true;
+}
+
+bool displayOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
+  gameState->frameCounter += 1;
+
+  displayClear(screenBuff, 1, 0);
+
+  bool writeString = true;
+  int y = screenBuff->HEIGHT - gameState->frameCounter;
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = " -= Congrats =- ";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "----------------";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "Well done on";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "completing the";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "first leg of ";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "your journey.";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "Push forwards!";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y < -8) return false;
+  return true;
 }
 
 bool flyin(GameState* gameState, ScreenBuff* screenBuff) {
@@ -466,11 +598,22 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
       gameState.lastscene = gameState.scene;
     }
 
+    updateScroller(&gameState, screenBuff);
+    if (!displayScroller(&gameState, screenBuff)) {
+      gameState.scene = 3;
+    }
+
     break;
   case 2:  // Outro
     if (gameState.lastscene != gameState.scene) {
       gameState.lastscene = gameState.scene;
     }
+  
+    updateOutroScroller(&gameState, screenBuff);
+    if (!displayOutroScroller(&gameState, screenBuff)) {
+      gameState.scene = 3;
+    }
+
     break;
   case 3: // Take Off
     if (gameState.lastscene != gameState.scene) {
@@ -509,7 +652,7 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
     if (gameState.lastscene != gameState.scene) {
       gameState.lastscene = gameState.scene;
       switch (gameState.level) {
-      case 1: gameState.starCount = 10;
+      case 1: gameState.starCount = 5;
         gameState.starMinVelocity = 20;
         gameState.distanceTarget = 2000;
         free(gameState.stars);
@@ -518,7 +661,7 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
           initStar(&gameState, screenBuff, &gameState.stars[i]);
         }
         break;
-      case 2: gameState.starCount = 20;
+      case 2: gameState.starCount = 10;
         gameState.starMinVelocity = 30;
         gameState.distanceTarget = 3000;
         free(gameState.stars);
@@ -527,8 +670,8 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
           initStar(&gameState, screenBuff, &gameState.stars[i]);
         }
         break;
-      case 3: gameState.starCount = 30;
-        gameState.starMinVelocity = 40;
+      case 3: gameState.starCount = 20;
+        gameState.starMinVelocity = 50;
         gameState.distanceTarget = 4000;
         free(gameState.stars);
         gameState.stars = new Star[gameState.starCount];
@@ -536,7 +679,12 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
           initStar(&gameState, screenBuff, &gameState.stars[i]);
         }
         break;
+      case 4:
+        // Game has ended we switch to outro
+        gameState.scene = 2;
+        break;
       default:
+        // Random logic for continuing if we wanted
         gameState.starCount = 10 * gameState.level;
         gameState.starMinVelocity = 20 + 10 * gameState.level;
         gameState.distanceTarget = 1000 * gameState.level;
