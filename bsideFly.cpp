@@ -38,26 +38,26 @@ const int P2_Right = 4;
 const int P2_Top = 7;
 const int P2_Bottom = 5;
 
+
 bool processKey(byte buttonVals, int key) {
   return buttonVals & (1 << key);
 }
 
 void processInputFly(GameState* gameState, byte buttonVals) {
-	gameState->p1keys.up = processKey(buttonVals, P1_Top);
-	gameState->p1keys.down = processKey(buttonVals, P1_Bottom);
-	gameState->p1keys.left = processKey(buttonVals, P1_Left);
-	gameState->p1keys.right = processKey(buttonVals, P1_Right);
-	gameState->p1keys.kick = processKey(buttonVals, P2_Left);
-	gameState->p1keys.punch = processKey(buttonVals, P2_Right);
-	gameState->p1keys.jump = processKey(buttonVals, P2_Bottom);
+  gameState->p1keys.up = processKey(buttonVals, P1_Top);
+  gameState->p1keys.down = processKey(buttonVals, P1_Bottom);
+  gameState->p1keys.left = processKey(buttonVals, P1_Left);
+  gameState->p1keys.right = processKey(buttonVals, P1_Right);
+  gameState->p1keys.kick = processKey(buttonVals, P2_Left);
+  gameState->p1keys.punch = processKey(buttonVals, P2_Right);
+  gameState->p1keys.jump = processKey(buttonVals, P2_Bottom);
 
-	// This is only monitoring for a keypress on false
-	if (processKey(buttonVals, P2_Top)) {
-		gameState->running = false;
+  // This is only monitoring for a keypress on false
+  if (processKey(buttonVals, P2_Top)) {
+    gameState->running = false;
     gameState->restart = true;
   }
 }
-
 
 void initStar(GameState* gameState, ScreenBuff* screenBuff, Star* star, bool allowX = false) {
   int x = screenBuff->HEIGHT + 1;
@@ -71,8 +71,8 @@ void initStar(GameState* gameState, ScreenBuff* screenBuff, Star* star, bool all
   }
   else star->dim.x = screenBuff->WIDTH - 1;
 
-  x = gameState->STARMINVELOCITY + 1;
-  while (x > gameState->STARMINVELOCITY) x = 1 + rand() % gameState->STARMINVELOCITY;
+  x = gameState->starMinVelocity + 1;
+  while (x > gameState->starMinVelocity) x = 1 + rand() % gameState->starMinVelocity;
   star->velocity = x;
 
   x = gameState->STARTYPES + 1;
@@ -114,6 +114,14 @@ void updateStar(GameState* gameState, ScreenBuff* screenBuff, Star* star) {
 void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
   if (gameState->restart) {
     resetGameState(screenBuff);
+    gameState->level = 1;
+    gameState->scene = 3;
+    gameState->lastscene = 0;
+    gameState->running = true;
+    gameState->restart = false;
+    gameState->player1.inPlay = true;
+    gameState->collision = false;
+    gameState->frameCounter = 0;
     return;
   }
 
@@ -126,7 +134,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 
   // StarField
   if (gameState->starField = true) {
-    for (int i = 0; i < gameState->STARCOUNT; i++) {
+    for (int i = 0; i < gameState->starCount; i++) {
       updateStar(gameState, screenBuff, &gameState->stars[i]);
       if (!gameState->collision && gameState->stars[i].collider) {
         const bool* star;
@@ -147,7 +155,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
     }
   }
 
-  int completion = (gameState->frameCounter * 100 / gameState->DISTANCE_TARGET) / 25;
+  int completion = (gameState->frameCounter * 100 / gameState->distanceTarget) / 25;
 
   if (gameState->collision) {
     if (gameState->player1.dim.y + gameState->player1.dim.height >= screenBuff->HEIGHT) {
@@ -159,6 +167,8 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
   if (completion == 4) {
     gameState->player1.inPlay = false;
     gameState->win = true;
+    gameState->level += 1;
+    gameState->scene = 4;
   }
 
   // Player movement
@@ -319,6 +329,39 @@ void drawHalo(ScreenBuff* screenBuff, Dimensions dim, const bool* Object) {
   }
 }
 
+bool flyin(GameState* gameState, ScreenBuff* screenBuff) {
+  gameState->frameCounter += 1;
+
+  // Fly up at an angle till it hits middle screen height, then back
+  if (gameState->player1.dim.y == (screenBuff->HEIGHT - gameState->player1.dim.height) / 2) {
+    if (gameState->player1.dim.x == 0) {
+      // Done
+      return false;
+    }
+    gameState->player1.dim.x -= 1;
+    return true;
+  }
+
+  gameState->player1.dim.x += 1;
+  gameState->player1.dim.y -= 1;
+
+  return true;
+}
+
+bool flyout(GameState* gameState, ScreenBuff* screenBuff) {
+  gameState->frameCounter += 1;
+
+  // Fly out the screen down at an angle.
+  if (gameState->player1.dim.y > screenBuff->HEIGHT) {
+    return false;
+  }
+
+  gameState->player1.dim.x += 1;
+  gameState->player1.dim.y += 1;
+
+  return true;
+}
+
 void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
   if (gameState->running == false) return;
 
@@ -327,7 +370,7 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
 
   if (gameState->starField = true) {
 
-    for (int i = 0; i < gameState->STARCOUNT; i++) {
+    for (int i = 0; i < gameState->starCount; i++) {
       // drawBlock(screenBuff, gameState->stars[i].dim, 1);
       if (gameState->stars[i].dim.width == 30)
         drawObject(screenBuff, gameState->stars[i].dim, star30x11);
@@ -338,48 +381,60 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
     }
   }
 
-  // Set FPS
-  char fps[16];
-  int percent = gameState->frameCounter * 100 / gameState->DISTANCE_TARGET;
-  int drawline = (percent * screenBuff->WIDTH) / 100;
-  /*
-  sprintf(fps, "%3.0d%%", percent);
-  for (int i = 0; i < strlen(fps); i++) {
-    drawCharacter(screenBuff, fps[i], 8 * i, 0);
-  }
-  */
+  if (gameState->scene == 6) {
+    if (gameState->running && gameState->collision) {
+      displayNoise(screenBuff, 9);
+      displayInvert(screenBuff);
+    }
 
-  // Draw Progress Bar
-  for (int draw = 0; draw < drawline; draw++) {
-    screenBuff->consoleBuffer[draw] = 1;
-    screenBuff->consoleBuffer[draw + screenBuff->WIDTH] = 1;
-    screenBuff->consoleBuffer[draw + screenBuff->WIDTH * 2] = 1;
-  }
+    // Display Text
+    char fps[16];
+    int percent = gameState->frameCounter * 100 / gameState->distanceTarget;
+    int drawline = (percent * screenBuff->WIDTH) / 100;
 
-  if (!gameState->player1.inPlay) {
-    if (gameState->win) {
-      sprintf(fps, "YOU WIN!");
-      for (int i = 0; i < strlen(fps); i++) {
-        drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
+    // Draw Progress Bar
+    for (int draw = 0; draw < drawline; draw++) {
+      screenBuff->consoleBuffer[draw] = 1;
+      screenBuff->consoleBuffer[draw + screenBuff->WIDTH] = 1;
+      screenBuff->consoleBuffer[draw + screenBuff->WIDTH * 2] = 1;
+    }
+
+    if (!gameState->player1.inPlay) {
+      if (gameState->win) {
+        sprintf(fps, "YOU WIN!");
+        for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+          drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
+          gameState->player1.inPlay = false;
+          gameState->running = false;
+        }
+      }
+      else {
+        sprintf(fps, "GAME OVER");
+        for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+          drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
+        }
         gameState->player1.inPlay = false;
         gameState->running = false;
       }
     }
-    else {
-      sprintf(fps, "GAME OVER");
-      for (int i = 0; i < strlen(fps); i++) {
-        drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
-      }
-      gameState->player1.inPlay = false;
-      gameState->running = false;
-    }
   }
-
-  //drawHalo(screenBuff, gameState->player1.dim, player);
-
-  if (gameState->running && gameState->collision) {
-    displayNoise(screenBuff, 9);
-    displayInvert(screenBuff);
+  if (gameState->scene == 3) {
+    char fps[16];
+    sprintf(fps, "Level %i",gameState->level);
+    for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+      drawCharacter(screenBuff, fps[i], 40 + 8 * i, 10);
+    }
+    
+    // Sliders
+    int counter = 0;
+    for (int i = gameState->frameCounter; i > 0; i--) {
+      if (counter < screenBuff->WIDTH/2)
+      {
+        counter++;
+        screenBuff->consoleBuffer[screenBuff->WIDTH * 5 + i] = 1;
+        screenBuff->consoleBuffer[screenBuff->WIDTH * 20 - i] = 1;
+      }
+    }
   }
 }
 
@@ -396,24 +451,109 @@ void resetGameState(ScreenBuff* screenBuff) {
   gameState.player1.dim.x = 0;
   gameState.player1.dim.y = (screenBuff->HEIGHT - gameState.player1.dim.height) / 2;
 
-  // Reset Clouds
-  if (gameState.starField = true)
-    for (int i = 0; i < gameState.STARCOUNT; i++)
-      initStar(&gameState, screenBuff, &gameState.stars[i]);
-
   // Reset State
   gameState.frameCounter = 0;
   gameState.running = true;
   gameState.restart = false;
 }
 
-void flyGameSetup(ScreenBuff* screenBuff) {
-  resetGameState(screenBuff);
-}
-
 void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
   processInputFly(&gameState, buttonVals);
-  updateFly(&gameState, screenBuff);
-  displayFly(&gameState, screenBuff);
+
+  switch (gameState.scene) {
+  case 1: // Intro
+    if (gameState.lastscene != gameState.scene) {
+      gameState.lastscene = gameState.scene;
+    }
+
+    break;
+  case 2:  // Outro
+    if (gameState.lastscene != gameState.scene) {
+      gameState.lastscene = gameState.scene;
+    }
+    break;
+  case 3: // Take Off
+    if (gameState.lastscene != gameState.scene) {
+      gameState.starCount = 0;
+      resetGameState(screenBuff);
+      gameState.lastscene = gameState.scene;
+      gameState.player1.dim.x = gameState.player1.dim.width * -1;
+      gameState.player1.dim.y = screenBuff->HEIGHT + gameState.player1.dim.y;
+    }
+
+    if (!flyin(&gameState, screenBuff)) {
+      gameState.scene = 6;
+    }
+
+    displayFly(&gameState, screenBuff);
+
+    break;
+  case 4: // Land
+    if (gameState.lastscene != gameState.scene) {
+      gameState.lastscene = gameState.scene;
+    }
+
+    if (!flyout(&gameState, screenBuff))
+    {
+      gameState.scene = 3;
+    }
+
+    displayFly(&gameState, screenBuff);
+    break;
+  case 5: // Crash
+    if (gameState.lastscene != gameState.scene) {
+      gameState.lastscene = gameState.scene;
+    }
+    break;
+  case 6: // Stage
+    if (gameState.lastscene != gameState.scene) {
+      gameState.lastscene = gameState.scene;
+      switch (gameState.level) {
+      case 1: gameState.starCount = 10;
+        gameState.starMinVelocity = 20;
+        gameState.distanceTarget = 2000;
+        free(gameState.stars);
+        gameState.stars = new Star[gameState.starCount];
+        for (int i = 0; i < gameState.starCount; i++) {
+          initStar(&gameState, screenBuff, &gameState.stars[i]);
+        }
+        break;
+      case 2: gameState.starCount = 20;
+        gameState.starMinVelocity = 30;
+        gameState.distanceTarget = 3000;
+        free(gameState.stars);
+        gameState.stars = new Star[gameState.starCount];
+        for (int i = 0; i < gameState.starCount; i++) {
+          initStar(&gameState, screenBuff, &gameState.stars[i]);
+        }
+        break;
+      case 3: gameState.starCount = 30;
+        gameState.starMinVelocity = 40;
+        gameState.distanceTarget = 4000;
+        free(gameState.stars);
+        gameState.stars = new Star[gameState.starCount];
+        for (int i = 0; i < gameState.starCount; i++) {
+          initStar(&gameState, screenBuff, &gameState.stars[i]);
+        }
+        break;
+      default:
+        gameState.starCount = 10 * gameState.level;
+        gameState.starMinVelocity = 20 + 10 * gameState.level;
+        gameState.distanceTarget = 1000 * gameState.level;
+        free(gameState.stars);
+        gameState.stars = new Star[gameState.starCount];
+        for (int i = 0; i < gameState.starCount; i++) {
+          initStar(&gameState, screenBuff, &gameState.stars[i]);
+        }
+        break;
+      }
+
+      resetGameState(screenBuff);
+    }
+
+    updateFly(&gameState, screenBuff);
+    displayFly(&gameState, screenBuff);
+    break;
+  }
 }
 

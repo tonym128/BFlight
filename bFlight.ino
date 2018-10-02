@@ -61,8 +61,6 @@ void startBFlight() {
   display.drawXbm(0, 0, bFlightStartupLogo_width, bFlightStartupLogo_height, bFlightStartupLogo_bits);
   display.display();
   delay(2000);
-  
-  flyGameSetup(&screenBuff);
 }
 
 void setup() {
