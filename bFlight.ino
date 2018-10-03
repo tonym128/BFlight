@@ -1,6 +1,8 @@
 /* LCD */
 
+#include "gameCommon.h"
 #include "bsideFly.h"
+#include "driveGame.h"
 #include <ESP8266WiFi.h>
 
 SSD1306  display(0x3c, 5, 2);
@@ -87,6 +89,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   buttonVals = readShift();
+  // driveGameLoop(&screenBuff,buttonVals);
   flyGameLoop(&screenBuff,buttonVals);
   sendToScreen();
 }
