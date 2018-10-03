@@ -145,7 +145,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
             star = star20x6;
           else // (gameState->stars[i].dim.width == 10)
             star = star10x4;
-          
+
           if (maskCollisionCheck(gameState->player1.dim, gameState->stars[i].dim, player, star)) {
             gameState->collision = true;
             break; // Only single collision needed / supported
@@ -336,8 +336,12 @@ void drawHalo(ScreenBuff* screenBuff, Dimensions dim, const bool* Object) {
 }
 bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
   time_t currentFrameTime = time(nullptr);
-  if (currentFrameTime - gameState->frameTimer <  50) {
-    delay(50 - (currentFrameTime - gameState->frameTimer));
+  if (currentFrameTime - gameState->frameTimer < 25) {
+#ifdef _WIN32
+    Sleep(25 - (currentFrameTime - gameState->frameTimer));
+#else
+    delay(25 - (currentFrameTime - gameState->frameTimer));
+#endif
   }
 
   gameState->frameTimer = currentFrameTime;
@@ -346,7 +350,7 @@ bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
   gameState->frameCounter += 1;
-  
+
   displayClear(screenBuff, 1, 0);
 
   bool writeString = true;
@@ -389,8 +393,13 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
   }
 
   if (1 == 1) {
-    char scroller[17] = " -= dFlight =- ";
-    drawString(screenBuff, scroller, 0, 2, true);
+    char scroller[17] = "                ";
+    drawString(screenBuff, scroller, 0, 0, true);
+  }
+
+  if (1 == 1) {
+    char scroller[17] = " -= dFlight =-  ";
+    drawString(screenBuff, scroller, 5, 2, true);
   }
 
   if (y < -8) return false;
@@ -399,8 +408,12 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
   time_t currentFrameTime = time(nullptr);
-  if (currentFrameTime - gameState->frameTimer < 50) {
-    delay(50 - (currentFrameTime - gameState->frameTimer));
+  if (currentFrameTime - gameState->frameTimer < 25) {
+#ifdef _WIN32
+    Sleep(25 - (currentFrameTime - gameState->frameTimer));
+#else
+    delay(25 - (currentFrameTime - gameState->frameTimer));
+#endif
   }
 
   gameState->frameTimer = currentFrameTime;
@@ -422,7 +435,7 @@ bool displayOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
   }
 
   if (y > -8 || y < screenBuff->HEIGHT) {
-    char scroller[17] = "----------------";
+    char scroller[17] = "";
     drawString(screenBuff, scroller, 0, y, false);
     y += 8;
   }
@@ -447,6 +460,12 @@ bool displayOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
   if (y > -8 || y < screenBuff->HEIGHT) {
     char scroller[17] = "your journey.";
+    drawString(screenBuff, scroller, 0, y, false);
+    y += 8;
+  }
+
+  if (y > -8 || y < screenBuff->HEIGHT) {
+    char scroller[17] = "";
     drawString(screenBuff, scroller, 0, y, false);
     y += 8;
   }
@@ -552,15 +571,15 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
   }
   if (gameState->scene == 3) {
     char fps[16];
-    sprintf(fps, "Level %i",gameState->level);
+    sprintf(fps, "Level %i", gameState->level);
     for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
       drawCharacter(screenBuff, fps[i], 40 + 8 * i, 10);
     }
-    
+
     // Sliders
     int counter = 0;
     for (int i = gameState->frameCounter; i > 0; i--) {
-      if (counter < screenBuff->WIDTH/2)
+      if (counter < screenBuff->WIDTH / 2)
       {
         counter++;
         screenBuff->consoleBuffer[screenBuff->WIDTH * 5 + i] = 1;
@@ -608,7 +627,7 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
     if (gameState.lastscene != gameState.scene) {
       gameState.lastscene = gameState.scene;
     }
-  
+
     updateOutroScroller(&gameState, screenBuff);
     if (!displayOutroScroller(&gameState, screenBuff)) {
       gameState.scene = 3;

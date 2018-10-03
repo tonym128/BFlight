@@ -1,12 +1,23 @@
+#pragma once
 #ifndef BSIDEFLY_H
 #define BSIDEFLY_H
+
+#ifdef _WIN32
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <ctime>
+#include <Windows.h>
+#include <cwchar>
+#else
+#include <Arduino.h>  // for type definitions
+#include "SSD1306.h" // Screen Library
+#include "images.h"
+#endif
 
 #include "myfont.h"
 #include <stdlib.h>
 #include <time.h>
-#include <Arduino.h>  // for type definitions
-#include "SSD1306.h" // Screen Library
-#include "images.h"
 
 static unsigned long currTime = 0;
 static unsigned long lastDebounceTime = 0;
