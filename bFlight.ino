@@ -1,11 +1,12 @@
 /* LCD */
-
+#include <brzo_i2c.h>
+#include "SSD1306Brzo.h"
 #include "gameCommon.h"
 #include "bsideFly.h"
 #include "driveGame.h"
 #include <ESP8266WiFi.h>
 
-SSD1306  display(0x3c, 5, 2);
+SSD1306Brzo display(0x3c, 5, 2);
 
 /* Shift In  */
 const int pinShcp = 15; //Clock

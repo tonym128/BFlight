@@ -11,7 +11,6 @@
 #include <cwchar>
 #else
 #include <Arduino.h>  // for type definitions
-#include "SSD1306.h" // Screen Library
 #include "images.h"
 #endif
 
