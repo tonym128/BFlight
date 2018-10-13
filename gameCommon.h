@@ -11,6 +11,7 @@
 #include <cwchar>
 #else
 #include <Arduino.h>  // for type definitions
+#include "SSD1306.h" // Screen Library
 #include "images.h"
 #endif
 
@@ -21,7 +22,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define PI 3.14159265
+
 // Screen Buffer
+
 struct ScreenBuff {
 	static const int WIDTH = 128;
 	static const int HEIGHT = 64;
@@ -59,10 +63,15 @@ bool maskCollisionCheck(Dimensions, Dimensions, const bool*, const bool*);
 void displayClear(ScreenBuff*, int, bool);
 void displayNoise(ScreenBuff*, int);
 void displayInvert(ScreenBuff*);
+void displayNoise(ScreenBuff*, Dimensions dim, int);
 
 // Draw methods
 void drawObject(ScreenBuff*, Dimensions, const bool*);
 void drawObject(ScreenBuff*, Dimensions, bool*, bool = true);
+void drawObjectFill(ScreenBuff*, Dimensions, const bool*, bool);
+void drawObjectWavy(ScreenBuff*, Dimensions, int, int, int, int, bool, const bool*);
+bool* rotateObject(Dimensions, double, double, const bool*);
+
 void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);

@@ -148,9 +148,9 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 		gameState->level += 1;
 		gameState->scene = 4;
 
-		if (gameState->level == 4)
+		if (gameState->level == 3)
 		{
-			gameState->level = 3;
+			gameState->level = 2;
 			gameState->scene = 2;
 		}
 	}
@@ -181,11 +181,11 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 
 bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	time_t currentFrameTime = time(nullptr);
-	if (currentFrameTime - gameState->frameTimer < 25) {
+	if (currentFrameTime - gameState->frameTimer < 10) {
 #ifdef _WIN32
-		Sleep(25 - (currentFrameTime - gameState->frameTimer));
+		Sleep(10 - (currentFrameTime - gameState->frameTimer));
 #else
-		delay(25 - (currentFrameTime - gameState->frameTimer));
+		delay(10 - (currentFrameTime - gameState->frameTimer));
 #endif
 	}
 
@@ -240,6 +240,7 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	if (1 == 1) {
 		char scroller[17] = "                ";
 		drawString(screenBuff, scroller, 0, 0, true);
+		drawString(screenBuff, scroller, 0, 8, true);
 	}
 
 	if (1 == 1) {
@@ -255,9 +256,9 @@ bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	time_t currentFrameTime = time(nullptr);
 	if (currentFrameTime - gameState->frameTimer < 25) {
 #ifdef _WIN32
-		Sleep(25 - (currentFrameTime - gameState->frameTimer));
+		Sleep(10 - (currentFrameTime - gameState->frameTimer));
 #else
-		delay(25 - (currentFrameTime - gameState->frameTimer));
+		delay(10 - (currentFrameTime - gameState->frameTimer));
 #endif
 	}
 

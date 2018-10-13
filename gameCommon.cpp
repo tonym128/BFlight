@@ -12,6 +12,50 @@ void displayNoise(ScreenBuff* screenBuff, int amountInverse = 0) {
 			}
 }
 
+void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0) {
+	int counter = 0;
+	for (int j = dim.y; j < dim.y + dim.height; j++) {
+		int dimXmod = dim.x <= 0 ? 1 : dim.x;
+		int firstLine = (dimXmod + screenBuff->WIDTH * j) / screenBuff->WIDTH;
+		for (int i = dim.x; i < dim.x + dim.width; i++) {
+			int pixel = i + screenBuff->WIDTH * j;
+			if (pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
+				screenBuff->consoleBuffer[pixel] = rand() % 2;
+			}
+			counter++;
+		}
+	}
+}
+
+bool* rotateObject(Dimensions dim, double angle, double zoom, const bool* object) {
+	bool rotated[4096];
+	double sinma = sin(-angle) * zoom;
+	double cosma = cos(-angle) * zoom;
+
+	for (int x = 0; x < dim.width; x++) {
+		for (int y = 0; y < dim.height; y++) {
+			int hwidth = dim.width / 2;
+			int hheight = dim.height / 2;
+
+			int xt = x - hwidth;
+			int yt = y - hheight;
+
+			int xs = (int)round((cosma * xt - sinma * yt) + hwidth);
+			int ys = (int)round((sinma * xt + cosma * yt) + hheight);
+
+			if (xs >= 0 && xs < dim.width && ys >= 0 && ys < dim.height) {
+				/* set target pixel (x,y) to color at (xs,ys) */
+				rotated[x + y * dim.width] = object[xs + ys * dim.width];
+			}
+			else {
+				/* set target pixel (x,y) to some default background */
+				rotated[x + y * dim.width] = 0;
+			}
+		}
+	}
+
+	return rotated;
+}
 
 bool rectCollisionCheck(Dimensions rect1, Dimensions rect2) {
 	if (rect1.x < rect2.x + rect2.width &&
@@ -64,6 +108,64 @@ void drawObject(ScreenBuff* screenBuff, Dimensions dim, const bool* objectArray)
 			int pixel = i + screenBuff->WIDTH * j;
 			if (objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
 				screenBuff->consoleBuffer[pixel] = 1;
+			}
+			counter++;
+		}
+	}
+}
+
+void drawObjectWavy(ScreenBuff* screenBuff, Dimensions dim, int ylow, int yhigh, int ystart, int frameCount, bool yup, const bool* objectArray) {
+	if (ystart > yhigh) ystart = yhigh;
+	if (ystart < ylow) ystart = ylow;
+
+	bool originalYup = yup;
+	int internalCounter = frameCount;
+	int counter = 0;
+	int yOffset = ystart;
+	for (int j = dim.y; j < dim.y + dim.height; j++) {
+		yup = originalYup;
+		yOffset = ystart;
+		internalCounter = frameCount;
+
+		for (int i = dim.x; i < dim.x + dim.width; i++) {
+			int pixel = i + screenBuff->WIDTH * (j + yOffset);
+			if (j + yOffset > 0 && j + yOffset < screenBuff->HEIGHT && i > 0 && i < screenBuff->WIDTH && objectArray[counter] && pixel >= 0 && pixel < screenBuff->MAXPIXEL) {
+				screenBuff->consoleBuffer[pixel] = 1;
+			}
+			counter++;
+
+			if (yOffset == yhigh || yOffset == ylow ) {
+				yup = yOffset == yhigh ? true : false;
+				
+				if (internalCounter == 4) {
+					yOffset += yup ? -1 : +1;
+					internalCounter = 0;
+				}
+				else {
+					internalCounter += 1;
+				}
+			}
+			else {
+				if (internalCounter == 1) {
+					yOffset += yup ? -1 : +1;
+				}
+				else {
+					internalCounter += 1;
+				}
+			}
+		}
+	}
+}
+
+void drawObjectFill(ScreenBuff* screenBuff, Dimensions dim, const bool* objectArray, bool drawColor) {
+	int counter = 0;
+	for (int j = dim.y; j < dim.y + dim.height; j++) {
+		int dimXmod = dim.x <= 0 ? 1 : dim.x;
+		int firstLine = (dimXmod + screenBuff->WIDTH * j) / screenBuff->WIDTH;
+		for (int i = dim.x; i < dim.x + dim.width; i++) {
+			int pixel = i + screenBuff->WIDTH * j;
+			if (objectArray[counter] == drawColor && pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
+				screenBuff->consoleBuffer[pixel] = drawColor;
 			}
 			counter++;
 		}

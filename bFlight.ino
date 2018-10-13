@@ -4,7 +4,9 @@
 #include "gameCommon.h"
 #include "bsideFly.h"
 #include "driveGame.h"
+#include "rotoZoomer.h"
 #include <ESP8266WiFi.h>
+#include "FS.h"
 
 SSD1306Brzo display(0x3c, 5, 2);
 
@@ -61,10 +63,44 @@ void sendToScreen() {
 }
 
 void startBFlight() {
-  display.drawXbm(0, 0, bFlightStartupLogo_width, bFlightStartupLogo_height, bFlightStartupLogo_bits);
-  display.display();
-  delay(2000);
+  File f;
+  f = SPIFFS.open("/bFSLogo.XBM", "r");
+
+  if (f) {
+    int s = f.size();
+    Serial.printf("File Opened , Size=%d\r\n", s);
+
+    String data = f.readString();
+    //Serial.println(data);
+    f.close();
+
+    const char* data1 = data.c_str();
+    display.drawXbm(0, 0, 128, 64, (uint8_t *)data1);
+    display.display();
+    delay(2000);
+  }
 }
+
+void startRRush() {
+  File f;
+  f = SPIFFS.open("/RoadRushLogo.XBM", "r");
+
+  if (f) {
+    int s = f.size();
+    Serial.printf("File Opened , Size=%d\r\n", s);
+
+    String data = f.readString();
+    //Serial.println(data);
+    f.close();
+
+    const char* data1 = data.c_str();
+    display.drawXbm(0, 0, 128, 64, (uint8_t *)data1);
+    display.display();
+    delay(2000);
+  }
+}
+
+int Game = 1;
 
 void setup() {
   /* shift in */
@@ -76,21 +112,37 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
+
+  // Startup SPIFFS Storage
+  SPIFFS.begin();
   
   // put your setup code here, to run once:
-  display.setFont(ArialMT_Plain_16);
   Serial.begin(74880);
   display.init();
   display.displayOn();
   display.flipScreenVertically();
-
-  startBFlight();
+  switch (Game) {
+      case 1: startBFlight();
+      break;
+      case 2: startRRush();
+      break;
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   buttonVals = readShift();
-  // driveGameLoop(&screenBuff,buttonVals);
-  flyGameLoop(&screenBuff,buttonVals);
+  switch (Game) {
+    case 1: 
+      driveGameLoop(&screenBuff,buttonVals);
+      break;
+    case 2: 
+      flyGameLoop(&screenBuff,buttonVals);
+      break;
+    case 3: 
+      rotoZoomerLoop(&screenBuff,buttonVals);
+      break;
+  }
+
   sendToScreen();
 }
