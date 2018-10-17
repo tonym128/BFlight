@@ -1,10 +1,10 @@
 /* LCD */
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
-#include "gameCommon.h"
-#include "bsideFly.h"
-#include "driveGame.h"
-#include "rotoZoomer.h"
+#include "gameCommon.hpp"
+#include "bsideFly.hpp"
+#include "driveGame.hpp"
+#include "rotoZoomer.hpp"
 #include <ESP8266WiFi.h>
 #include "FS.h"
 

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef GAMECOMMON_H
 #define GAMECOMMON_H
 
@@ -9,6 +8,20 @@
 #include <ctime>
 #include <Windows.h>
 #include <cwchar>
+#include <stdint.h>
+#elif __linux
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <ctime>
+#include <cwchar>
+#include <stdint.h>
+#include <string.h>
+#include <math.h>
+
+//typedef uint32_t DWORD;   // DWORD = unsigned 32 bit value
+//typedef uint16_t WORD;    // WORD = unsigned 16 bit value
+typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #else
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
@@ -16,7 +29,7 @@
 #endif
 
 #ifndef MYFONT_H_
-#include "myfont.h"
+#include "myfont.hpp"
 #endif
 
 #include <stdlib.h>

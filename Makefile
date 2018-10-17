@@ -1,0 +1,1 @@
+ g++ -g -Wall -std=c++11 -o bFlight bFlight.cpp gameCommon.cpp driveGame.cpp bsideFly.cpp rotoZoomer.cpp  -I. -I/usr/include/ncurses -lncurses -lm

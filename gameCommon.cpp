@@ -1,4 +1,4 @@
-#include "gameCommon.h"
+#include "gameCommon.hpp"
 
 bool processKey(byte buttonVals, int key) {
 	return buttonVals & (1 << key);

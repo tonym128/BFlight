@@ -1,13 +1,12 @@
-#pragma once
 #ifndef DRIVEGAME_H
 #define DRIVEGAME_H
 
 #ifndef GAMECOMMON_H
-#include "gameCommon.h"
+#include "gameCommon.hpp"
 #endif
 
 #ifndef MYFONT_H_
-#include "myfont.h"
+#include "myfont.hpp"
 #endif
 
 // Draw Player

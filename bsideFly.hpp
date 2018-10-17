@@ -1,14 +1,9 @@
-#pragma once
 #ifndef BSIDEFLY_H
 #define BSIDEFLY_H
 
 #ifndef GAMECOMMON_H
-#include "gameCommon.h"
+#include "gameCommon.hpp"
 #endif
-
-static unsigned long currTime = 0;
-static unsigned long lastDebounceTime = 0;
-static unsigned long debounceDelay = 150;
 
 /* Shift Out ( 74HC595 ) */
 const int latchPin = 12; //Pin connected to latch pin (ST_CP) of 74HC595
