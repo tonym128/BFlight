@@ -16,8 +16,8 @@ clean :
 	$(RM) ${EXEC}
 	$(RM) *.o
 
-run :
-	@$(MAKE) && ./$(EXEC) $(ARGS)
+run : $(OBJECTS)
+	./$(EXEC) $(ARGS)
 
 # CC=gcc
 # CFLAGS=-I. -I/usr/include/ncurses -lncurses -lm
