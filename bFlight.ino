@@ -1,14 +1,17 @@
 /* LCD */
+#ifdef _WIN32
+#else
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
+#include <ESP8266WiFi.h>
+#include "FS.h"
+SSD1306Brzo display(0x3c, 5, 2);
+#endif //#WIN32
+
 #include "gameCommon.h"
 #include "bsideFly.h"
 #include "driveGame.h"
 #include "rotoZoomer.h"
-#include <ESP8266WiFi.h>
-#include "FS.h"
-
-SSD1306Brzo display(0x3c, 5, 2);
 
 /* Shift In  */
 const int pinShcp = 15; //Clock
@@ -18,7 +21,28 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-byte readShift()
+
+#ifdef _WIN32
+bool processWinKey(int key) {
+	if (GetAsyncKeyState(key) & 0x8000) return true;
+	return false;
+}
+
+byte getReadShift() {
+	byte buttonVals = 0;
+	if (processWinKey(VK_LEFT))  buttonVals = buttonVals | (1 << P1_Left);
+	if (processWinKey(VK_UP))    buttonVals = buttonVals | (1 << P1_Top);
+	if (processWinKey(VK_RIGHT)) buttonVals = buttonVals | (1 << P1_Right);
+	if (processWinKey(VK_DOWN))  buttonVals = buttonVals | (1 << P1_Bottom);
+	if (processWinKey('D'))      buttonVals = buttonVals | (1 << P2_Right);
+	if (processWinKey('S'))      buttonVals = buttonVals | (1 << P2_Bottom);
+	if (processWinKey('A'))      buttonVals = buttonVals | (1 << P2_Left);
+	if (processWinKey('W'))      buttonVals = buttonVals | (1 << P2_Top);
+
+	return buttonVals;
+}
+#else
+byte getReadShift()
 {
   int inputPin = 1;
   int buttonPressedVal = 1; //Depending on how buttons are wired
@@ -43,8 +67,11 @@ byte readShift()
 
   return buttonVals;
 }
+#endif
 
 void sendToScreen() {
+#ifdef _WIN32
+#else
   display.setColor(BLACK);
   display.clear();
   int x = 0;
@@ -60,10 +87,13 @@ void sendToScreen() {
   }
 
   display.display();
+#endif
 }
 
 void startBFlight() {
-  File f;
+ #ifdef _WIN32
+ #else
+ File f;
   f = SPIFFS.open("/bFSLogo.XBM", "r");
 
   if (f) {
@@ -79,9 +109,12 @@ void startBFlight() {
     display.display();
     delay(2000);
   }
+#endif
 }
 
 void startRRush() {
+#ifdef _WIN32
+#else
   File f;
   f = SPIFFS.open("/RoadRushLogo.XBM", "r");
 
@@ -98,11 +131,14 @@ void startRRush() {
     display.display();
     delay(2000);
   }
+#endif
 }
 
 int Game = 1;
 
 void setup() {
+#ifdef _WIN32
+#else
   /* shift in */
   pinMode(pinStcp, OUTPUT);
   pinMode(pinShcp, OUTPUT);
@@ -121,6 +157,8 @@ void setup() {
   display.init();
   display.displayOn();
   display.flipScreenVertically();
+#endif // _WIN32
+
   switch (Game) {
       case 1: startBFlight();
       break;
@@ -131,7 +169,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  buttonVals = readShift();
+  buttonVals = getReadShift();
   switch (Game) {
     case 1: 
       driveGameLoop(&screenBuff,buttonVals);

@@ -25,7 +25,7 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	if (zoomWinner > 1.1 || zoomWinner < 0.6) {
 		zoomWinnerDirection = !zoomWinnerDirection;
 	}
-
+  
 	zoomWinner += zoomWinnerDirection ? 0.003 : -0.003;
 
 	displayClear(screenBuff, 1, false);
