@@ -1,4 +1,4 @@
-#include "gameCommon.h"
+#include "gameCommon.hpp"
 
 bool processKey(byte buttonVals, int key) {
 	return buttonVals & (1 << key);
@@ -201,6 +201,20 @@ void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
 			}
 		}
 	}
+}
+
+bool* reverseObject(Dimensions dim, const bool* objectArray) {
+	bool newObjectArray[384];
+	int counter = 0;
+	for (int j = 0; j < dim.height; j++) {
+		for (int i = dim.width - 1; i >= 0; i--) {
+			int pixel = i + dim.width * j;
+			newObjectArray[counter] = objectArray[pixel];
+			counter++;
+		}
+	}
+
+	return newObjectArray;
 }
 
 void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y, bool backFill) {

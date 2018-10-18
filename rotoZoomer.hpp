@@ -1,13 +1,12 @@
-#pragma once
 #ifndef ROTOZOOMER_H
 #define ROTOZOOMER_H
 
 #ifndef GAMECOMMON_H
-#include "gameCommon.h"
+#include "gameCommon.hpp"
 #endif //GAMECOMMON_H
 
 #ifndef MYFONT_H_
-#include "myfont.h"
+#include "myfont.hpp"
 #endif //MYFONT_H_
 
 void rotoZoomerLoop(ScreenBuff*, byte);

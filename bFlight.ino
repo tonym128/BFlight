@@ -3,15 +3,14 @@
 #else
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
+#include "gameCommon.hpp"
+#include "bsideFly.hpp"
+#include "driveGame.hpp"
+#include "rotoZoomer.hpp"
 #include <ESP8266WiFi.h>
 #include "FS.h"
-SSD1306Brzo display(0x3c, 5, 2);
-#endif //#WIN32
 
-#include "gameCommon.h"
-#include "bsideFly.h"
-#include "driveGame.h"
-#include "rotoZoomer.h"
+SSD1306Brzo display(0x3c, 5, 2);
 
 /* Shift In  */
 const int pinShcp = 15; //Clock

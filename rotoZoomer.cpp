@@ -1,4 +1,4 @@
-#include "rotoZoomer.h"
+#include "rotoZoomer.hpp"
 
 int FrameCounter = 0;
 Dimensions imageDim;

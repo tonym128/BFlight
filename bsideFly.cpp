@@ -1,4 +1,4 @@
-#include "bsideFly.h"
+#include "bsideFly.hpp"
 
 GameState gameState;
 
@@ -111,7 +111,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 	gameState->collision = false;
 
 	// StarField
-	if (gameState->starField = true) {
+	if (gameState->starField == true) {
 		for (int i = 0; i < gameState->starCount; i++) {
 			updateStar(gameState, screenBuff, &gameState->stars[i]);
 			if (!gameState->collision && gameState->stars[i].collider) {
@@ -180,16 +180,21 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 }
 
 bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
-	time_t currentFrameTime = time(nullptr);
-	if (currentFrameTime - gameState->frameTimer < 10) {
-#ifdef _WIN32
-		Sleep(10 - (currentFrameTime - gameState->frameTimer));
-#else
-		delay(10 - (currentFrameTime - gameState->frameTimer));
-#endif
-	}
+// 	time_t currentFrameTime = time(nullptr);
+// 	if (currentFrameTime - gameState->frameTimer < 10) {
+// #ifdef _WIN32
+// 		Sleep(10 - (currentFrameTime - gameState->frameTimer));
+// #elif __linux
+//    struct timespec ts;
+//    ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
+//    ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
+//    nanosleep(&ts, NULL);
+// #else
+// 		delay(10 - (currentFrameTime - gameState->frameTimer));
+// #endif
+// 	}
 
-	gameState->frameTimer = currentFrameTime;
+// 	gameState->frameTimer = currentFrameTime;
 	return true;
 }
 
@@ -198,7 +203,6 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 	displayClear(screenBuff, 1, 0);
 
-	bool writeString = true;
 	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
@@ -257,6 +261,11 @@ bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	if (currentFrameTime - gameState->frameTimer < 25) {
 #ifdef _WIN32
 		Sleep(10 - (currentFrameTime - gameState->frameTimer));
+#elif __linux
+   struct timespec ts;
+   ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
+   ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
+   nanosleep(&ts, NULL);
 #else
 		delay(10 - (currentFrameTime - gameState->frameTimer));
 #endif
@@ -271,7 +280,6 @@ bool displayOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 	displayClear(screenBuff, 1, 0);
 
-	bool writeString = true;
 	int y = screenBuff->HEIGHT - gameState->frameCounter;
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
@@ -365,7 +373,7 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
 	displayClear(screenBuff, 1, 0);
 	drawObject(screenBuff, gameState->player1.dim, player);
 
-	if (gameState->starField = true) {
+	if (gameState->starField == true) {
 
 		for (int i = 0; i < gameState->starCount; i++) {
 			// drawBlock(screenBuff, gameState->stars[i].dim, 1);

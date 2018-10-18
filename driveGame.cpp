@@ -1,4 +1,4 @@
-#include "driveGame.h"
+#include "driveGame.hpp"
 
 struct Player1Keys {
 	bool up = false;
@@ -255,6 +255,11 @@ bool drawWavingFlag(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 #ifdef _WIN32
 	Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
+#elif __linux
+   struct timespec ts;
+   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
+   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
+   nanosleep(&ts, NULL);
 #else
 	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif
@@ -268,6 +273,11 @@ bool updateDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff)
 	if (currentFrameTime - gameStateDrive->frameTimer < 10) {
 #ifdef _WIN32
 		Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
+#elif __linux
+   struct timespec ts;
+   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
+   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
+   nanosleep(&ts, NULL);
 #else
 		delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif
@@ -282,7 +292,6 @@ bool displayDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff
 
 	displayClear(screenBuff, 1, 0);
 
-	bool writeString = true;
 	int y = screenBuff->HEIGHT - gameStateDrive->frameCounter + 10;
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
@@ -343,7 +352,6 @@ bool displayDriveOutroScroller(GameStateDrive* gameStateDrive, ScreenBuff* scree
 
 	displayClear(screenBuff, 1, 0);
 
-	bool writeString = true;
 	int y = screenBuff->HEIGHT - gameStateDrive->frameCounter + 10;
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
@@ -417,6 +425,11 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
 
 #ifdef _WIN32
 	Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
+#elif __linux
+   struct timespec ts;
+   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
+   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
+   nanosleep(&ts, NULL);
 #else
 	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif

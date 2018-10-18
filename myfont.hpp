@@ -1,5 +1,6 @@
 #ifndef MYFONT_H_   /* Include guard */
 #define MYFONT_H_
+#include <map>
 
 bool* font(char);
 static const int fontLength = 6144;
