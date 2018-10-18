@@ -30,9 +30,9 @@ struct GameStateBeat {
 	bool playerDirection = true;
 	int animation = 0;
 
-	clock_t frameTimer = clock();
-	clock_t startTime = clock();
-	clock_t currentTime = clock();
+	time_t frameTimer = time(nullptr);
+	time_t startTime = time(nullptr);
+	time_t currentTime = time(nullptr);
 
 	int frameCounter = 0;
 
@@ -51,10 +51,10 @@ void processInput(GameStateBeat* gameStateBeat, byte buttonVals) {
 
 bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 	gameStateBeat->frameCounter++;
-	gameStateBeat->currentTime = clock();
+	gameStateBeat->currentTime = time(nullptr);
 	double animTick = 5;
 	double updateTick = 60;
-	if (gameStateBeat->currentTime - gameStateBeat->startTime > CLOCKS_PER_SEC / updateTick) {
+	if (gameStateBeat->currentTime - gameStateBeat->startTime > 1000 / updateTick) {
 		if (gameStateBeat->playerKeys.down) { gameStateBeat->playerDimension.y += 1; }
 		if (gameStateBeat->playerKeys.up) { gameStateBeat->playerDimension.y -= 1; }
 		if (gameStateBeat->playerKeys.left) { gameStateBeat->playerDimension.x -= 1; }
@@ -67,7 +67,7 @@ bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 		if (gameStateBeat->playerDimension.y < 0) gameStateBeat->playerDimension.y = 0;
 	}
 
-	if (gameStateBeat->currentTime - gameStateBeat->startTime > CLOCKS_PER_SEC / animTick) {
+	if (gameStateBeat->currentTime - gameStateBeat->startTime > 1000 / animTick) {
 		gameStateBeat->animation++;
 		if (gameStateBeat->animation == 3) {
 			gameStateBeat->animation = 0;
@@ -111,53 +111,67 @@ const bool* getPlayerImage(int animationFrame, int animation, bool direction) {
 	Dimensions dim;
 	dim.width = 16;
 	dim.height = 16;
+	bool reverseImage[256];
 
 	switch (animation) {
 	case 0: //Standing
 		switch (animationFrame) {
 		case 0:
-			return direction ? playerStand1Image : reverseObject(dim, playerStand1Image);
+			reverseObject(dim, playerStand1Image,reverseImage);
+			return direction ? playerStand1Image : (const bool*)reverseImage;
 			break;
 		case 1:
-			return direction ? playerStand2Image : reverseObject(dim, playerStand2Image);
+			reverseObject(dim, playerStand2Image,reverseImage);
+			return direction ? playerStand2Image : (const bool*)reverseImage;
 			break;
 		case 2:
-			return direction ? playerStand3Image : reverseObject(dim, playerStand3Image);
+			reverseObject(dim, playerStand3Image,reverseImage);
+			return direction ? playerStand3Image : (const bool*)reverseImage;
 			break;
 		default:
-			return direction ? playerStand1Image : reverseObject(dim, playerStand1Image);
+			reverseObject(dim, playerStand1Image,reverseImage);
+			return direction ? playerStand1Image : (const bool*)reverseImage;
 		}
 	case 2: //Punching
 		switch (animationFrame) {
 		case 0:
-			return direction ? playerPunch1Image : reverseObject(dim, playerPunch1Image);
+			reverseObject(dim, playerPunch1Image,reverseImage);
+			return direction ? playerPunch1Image : (const bool*)reverseImage;
 			break;
 		case 1:
-			return direction ? playerPunch2Image : reverseObject(dim, playerPunch2Image);
+			reverseObject(dim, playerPunch2Image,reverseImage);
+			return direction ? playerPunch2Image : (const bool*)reverseImage;
 			break;
 		case 2:
-			return direction ? playerPunch1Image : reverseObject(dim, playerPunch1Image);
+			reverseObject(dim, playerPunch1Image,reverseImage);
+			return direction ? playerPunch1Image : (const bool*)reverseImage;
 			break;
 		default:
-			return direction ? playerPunch2Image : reverseObject(dim, playerPunch2Image);
+			reverseObject(dim, playerPunch2Image,reverseImage);
+			return direction ? playerPunch2Image : (const bool*)reverseImage;
 		}
 	case 3: //Kicking
 		switch (animationFrame) {
 		case 0:
-			return direction ? playerKick1Image : reverseObject(dim, playerKick1Image);
+			reverseObject(dim, playerKick1Image,reverseImage);
+			return direction ? playerKick1Image : (const bool*)reverseImage;
 			break;
 		case 1:
-			return direction ? playerKick2Image : reverseObject(dim, playerKick2Image);
+			reverseObject(dim, playerKick2Image,reverseImage);
+			return direction ? playerKick2Image : (const bool*)reverseImage;
 			break;
 		case 2:
-			return direction ? playerKick1Image : reverseObject(dim, playerKick1Image);
+			reverseObject(dim, playerKick1Image,reverseImage);
+			return direction ? playerKick1Image : (const bool*)reverseImage;
 			break;
 		default:
-			return direction ? playerKick2Image : reverseObject(dim, playerKick2Image);
+			reverseObject(dim, playerStand1Image,reverseImage);
+			return direction ? playerKick2Image : (const bool*)reverseImage;
 		}
 	}
 
-    return direction ? playerKick2Image : reverseObject(dim, playerStand1Image);
+	reverseObject(dim, playerStand1Image,reverseImage);
+    return direction ? playerStand1Image : (const bool*)reverseImage;
 }
 
 void displayBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {

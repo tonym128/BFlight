@@ -9,7 +9,7 @@ find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 endif (UNIX)
 
-add_executable(bFlight64 bFlight.cpp myfont.cpp gameCommon.cpp bsideFly.cpp driveGame.cpp rotoZoomer.cpp beatemup.cpp)
+add_executable(bFlight64 game.cpp myfont.cpp gameCommon.cpp bsideFly.cpp driveGame.cpp rotoZoomer.cpp beatemup.cpp)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
