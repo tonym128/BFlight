@@ -2,7 +2,7 @@
 #include "bsideFly.hpp"
 #include "driveGame.hpp"
 #include "rotoZoomer.hpp"
-// #include "beatemup.hpp"
+#include "beatemup.hpp"
 
 #ifdef _WIN32_
 #elif __linux
@@ -119,10 +119,9 @@ void loop() {
     case 3:
       rotoZoomerLoop(&screenBuff,buttonVals);
       break;
-/*	case 4:
+	case 4:
       beatemupLoop(&screenBuff, buttonVals); 
       break;
-*/
   }
 
   sendToScreen();

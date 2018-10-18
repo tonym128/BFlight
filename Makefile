@@ -1,5 +1,5 @@
 # Object files to either reference or create
-OBJECTS = bFlight.o myfont.o gameCommon.o driveGame.o bsideFly.o rotoZoomer.o
+OBJECTS = bFlight.o myfont.o gameCommon.o driveGame.o bsideFly.o rotoZoomer.o beatemup.o
 # The executable file that will be created at the end
 EXEC = bFlight
 # The flags to use for compilation
@@ -11,6 +11,13 @@ CC = g++
 # Perform action on all object files (May or may not exist)
 all: $(OBJECTS)
 	$(CC) $(CXXFLAGS) -o $(EXEC) $(OBJECTS) $(LIBS)
+
+clean :
+	$(RM) ${EXEC}
+	$(RM) *.o
+
+run :
+	@$(MAKE) && ./$(EXEC) $(ARGS)
 
 # CC=gcc
 # CFLAGS=-I. -I/usr/include/ncurses -lncurses -lm
