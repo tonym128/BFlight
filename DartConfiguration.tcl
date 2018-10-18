@@ -5,7 +5,7 @@
 
 # Configuration directories and files
 SourceDirectory: /mnt/c/Users/tmama/projects/bflight/BFlight
-BuildDirectory: /mnt/c/Users/tmama/projects/bflight/BFlight
+BuildDirectory: /mnt/c/Users/tmama/projects/bFlight/BFlight
 
 # Where to place the cost data store
 CostDataFile: 
