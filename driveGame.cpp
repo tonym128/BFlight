@@ -259,7 +259,7 @@ bool drawWavingFlag(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
    struct timespec ts;
    ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
    ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
-   //nanosleep(&ts, NULL);
+   nanosleep(&ts, NULL);
 #else
 	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif
@@ -277,7 +277,7 @@ bool updateDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff)
    struct timespec ts;
    ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
    ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
-   //nanosleep(&ts, NULL);
+   nanosleep(&ts, NULL);
 #else
 		delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif
@@ -429,7 +429,7 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
    struct timespec ts;
    ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
    ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
-   //nanosleep(&ts, NULL);
+   nanosleep(&ts, NULL);
 #else
 	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
 #endif

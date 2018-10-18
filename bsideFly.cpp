@@ -188,7 +188,7 @@ bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
    struct timespec ts;
    ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
    ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
-   //nanosleep(&ts, NULL);
+   nanosleep(&ts, NULL);
 #else
 		delay(10 - (currentFrameTime - gameState->frameTimer));
 #endif
@@ -265,7 +265,7 @@ bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
    struct timespec ts;
    ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
    ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
-   //nanosleep(&ts, NULL);
+   nanosleep(&ts, NULL);
 #else
 		delay(10 - (currentFrameTime - gameState->frameTimer));
 #endif
