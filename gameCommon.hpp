@@ -82,7 +82,7 @@ void drawObject(ScreenBuff*, Dimensions, const bool*);
 void drawObject(ScreenBuff*, Dimensions, bool*, bool = true);
 void drawObjectFill(ScreenBuff*, Dimensions, const bool*, bool);
 void drawObjectWavy(ScreenBuff*, Dimensions, int, int, int, int, bool, const bool*);
-bool* rotateObject(Dimensions, double, double, const bool*);
+void rotateObject(Dimensions, double, double, const bool*, bool*);
 void reverseObject(Dimensions, const bool*, bool*);
 
 void drawBlock(ScreenBuff*, Dimensions, bool);

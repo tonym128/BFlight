@@ -180,21 +180,21 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 }
 
 bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
-// 	time_t currentFrameTime = time(nullptr);
-// 	if (currentFrameTime - gameState->frameTimer < 10) {
-// #ifdef _WIN32
-// 		Sleep(10 - (currentFrameTime - gameState->frameTimer));
-// #elif __linux
-//    struct timespec ts;
-//    ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
-//    ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
-//    nanosleep(&ts, NULL);
-// #else
-// 		delay(10 - (currentFrameTime - gameState->frameTimer));
-// #endif
-// 	}
+ 	time_t currentFrameTime = time(nullptr);
+ 	if (currentFrameTime - gameState->frameTimer < 10) {
+ #ifdef _WIN32
+ 		Sleep(10 - (currentFrameTime - gameState->frameTimer));
+ #elif __linux
+    struct timespec ts;
+    ts.tv_sec = (10 - (currentFrameTime - gameState->frameTimer)) / 1000;
+    ts.tv_nsec = (10 - (currentFrameTime - gameState->frameTimer)) % 1000 * 1000000;
+    nanosleep(&ts, NULL);
+ #else
+ 		delay(10 - (currentFrameTime - gameState->frameTimer));
+ #endif
+ 	}
 
-// 	gameState->frameTimer = currentFrameTime;
+ 	gameState->frameTimer = currentFrameTime;
 	return true;
 }
 

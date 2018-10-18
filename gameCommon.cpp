@@ -27,8 +27,7 @@ void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0)
 	}
 }
 
-bool* rotateObject(Dimensions dim, double angle, double zoom, const bool* object) {
-	bool rotated[8192];
+void rotateObject(Dimensions dim, double angle, double zoom, const bool* object, bool* rotated) {
 	double sinma = sin(-angle) * zoom;
 	double cosma = cos(-angle) * zoom;
 
@@ -53,8 +52,6 @@ bool* rotateObject(Dimensions dim, double angle, double zoom, const bool* object
 			}
 		}
 	}
-
-	return rotated;
 }
 
 bool rectCollisionCheck(Dimensions rect1, Dimensions rect2) {

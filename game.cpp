@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 4;
+int Game = 1;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -50,6 +50,7 @@ byte getReadShift() {
 	if (processWinKey('S'))      buttonVals = buttonVals | (1 << P2_Bottom);
 	if (processWinKey('A'))      buttonVals = buttonVals | (1 << P2_Left);
 	if (processWinKey('W'))      buttonVals = buttonVals | (1 << P2_Top);
+	if (processWinKey('Q'))      exit(0);
 
 	return buttonVals;
 }

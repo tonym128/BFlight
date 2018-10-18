@@ -20,7 +20,8 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	if (direction)
 		zoom = (zoomFactor / double(zoomFactor)) - zoom;
 
-	bool* rotatedLogo = rotateObject(imageDim, FrameCounter * (PI / 180), zoom, defcon_image);
+	bool rotatedLogo[defcon_height * defcon_width];
+	rotateObject(imageDim, FrameCounter * (PI / 180), zoom, defcon_image, rotatedLogo);
 
 	if (zoomWinner > 1.1 || zoomWinner < 0.6) {
 		zoomWinnerDirection = !zoomWinnerDirection;
@@ -34,9 +35,11 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	imageDim.y = 0;
 	imageDim.width = defconWinner_width;
 	imageDim.height = defconWinner_height;
-	drawObject(screenBuff, imageDim, (const bool*)rotateObject(imageDim, (PI / 180), zoomWinner, defconWinner_image));
+	rotateObject(imageDim, (PI / 180), zoomWinner, defconWinner_image, rotatedLogo);
+	drawObject(screenBuff, imageDim, rotatedLogo);
 	imageDim.x = 96;
-	drawObject(screenBuff, imageDim, (const bool*)rotateObject(imageDim,180 * (PI / 180), zoomWinner, defconWinner_image));
+	rotateObject(imageDim,180 * (PI / 180), zoomWinner, defconWinner_image,rotatedLogo);
+	drawObject(screenBuff, imageDim, rotatedLogo);
 	FrameCounter++;
 	return;
 }
