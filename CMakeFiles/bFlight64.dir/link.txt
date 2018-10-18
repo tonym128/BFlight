@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/bFlight64.dir/bFlight.cpp.o CMakeFiles/bFlight64.dir/myfont.cpp.o CMakeFiles/bFlight64.dir/gameCommon.cpp.o CMakeFiles/bFlight64.dir/bsideFly.cpp.o CMakeFiles/bFlight64.dir/driveGame.cpp.o CMakeFiles/bFlight64.dir/rotoZoomer.cpp.o CMakeFiles/bFlight64.dir/beatemup.cpp.o  -o bFlight64 -rdynamic 

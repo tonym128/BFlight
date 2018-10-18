@@ -4,7 +4,7 @@
 #include "rotoZoomer.hpp"
 #include "beatemup.hpp"
 
-#ifdef _WIN32_
+#ifdef _WIN32
 #elif __linux
 #include <ncurses.h>
 #else
@@ -13,9 +13,27 @@
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 2;
+int Game = 4;
 
-#ifdef _WIN32_
+#ifdef _WIN32
+COORD charBufSize;
+COORD characterPos;
+SMALL_RECT writeArea;
+void SetConsoleFont() {
+	HANDLE wHnd;
+	wHnd = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = 6;                   // Width of each character in the font
+	cfi.dwFontSize.Y = 6;                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+	SetCurrentConsoleFontEx(wHnd, FALSE, &cfi);
+}
+
 bool processWinKey(int key) {
 	if (GetAsyncKeyState(key) & 0x8000) return true;
 	return false;
@@ -87,8 +105,6 @@ byte getReadShift() {
 
     return buttonVals;
 }
-#else
-#endif
 
 void sendToScreen() {
 
@@ -104,6 +120,9 @@ void sendToScreen() {
       }
   }
 }
+
+#else
+#endif
 
 void loop() {
   // put your main code here, to run repeatedly:
@@ -127,7 +146,7 @@ void loop() {
   sendToScreen();
 }
 
-#ifdef _WIN32_
+#ifdef _WIN32
 int main() {
     while (1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -149,7 +168,7 @@ int main() {
     nodelay(stdscr, TRUE);
 
     while (1) {
-    	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    	// std::this_thread::sleep_for(std::chrono::milliseconds(10));
         loop();
     }
 
