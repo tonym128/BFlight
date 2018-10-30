@@ -193,8 +193,23 @@ void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
 		int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
 		for (int i = dim.x; i <= dim.x + dim.width; i++) {
 			int pixel = i + screenBuff->WIDTH * j;
-			if (pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH) {
+			if (pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH && j > 0 && j < screenBuff->HEIGHT && i > 0 && i < screenBuff->WIDTH) {
 				screenBuff->consoleBuffer[pixel] = colour;
+			}
+		}
+	}
+}
+
+void drawMoire(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
+	bool pixelColour = colour;
+	for (int j = dim.y; j <= dim.y + dim.height; j++) {
+		int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;
+		pixelColour = j % 2 == 0 ? colour : !colour;
+		for (int i = dim.x; i <= dim.x + dim.width; i++) {
+			int pixel = i + screenBuff->WIDTH * j;
+			pixelColour = !pixelColour;
+			if (pixel >= 0 && pixel < screenBuff->MAXPIXEL && firstLine == pixel / screenBuff->WIDTH  && j > 0 && j < screenBuff->HEIGHT && i > 0 && i < screenBuff->WIDTH) {
+				screenBuff->consoleBuffer[pixel] = pixelColour;
 			}
 		}
 	}
@@ -206,6 +221,16 @@ void reverseObject(Dimensions dim, const bool* objectArray, bool* newObjectArray
 		for (int i = dim.width - 1; i >= 0; i--) {
 			int pixel = i + dim.width * j;
 			newObjectArray[counter] = objectArray[pixel];
+			counter++;
+		}
+	}
+}
+
+void invertObject(Dimensions dim, const bool* objectArray, bool* newObjectArray) {
+	int counter = 0;
+	for (int j = 0; j < dim.height; j++) {
+		for (int i = dim.width - 1; i >= 0; i--) {
+			newObjectArray[counter] = !objectArray[counter];
 			counter++;
 		}
 	}

@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <cwchar>
 #include <stdint.h>
+
 #elif __linux
 #include <iostream>
 #include <chrono>
@@ -84,8 +85,10 @@ void drawObjectFill(ScreenBuff*, Dimensions, const bool*, bool);
 void drawObjectWavy(ScreenBuff*, Dimensions, int, int, int, int, bool, const bool*);
 void rotateObject(Dimensions, double, double, const bool*, bool*);
 void reverseObject(Dimensions, const bool*, bool*);
+void invertObject(Dimensions, const bool*, bool*);
 
 void drawBlock(ScreenBuff*, Dimensions, bool);
+void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);
 

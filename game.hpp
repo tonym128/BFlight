@@ -6,6 +6,7 @@
 #include "driveGame.hpp"
 #include "rotoZoomer.hpp"
 #include "beatemup.hpp"
+#include "carpark.hpp"
 
 #ifdef _WIN32
 #elif __linux
