@@ -254,30 +254,29 @@ void drawString(ScreenBuff* screenBuff, char* scrollText, int x, int y, bool bac
 	}
 }
 
-void initTime() {
+void setCurrentTime() {
 #ifdef _WIN32
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
-	startTime = (time.wSecond * 1000) + time.wMilliseconds;
+    std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
+	auto now = std::chrono::system_clock::now().time_since_epoch();
+	auto t100ms = std::chrono::milliseconds(100);
+	auto time = now + t100ms;
+	currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 #else
-	startTime = time(nullptr);
 	currentTime = time(nullptr);
 #endif
 }
 
+void initTime() {
+	setCurrentTime();	
+	startTime = currentTime;
+}
+
 void updateMinTime(int sleepMiliseconds) {
-#ifdef _WIN32
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
-#else
-	currentTime = time(nullptr);
-#endif
+	setCurrentTime();
 
 	if (currentTime - frameTime < sleepMiliseconds) {
  #ifdef _WIN32
- 		Sleep(sleepMiliseconds - (currentTime - frameTime));
+ 	    std::this_thread::sleep_for(std::chrono::milliseconds(sleepMiliseconds - (currentTime - frameTime)));
  #elif __linux
     	struct timespec ts;
     	ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
@@ -293,4 +292,8 @@ void updateMinTime(int sleepMiliseconds) {
 
 bool checkTime(int Seconds) {
 	return (currentTime - startTime > Seconds * 1000);
+}
+
+int getElapsedSeconds() {
+	return (int)(currentTime - startTime)/1000;
 }

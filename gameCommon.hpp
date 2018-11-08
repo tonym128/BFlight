@@ -9,7 +9,7 @@
 #include <Windows.h>
 #include <cwchar>
 #include <stdint.h>
-
+#define localtime_r(_Time, _Tm) localtime_s(_Tm, _Time)
 #elif __linux
 #include <iostream>
 #include <chrono>
@@ -92,19 +92,16 @@ void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);
 
-// Re-initialise the timers
+void setCurrentTime();
 void initTime();
-
-// Minimum time for a frame
 void updateMinTime(int);
-
-// Check whether a certain amount of time has passed
 bool checkTime(int);
+int getElapsedSeconds();
 
 #ifdef _WIN32
-	static long frameTime = 0;
-	static long startTime = 0;
-	static long currentTime = 0;
+	static long long frameTime = 0;
+	static long long startTime = 0;
+	static long long currentTime = 0;
 #else
 	static time_t frameTime = time(nullptr);
 	static time_t startTime = time(nullptr);

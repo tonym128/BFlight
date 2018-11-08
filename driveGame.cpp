@@ -92,7 +92,7 @@ void initCar(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff, Car* car) {
 }
 
 bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
-	currentTime = time(nullptr);
+	updateMinTime(0);
 	gameStateDrive->frameCounter += 1;
 	if (gameStateDrive->playerCar.x < screenBuff->WIDTH / 5 || gameStateDrive->playerCar.x + gameStateDrive->playerCar.width > screenBuff->WIDTH - screenBuff->WIDTH / 5) {
 		if (gameStateDrive->MaxOffRoadSpeed < gameStateDrive->carSpeed) gameStateDrive->carSpeed -= 2;
@@ -392,21 +392,9 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
 		}
 	}
 
-	time_t currentFrameTime = time(nullptr);
+	updateMinTime(0);
 
-#ifdef _WIN32
-	Sleep(10 - (currentFrameTime - frameTime));
-#elif __linux
-   struct timespec ts;
-   ts.tv_sec = (10 - (currentFrameTime - frameTime)) / 1000;
-   ts.tv_nsec = (10 - (currentFrameTime - frameTime)) % 1000 * 1000000;
-   nanosleep(&ts, NULL);
-#else
-	delay(10 - (currentFrameTime - frameTime));
-#endif
-
-	frameTime = currentFrameTime;
-	return !(currentFrameTime - startTime > 2);
+	return !checkTime(2);
 }
 
 bool displayWinLose(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
@@ -424,10 +412,7 @@ bool displayWinLose(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 		}
 	}
 
-	time_t currentFrameTime = time(nullptr);
-
-	frameTime = currentFrameTime;
-	return !(currentFrameTime - startTime > 2);
+	return !checkTime(2);
 }
 
 void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
@@ -588,11 +573,13 @@ void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	char speed[20];
 	sprintf(speed, "%i mph, %i feet", gameStateDrive->carSpeed, gameStateDrive->stageDistance - gameStateDrive->distance / 10);
 	drawString(screenBuff, speed, 0, 0, false);
-	sprintf(speed, "%i s", (int)gameStateDrive->stageTime - (currentTime - startTime));
+	sprintf(speed, "%i s", (int)gameStateDrive->stageTime - getElapsedSeconds());
 	drawString(screenBuff, speed, 0, 8, false);
 }
 
 void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
+	initTime();
+	
 	gameStateDrive->playerCar.x = screenBuff->WIDTH / 2 - playerCar_width / 2;
 	gameStateDrive->playerCar.y = screenBuff->HEIGHT - playerCar_height - 4;
 	gameStateDrive->playerCar.width = playerCar_width;
@@ -615,7 +602,6 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 		initCar(gameStateDrive, screenBuff, &gameStateDrive->cars[i]);
 	}
 	
-	initTime();
 	gameStateDrive->frameCounter = 0;
 	gameStateDrive->distance = 0;
 	gameStateDrive->lastdistance = 0;
@@ -631,7 +617,6 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->collision = false;
 	gameStateDrive->running = true;
 	gameStateDrive->restart = false;
-
 }
 
 void driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
@@ -705,6 +690,7 @@ void driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		}
 
 		gameStateDrive.frameCounter++;
+		updateMinTime(100);
 
 		if (!displayWinLose(&gameStateDrive, screenBuff)) {
 			if (gameStateDrive.win) {

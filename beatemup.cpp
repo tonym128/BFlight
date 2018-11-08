@@ -47,10 +47,10 @@ void processInput(GameStateBeat* gameStateBeat, byte buttonVals) {
 
 bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 	gameStateBeat->frameCounter++;
-	currentTime = time(nullptr);
+	setCurrentTime();
 	double animTick = 5;
 	double updateTick = 60;
-	if (currentTime - startTime > 1000 / updateTick) {
+	if (currentTime - frameTime > 1000 / updateTick) {
 		if (gameStateBeat->playerKeys.down) { gameStateBeat->playerDimension.y += 1; }
 		if (gameStateBeat->playerKeys.up) { gameStateBeat->playerDimension.y -= 1; }
 		if (gameStateBeat->playerKeys.left) { gameStateBeat->playerDimension.x -= 1; }
@@ -63,7 +63,7 @@ bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 		if (gameStateBeat->playerDimension.y < 0) gameStateBeat->playerDimension.y = 0;
 	}
 
-	if (currentTime - startTime > 1000 / animTick) {
+	if (currentTime - frameTime > 1000 / animTick) {
 		gameStateBeat->animation++;
 		if (gameStateBeat->animation == 3) {
 			gameStateBeat->animation = 0;
@@ -71,7 +71,8 @@ bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 				gameStateBeat->playerAnimation = Standing;
 			}
 		}
-		startTime = currentTime;
+		
+		frameTime = currentTime;
 	}
 
 	if (gameStateBeat->playerKeys.left) {

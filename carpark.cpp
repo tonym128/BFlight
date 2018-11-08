@@ -101,13 +101,7 @@ const bool* car_getPlayerImage(int animationFrame, int animation, bool direction
 
 void updateCarGame(GameStateCarPark* gameStateCarPark, ScreenBuff* screenBuff) {
     gameStateCarPark->frameCounter++;
-#ifdef _WIN32
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
-#else
-	currentTime = time(nullptr);
-#endif
+	updateMinTime(0);
 	double animTick = 5;
 	double updateTick = 60;
 
