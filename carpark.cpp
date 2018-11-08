@@ -24,15 +24,6 @@ struct GameStateCarPark {
 	bool playerDirection = true;
 	int animation = 0;
 
-#ifdef _WIN32
-	long frameTimer = 0;
-	long startTime = 0;
-	long currentTime = 0;
-#else
-	time_t frameTimer = time(nullptr);
-	time_t startTime = time(nullptr);
-	time_t currentTime = time(nullptr);
-#endif
 	int frameCounter = 0;
 	
 	bool aimScrollDirection = 1; // Scrolling Left or Right 
@@ -113,9 +104,9 @@ void updateCarGame(GameStateCarPark* gameStateCarPark, ScreenBuff* screenBuff) {
 #ifdef _WIN32
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-	gameStateCarPark->currentTime = (time.wSecond * 1000) + time.wMilliseconds;
+	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
 #else
-	gameStateCarPark->currentTime = time(nullptr);
+	currentTime = time(nullptr);
 #endif
 	double animTick = 5;
 	double updateTick = 60;
@@ -131,7 +122,7 @@ void updateCarGame(GameStateCarPark* gameStateCarPark, ScreenBuff* screenBuff) {
 		gameStateCarPark->quad_c += gameStateCarPark->quad_c_move;
 	}
 
-	if (gameStateCarPark->currentTime - gameStateCarPark->startTime > 1000 / animTick) {
+	if (currentTime - startTime > 1000 / animTick) {
 		gameStateCarPark->animation++;
 		if (gameStateCarPark->animation == 3) {
 			gameStateCarPark->animation = 0;
@@ -152,7 +143,7 @@ void updateCarGame(GameStateCarPark* gameStateCarPark, ScreenBuff* screenBuff) {
 			gameStateCarPark->quad_c = gameStateCarPark->quad_c_max;
 		}
 
-		gameStateCarPark->startTime = gameStateCarPark->currentTime;
+		startTime = currentTime;
 	}
 
     // Agro meter always increasing.
@@ -226,15 +217,7 @@ void initGame() {
 	gameStateCarPark.playerDimension.y = 20;
 	gameStateCarPark.playerDimension.width = 16;
 	gameStateCarPark.playerDimension.height = 16;
-#ifdef _WIN32
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-	gameStateCarPark.currentTime = (time.wSecond * 1000) + time.wMilliseconds;
-	gameStateCarPark.startTime = (time.wSecond * 1000) + time.wMilliseconds;
-#else
-	gameStateCarPark.startTime = time(nullptr);
-	gameStateCarPark.currentTime = time(nullptr);
-#endif
+	initTime();
 }
 
 bool carparkLoop(ScreenBuff* screenBuff, byte buttonVals) {

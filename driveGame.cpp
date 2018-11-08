@@ -47,10 +47,7 @@ struct GameStateDrive {
 	int scene = 1;
 
 	int lastscene = 0;
-	time_t frameTimer = time(nullptr);
 
-	time_t startTime = time(nullptr);
-	time_t currentTime = time(nullptr);
 	int frameCounter = 0;
 	int distance = 0;
 	int lastdistance = 0;
@@ -95,7 +92,7 @@ void initCar(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff, Car* car) {
 }
 
 bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
-	gameStateDrive->currentTime = time(nullptr);
+	currentTime = time(nullptr);
 	gameStateDrive->frameCounter += 1;
 	if (gameStateDrive->playerCar.x < screenBuff->WIDTH / 5 || gameStateDrive->playerCar.x + gameStateDrive->playerCar.width > screenBuff->WIDTH - screenBuff->WIDTH / 5) {
 		if (gameStateDrive->MaxOffRoadSpeed < gameStateDrive->carSpeed) gameStateDrive->carSpeed -= 2;
@@ -198,7 +195,7 @@ bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	}
 
 	// If we have run out of time
-	if ((int)gameStateDrive->stageTime - (gameStateDrive->currentTime - gameStateDrive->startTime) < 0) {
+	if (checkTime(gameStateDrive->stageTime)) {
 		gameStateDrive->win = false;
 		return false;
 	}
@@ -251,39 +248,13 @@ bool drawWavingFlag(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	}
 
 	drawObjectWavy(screenBuff, dimFlag, -4, 0, gameStateDrive->flagCount, gameStateDrive->flagFrameCounter, gameStateDrive->flagUp, flag);
-	time_t currentFrameTime = time(nullptr);
 
-#ifdef _WIN32
-	Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
-#elif __linux
-   struct timespec ts;
-   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
-   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
-   nanosleep(&ts, NULL);
-#else
-	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
-#endif
-
-	gameStateDrive->frameTimer = currentFrameTime;
-	return !(currentFrameTime - gameStateDrive->startTime > 3);
+	updateMinTime(10);
+	return !checkTime(3);
 }
 
 bool updateDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
-	time_t currentFrameTime = time(nullptr);
-	if (currentFrameTime - gameStateDrive->frameTimer < 10) {
-#ifdef _WIN32
-		Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
-#elif __linux
-   struct timespec ts;
-   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
-   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
-   nanosleep(&ts, NULL);
-#else
-		delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
-#endif
-	}
-
-	gameStateDrive->frameTimer = currentFrameTime;
+	updateMinTime(10);
 	return true;
 }
 
@@ -424,18 +395,18 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
 	time_t currentFrameTime = time(nullptr);
 
 #ifdef _WIN32
-	Sleep(10 - (currentFrameTime - gameStateDrive->frameTimer));
+	Sleep(10 - (currentFrameTime - frameTime));
 #elif __linux
    struct timespec ts;
-   ts.tv_sec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) / 1000;
-   ts.tv_nsec = (10 - (currentFrameTime - gameStateDrive->frameTimer)) % 1000 * 1000000;
+   ts.tv_sec = (10 - (currentFrameTime - frameTime)) / 1000;
+   ts.tv_nsec = (10 - (currentFrameTime - frameTime)) % 1000 * 1000000;
    nanosleep(&ts, NULL);
 #else
-	delay(10 - (currentFrameTime - gameStateDrive->frameTimer));
+	delay(10 - (currentFrameTime - frameTime));
 #endif
 
-	gameStateDrive->frameTimer = currentFrameTime;
-	return !(currentFrameTime - gameStateDrive->startTime > 2);
+	frameTime = currentFrameTime;
+	return !(currentFrameTime - startTime > 2);
 }
 
 bool displayWinLose(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
@@ -455,8 +426,8 @@ bool displayWinLose(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 	time_t currentFrameTime = time(nullptr);
 
-	gameStateDrive->frameTimer = currentFrameTime;
-	return !(currentFrameTime - gameStateDrive->startTime > 2);
+	frameTime = currentFrameTime;
+	return !(currentFrameTime - startTime > 2);
 }
 
 void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
@@ -617,7 +588,7 @@ void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	char speed[20];
 	sprintf(speed, "%i mph, %i feet", gameStateDrive->carSpeed, gameStateDrive->stageDistance - gameStateDrive->distance / 10);
 	drawString(screenBuff, speed, 0, 0, false);
-	sprintf(speed, "%i s", (int)gameStateDrive->stageTime - (gameStateDrive->currentTime - gameStateDrive->startTime));
+	sprintf(speed, "%i s", (int)gameStateDrive->stageTime - (currentTime - startTime));
 	drawString(screenBuff, speed, 0, 8, false);
 }
 
@@ -643,10 +614,8 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	for (int i = 0; i < gameStateDrive->maxCars; i++) {
 		initCar(gameStateDrive, screenBuff, &gameStateDrive->cars[i]);
 	}
-	gameStateDrive->frameTimer = time(nullptr);
-
-	gameStateDrive->startTime = time(nullptr);
-	gameStateDrive->currentTime = time(nullptr);
+	
+	initTime();
 	gameStateDrive->frameCounter = 0;
 	gameStateDrive->distance = 0;
 	gameStateDrive->lastdistance = 0;
@@ -732,7 +701,7 @@ void driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	case 5: // Display Win Lose
 		if (gameStateDrive.scene != gameStateDrive.lastscene) {
 			gameStateDrive.lastscene = gameStateDrive.scene;
-			gameStateDrive.startTime = time(nullptr);
+			initTime();
 		}
 
 		gameStateDrive.frameCounter++;

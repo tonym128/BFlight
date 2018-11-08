@@ -253,3 +253,44 @@ void drawString(ScreenBuff* screenBuff, char* scrollText, int x, int y, bool bac
 		drawCharacter(screenBuff, scrollText[i], x + 8 * i, y, backFill);
 	}
 }
+
+void initTime() {
+#ifdef _WIN32
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
+	startTime = (time.wSecond * 1000) + time.wMilliseconds;
+#else
+	startTime = time(nullptr);
+	currentTime = time(nullptr);
+#endif
+}
+
+void updateMinTime(int sleepMiliseconds) {
+#ifdef _WIN32
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	currentTime = (time.wSecond * 1000) + time.wMilliseconds;
+#else
+	currentTime = time(nullptr);
+#endif
+
+	if (currentTime - frameTime < sleepMiliseconds) {
+ #ifdef _WIN32
+ 		Sleep(sleepMiliseconds - (currentTime - frameTime));
+ #elif __linux
+    	struct timespec ts;
+    	ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
+    	ts.tv_nsec = (sleepMiliseconds - (currentTime - frameTime)) % 1000 * 1000000;
+    	nanosleep(&ts, NULL);
+ #else
+ 		delay(sleepMiliseconds - (currentTime - frameTime));
+ #endif
+ 	}
+
+	frameTime = currentTime;
+}
+
+bool checkTime(int Seconds) {
+	return (currentTime - startTime > Seconds * 1000);
+}

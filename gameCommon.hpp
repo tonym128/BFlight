@@ -92,4 +92,23 @@ void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);
 
+// Re-initialise the timers
+void initTime();
+
+// Minimum time for a frame
+void updateMinTime(int);
+
+// Check whether a certain amount of time has passed
+bool checkTime(int);
+
+#ifdef _WIN32
+	static long frameTime = 0;
+	static long startTime = 0;
+	static long currentTime = 0;
+#else
+	static time_t frameTime = time(nullptr);
+	static time_t startTime = time(nullptr);
+	static time_t currentTime = time(nullptr);
+#endif
+
 #endif // !GAMECOMMON_H

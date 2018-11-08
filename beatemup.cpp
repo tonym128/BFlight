@@ -30,10 +30,6 @@ struct GameStateBeat {
 	bool playerDirection = true;
 	int animation = 0;
 
-	time_t frameTimer = time(nullptr);
-	time_t startTime = time(nullptr);
-	time_t currentTime = time(nullptr);
-
 	int frameCounter = 0;
 
 } gameStateBeat;
@@ -51,10 +47,10 @@ void processInput(GameStateBeat* gameStateBeat, byte buttonVals) {
 
 bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 	gameStateBeat->frameCounter++;
-	gameStateBeat->currentTime = time(nullptr);
+	currentTime = time(nullptr);
 	double animTick = 5;
 	double updateTick = 60;
-	if (gameStateBeat->currentTime - gameStateBeat->startTime > 1000 / updateTick) {
+	if (currentTime - startTime > 1000 / updateTick) {
 		if (gameStateBeat->playerKeys.down) { gameStateBeat->playerDimension.y += 1; }
 		if (gameStateBeat->playerKeys.up) { gameStateBeat->playerDimension.y -= 1; }
 		if (gameStateBeat->playerKeys.left) { gameStateBeat->playerDimension.x -= 1; }
@@ -67,7 +63,7 @@ bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 		if (gameStateBeat->playerDimension.y < 0) gameStateBeat->playerDimension.y = 0;
 	}
 
-	if (gameStateBeat->currentTime - gameStateBeat->startTime > 1000 / animTick) {
+	if (currentTime - startTime > 1000 / animTick) {
 		gameStateBeat->animation++;
 		if (gameStateBeat->animation == 3) {
 			gameStateBeat->animation = 0;
@@ -75,7 +71,7 @@ bool updateBeatemupGame(GameStateBeat* gameStateBeat, ScreenBuff* screenBuff) {
 				gameStateBeat->playerAnimation = Standing;
 			}
 		}
-		gameStateBeat->startTime = gameStateBeat->currentTime;
+		startTime = currentTime;
 	}
 
 	if (gameStateBeat->playerKeys.left) {
