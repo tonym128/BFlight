@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 5;
+int Game = 3;
 
 #ifdef _WIN32
 COORD charBufSize;

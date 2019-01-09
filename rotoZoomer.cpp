@@ -41,5 +41,12 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	rotateObject(imageDim,180 * (PI / 180), zoomWinner, defconWinner_image,rotatedLogo);
 	drawObject(screenBuff, imageDim, rotatedLogo);
 	FrameCounter++;
+
+	char fps[16];
+
+	sprintf(fps, "%i", FrameCounter);
+	for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+		drawCharacter(screenBuff, fps[i], 8 * i, 0);
+	}
 	return;
 }
