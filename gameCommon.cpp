@@ -30,17 +30,20 @@ void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0)
 void rotateObject(Dimensions dim, double angle, double zoom, const bool* object, bool* rotated) {
 	double sinma = sin(-angle) * zoom;
 	double cosma = cos(-angle) * zoom;
+	
+	int hwidth = dim.width / 2;
+	int hheight = dim.height / 2;
 
 	for (int x = 0; x < dim.width; x++) {
+		int xt = x - hwidth;
+		double cosmax = cosma * xt;
+		double sinmax = sinma * xt;
+	
 		for (int y = 0; y < dim.height; y++) {
-			int hwidth = dim.width / 2;
-			int hheight = dim.height / 2;
-
-			int xt = x - hwidth;
 			int yt = y - hheight;
 
-			int xs = (int)round((cosma * xt - sinma * yt) + hwidth);
-			int ys = (int)round((sinma * xt + cosma * yt) + hheight);
+			int xs = (int)(cosmax - sinma * yt) + hwidth;
+			int ys = (int)(sinmax + cosma * yt) + hheight;
 
 			if (xs >= 0 && xs < dim.width && ys >= 0 && ys < dim.height) {
 				/* set target pixel (x,y) to color at (xs,ys) */
