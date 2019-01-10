@@ -10,6 +10,7 @@
 #endif //MYFONT_H_
 
 void rotoZoomerLoop(ScreenBuff*, byte);
+void rotoZoomerInit();
 
 #define defcon_width 64
 #define defcon_height 64

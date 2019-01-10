@@ -90,6 +90,7 @@ void drawObjectWavy(ScreenBuff*, Dimensions, int, int, int, int, bool, const boo
 void rotateObject(Dimensions, double, double, const bool*, bool*);
 void reverseObject(Dimensions, const bool*, bool*);
 void invertObject(Dimensions, const bool*, bool*);
+void flipObject(Dimensions, const bool*, bool*);
 
 void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);

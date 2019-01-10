@@ -28,6 +28,15 @@ void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0)
 }
 
 void rotateObject(Dimensions dim, double angle, double zoom, const bool* object, bool* rotated) {
+	int xt;
+	int xs;
+
+	int yt;
+	int ys;
+
+	double cosmax;
+	double sinmax;
+
 	double sinma = sin(-angle) * zoom;
 	double cosma = cos(-angle) * zoom;
 	
@@ -35,22 +44,20 @@ void rotateObject(Dimensions dim, double angle, double zoom, const bool* object,
 	int hheight = dim.height / 2;
 
 	for (int x = 0; x < dim.width; x++) {
-		int xt = x - hwidth;
-		double cosmax = cosma * xt;
-		double sinmax = sinma * xt;
+		xt = x - hwidth;
+		cosmax = cosma * xt;
+		sinmax = sinma * xt;
 	
 		for (int y = 0; y < dim.height; y++) {
-			int yt = y - hheight;
+			yt = y - hheight;
 
-			int xs = (int)(cosmax - sinma * yt) + hwidth;
-			int ys = (int)(sinmax + cosma * yt) + hheight;
+			xs = (int)(cosmax - sinma * yt) + hwidth;
+			ys = (int)(sinmax + cosma * yt) + hheight;
 
 			if (xs >= 0 && xs < dim.width && ys >= 0 && ys < dim.height) {
-				/* set target pixel (x,y) to color at (xs,ys) */
 				rotated[x + y * dim.width] = object[xs + ys * dim.width];
 			}
 			else {
-				/* set target pixel (x,y) to some default background */
 				rotated[x + y * dim.width] = 0;
 			}
 		}
@@ -234,6 +241,17 @@ void invertObject(Dimensions dim, const bool* objectArray, bool* newObjectArray)
 	for (int j = 0; j < dim.height; j++) {
 		for (int i = dim.width - 1; i >= 0; i--) {
 			newObjectArray[counter] = !objectArray[counter];
+			counter++;
+		}
+	}
+}
+
+void flipObject(Dimensions dim, const bool* objectArray, bool* newObjectArray) {
+	int counter = 0;
+	for (int j = dim.height - 1; j >= 0; j--) {
+		for (int i = dim.width - 1; i >= 0; i--) {
+			int pixel = i + dim.width * j;
+			newObjectArray[counter] = objectArray[pixel];
 			counter++;
 		}
 	}

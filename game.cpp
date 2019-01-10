@@ -279,6 +279,7 @@ void gameSetup() {
       case 2: startRRush();
       break;
       case 3: 
+        rotoZoomerInit();
       break;
       case 4: 
       break;
@@ -314,7 +315,8 @@ void gameLoop() {
 
 #ifdef _WIN32
 int main() {
-    while (1) {
+   gameSetup();
+   while (1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         gameLoop();
     }
