@@ -8,7 +8,7 @@ const int zoomFactor = 200;
 double zoomWinner = 0.8;
 bool zoomWinnerDirection = false;
 double PI_180 = PI / 180;
-/*
+
 class N_Script_Timer
 {
     public:
@@ -43,7 +43,7 @@ class N_Script_Timer
 };
 
 N_Script_Timer stopwatch;
-*/
+
 bool rotatedLogo[defcon_height * defcon_width];
 bool rotatedLogo2[defconWinner_height * defconWinner_width];
 
@@ -59,10 +59,10 @@ void rotoZoomerInit() {
 }
 
 void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
-/*
+
 	stopwatch.Reset();
 	stopwatch.Start();
-*/
+
 	double zoom = (FrameCounter % zoomFactor) / (double)zoomFactor;
 	if (FrameCounter % zoomFactor == 0) 
 		direction = !direction;
@@ -76,7 +76,7 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
   
 	zoomWinner += zoomWinnerDirection ? 0.012 : -0.012;
 
-//	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 1; i++) {
 		rotateObject(imageDim, FrameCounter * PI_180, zoom, defcon_image, rotatedLogo);
 		displayClear(screenBuff, 1, false);
 		drawObject(screenBuff, imageDim, (const bool*)rotatedLogo);
@@ -86,17 +86,16 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		imageDimWinner.x = 96;
 		flipObject(imageDimWinner, rotatedLogo2,rotatedLogo);
 		drawObject(screenBuff, imageDimWinner, rotatedLogo);
-//	};
+	};
 
 	FrameCounter++;
 
-/*
 	char fps[16];
 	stopwatch.End();
 	sprintf(fps,"%i - %lli",FrameCounter, stopwatch.milliseconds.count());
 	for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 		drawCharacter(screenBuff, fps[i], 8 * i, 0);
 	}
-*/
+
 	return;
 }

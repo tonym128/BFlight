@@ -30,7 +30,10 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #else
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
+#include "fixed.h"
+typedef numeric::Fixed<8, 8> fixed;
 #endif
+
 
 #ifndef MYFONT_H_
 #include "myfont.hpp"

@@ -28,6 +28,7 @@ void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0)
 }
 
 void rotateObject(Dimensions dim, double angle, double zoom, const bool* object, bool* rotated) {
+#ifdef _WIN32
 	int xt;
 	int xs;
 
@@ -39,7 +40,32 @@ void rotateObject(Dimensions dim, double angle, double zoom, const bool* object,
 
 	double sinma = sin(-angle) * zoom;
 	double cosma = cos(-angle) * zoom;
-	
+#elif __linux
+	int xt;
+	int xs;
+
+	int yt;
+	int ys;
+
+	double cosmax;
+	double sinmax;
+
+	double sinma = sin(-angle) * zoom;
+	double cosma = cos(-angle) * zoom;
+#else
+	fixed xt;
+	fixed xs;
+
+	fixed yt;
+	fixed ys;
+
+	fixed cosmax;
+	fixed sinmax;
+
+	fixed sinma = sin(-angle) * zoom;
+	fixed cosma = cos(-angle) * zoom;
+#endif
+
 	int hwidth = dim.width / 2;
 	int hheight = dim.height / 2;
 
@@ -51,11 +77,25 @@ void rotateObject(Dimensions dim, double angle, double zoom, const bool* object,
 		for (int y = 0; y < dim.height; y++) {
 			yt = y - hheight;
 
+#ifdef _WIN32
 			xs = (int)(cosmax - sinma * yt) + hwidth;
 			ys = (int)(sinmax + cosma * yt) + hheight;
+#elif __linux
+			xs = (int)(cosmax - sinma * yt) + hwidth;
+			ys = (int)(sinmax + cosma * yt) + hheight;
+#else
+			xs = (cosmax - sinma * yt) + hwidth;
+			ys = (sinmax + cosma * yt) + hheight;
+#endif
 
 			if (xs >= 0 && xs < dim.width && ys >= 0 && ys < dim.height) {
+#ifdef _WIN32
 				rotated[x + y * dim.width] = object[xs + ys * dim.width];
+#elif __linux
+				rotated[x + y * dim.width] = object[xs + ys * dim.width];
+#else
+				rotated[x + y * dim.width] = object[xs.to_int() + ys.to_int() * dim.width];
+#endif
 			}
 			else {
 				rotated[x + y * dim.width] = 0;
