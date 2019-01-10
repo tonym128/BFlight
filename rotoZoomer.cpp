@@ -61,11 +61,9 @@ void rotoZoomerInit() {
 }
 
 void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
-/*
-	stopwatch.Reset();
+/*	stopwatch.Reset();
 	stopwatch.Start();
 */
-
 	double zoom = (FrameCounter % zoomFactor) / (double)zoomFactor;
 	if (FrameCounter % zoomFactor == 0) 
 		direction = !direction;
@@ -89,7 +87,7 @@ void rotoZoomerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		imageDimWinner.x = 96;
 		flipObject(imageDimWinner, rotatedLogo2,rotatedLogo);
 		drawObject(screenBuff, imageDimWinner, rotatedLogo);
-// };
+//	};
 
 	FrameCounter++;
 

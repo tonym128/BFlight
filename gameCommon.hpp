@@ -30,10 +30,16 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #else
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
-#include "fixed.h"
-typedef numeric::Fixed<8, 8> fixed;
 #endif
 
+// Fixed Point Math Helpers
+#define FP_SHIFT 16     // shifts to produce a fixed-point number
+#define FP_SCALE 65536  // scaling factor
+typedef int FIXPOINT;
+#define INT_TO_FIXP(n) (FIXPOINT((n << FP_SHIFT)))
+#define FLOAT_TO_FIXP(n) (FIXPOINT((float)n * FP_SCALE))
+#define FIXP_INT_PART(n) (n >> FP_SHIFT)
+#define FIXP_DEC_PART(n) (n & 0x0000ffff)
 
 #ifndef MYFONT_H_
 #include "myfont.hpp"
