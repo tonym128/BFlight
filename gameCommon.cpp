@@ -312,7 +312,13 @@ void updateMinTime(int sleepMiliseconds) {
 }
 
 bool checkTime(int Seconds) {
+ #ifdef _WIN32
 	return (currentTime - startTime > Seconds * 1000);
+ #elif __linux
+  return (currentTime - startTime > Seconds * 1000);
+ #else
+  return (currentTime - startTime > Seconds);
+ #endif
 }
 
 int getElapsedSeconds() {

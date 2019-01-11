@@ -3,7 +3,7 @@
 #ifdef _WIN32
 #elif __linux
 #else 
-SSD1306Brzo display(0x3c, 5, 2);
+SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */
 const int pinShcp = 15; //Clock
@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 3;
+int Game = 1;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -267,11 +267,12 @@ void gameSetup() {
   SPIFFS.begin();
   
   // put your setup code here, to run once:
-  Serial.begin(74880);
+  Serial.begin(115200);
+  Serial.println("Startup");
   display.init();
   display.displayOn();
   display.flipScreenVertically();
-#endif // _WIN32
+#endif
 
   switch (Game) {
       case 1: startBFlight();
@@ -290,7 +291,7 @@ void gameSetup() {
 
 void gameLoop() {
   // put your main code here, to run repeatedly:
-    buttonVals = getReadShift();
+    // buttonVals = getReadShift();
 
     switch (Game) {
     case 1:
