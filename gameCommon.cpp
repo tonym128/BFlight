@@ -198,6 +198,14 @@ void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray, bool 
 	}
 }
 
+void drawVertLine(ScreenBuff* screenBuff, int x, int y, int length, bool colour) {
+	int pixel = x + screenBuff->WIDTH * y;
+	while (pixel <= x + (y + length) * screenBuff->WIDTH) {
+		screenBuff->consoleBuffer[pixel] = colour;
+		pixel += screenBuff->WIDTH;
+	}
+}
+
 void drawBlock(ScreenBuff* screenBuff, Dimensions dim, bool colour) {
 	for (int j = dim.y; j <= dim.y + dim.height; j++) {
 		int firstLine = (dim.x + screenBuff->WIDTH * j) / screenBuff->WIDTH;

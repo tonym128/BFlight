@@ -101,6 +101,7 @@ void reverseObject(Dimensions, const bool*, bool*);
 void invertObject(Dimensions, const bool*, bool*);
 void flipObject(Dimensions, const bool*, bool*);
 
+void drawVertLine(ScreenBuff*, int, int, int, bool);
 void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
