@@ -32,7 +32,7 @@ int worldMap[mapWidth][mapHeight]=
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -61,9 +61,6 @@ void update(GameStateMaze* gameStateMaze) {
 	double moveSpeed = 0.2; //the constant value is in squares/second
 	double rotSpeed = 0.1; //the constant value is in radians/second
 	//move forward if no wall in front of you
-	if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
-	if (worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
-
 	if (gameStateMaze->p1keys.up)
 	{
 		if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
@@ -199,9 +196,10 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 		//give x and y sides different brightness
 		// if (side == 1) {color = color / 2;}
+		int pattern = worldMap[mapX][mapY] - 1;
 
 		//draw the pixels of the stripe as a vertical line
-		drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true);
+		drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
 	}
 
 	//timing for input and FPS counter

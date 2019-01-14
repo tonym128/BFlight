@@ -198,11 +198,49 @@ void drawObject(ScreenBuff* screenBuff, Dimensions dim, bool* objectArray, bool 
 	}
 }
 
-void drawVertLine(ScreenBuff* screenBuff, int x, int y, int length, bool colour) {
+void drawVertLine(ScreenBuff* screenBuff, int x, int y, int length, bool colour, int pattern) {
+// Top and bottom pixels
 	int pixel = x + screenBuff->WIDTH * y;
-	while (pixel <= x + (y + length) * screenBuff->WIDTH) {
-		screenBuff->consoleBuffer[pixel] = colour;
-		pixel += screenBuff->WIDTH;
+
+	switch (pattern) {
+	case 0:
+		screenBuff->consoleBuffer[x + screenBuff->WIDTH * y] = colour;
+		screenBuff->consoleBuffer[x + (y + length) * screenBuff->WIDTH] = colour;
+		break;
+		// All pixels
+	case 1:
+
+		while (pixel <= x + (y + length) * screenBuff->WIDTH) {
+			screenBuff->consoleBuffer[pixel] = colour;
+			pixel += screenBuff->WIDTH;
+		}
+		break;
+	case 2:
+		// Alternate lines 
+		while (pixel <= x + (y + length) * screenBuff->WIDTH) {
+			screenBuff->consoleBuffer[pixel] = colour && pixel % 3 == 0;
+			pixel += screenBuff->WIDTH;
+		}
+		break;
+	case 3:
+		// Horizontal lines
+		while (pixel <= x + (y + length) * screenBuff->WIDTH) {
+			screenBuff->consoleBuffer[pixel] = colour && pixel % 3 == 0;
+			pixel += screenBuff->WIDTH;
+		}
+		break;
+	case 4:
+		// Moire pattern
+		bool flip = x % 2;
+		bool alt = (pixel % 2) && flip;
+
+		while (pixel <= x + (y + length) * screenBuff->WIDTH) {
+			screenBuff->consoleBuffer[pixel] = colour && alt;
+			alt = !alt;
+			pixel += screenBuff->WIDTH;
+		}
+
+		break;
 	}
 }
 
