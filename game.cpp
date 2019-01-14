@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 1;
+int Game = 3;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -216,29 +216,6 @@ void startRRush() {
 #endif
 }
 
-void startCarPark() {
-#ifdef _WIN32 
-#elif __linux
-#else
-  File f;
-  f = SPIFFS.open("/parking.XBM", "r");
-
-  if (f) {
-    int s = f.size();
-    Serial.printf("File Opened , Size=%d\r\n", s);
-
-    String data = f.readString();
-    //Serial.println(data);
-    f.close();
-
-    const char* data1 = data.c_str();
-    display.drawXbm(0, 0, 128, 64, (uint8_t *)data1);
-    display.display();
-    delay(2000);
-  }
-#endif
-}
-
 void gameSetup() {
 #ifdef _WIN32 
 #elif __linux
@@ -279,19 +256,18 @@ void gameSetup() {
       break;
       case 2: startRRush();
       break;
-      case 3: 
-        rotoZoomerInit();
+      case 3: rotoZoomerInit();
       break;
-      case 4: 
+      case 4: mazeRunnerInit();
       break;
-      case 5: startCarPark();
+      case 5: 
       break;
   }
 }
 
 void gameLoop() {
   // put your main code here, to run repeatedly:
-    // buttonVals = getReadShift();
+    buttonVals = getReadShift();
 
     switch (Game) {
     case 1:
@@ -304,10 +280,9 @@ void gameLoop() {
       rotoZoomerLoop(&screenBuff,buttonVals);
       break;
 	case 4:
-      beatemupLoop(&screenBuff, buttonVals); 
+	  mazeRunnerLoop(&screenBuff, buttonVals);
       break;
 	case 5:
-      carparkLoop(&screenBuff, buttonVals); 
       break;
   }
 

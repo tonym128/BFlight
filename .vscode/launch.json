@@ -27,7 +27,7 @@
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bFlight64.exe",
+            "program": "${workspaceFolder}/build/Debug/bFlight64.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

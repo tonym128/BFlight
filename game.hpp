@@ -5,8 +5,7 @@
 #include "bsideFly.hpp"
 #include "driveGame.hpp"
 #include "rotoZoomer.hpp"
-#include "beatemup.hpp"
-#include "carpark.hpp"
+#include "mazeRunner.hpp"
 
 #ifdef _WIN32
 #elif __linux
