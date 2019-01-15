@@ -13,6 +13,10 @@
 #include "myfont.hpp"
 #endif //MYFONT_H_
 
+#ifndef MAZEGENERATOR_H
+#include "mazeGenerator.hpp"
+#endif //MAZEGENERATOR_H
+
 void mazeRunnerLoop(ScreenBuff*, byte);
 void mazeRunnerInit();
 

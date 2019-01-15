@@ -525,9 +525,8 @@ void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 		j += 1;
 		
 		// Change the offset every second line (give a nice flow to the bottom)
-		if (y % 2 == 0) {
-			if (turnOffset > 0) { turnOffset *= 0.9; }
-			else if (turnOffset < 0) { turnOffset *= 0.9; }
+		if (y % 2 == 0 && turnOffset != 0) {
+			turnOffset = (int)(turnOffset * 0.9);
 		}
 	}
 

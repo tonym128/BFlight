@@ -8,42 +8,47 @@ struct Player1Keys {
 	bool open = false;
 };
 
+#define mapWidth 25
+#define mapHeight 25
+
 struct GameStateMaze {
 	Player1Keys p1keys;
 	bool running = false;
 	bool restart = false;
+	bool win = false;
+	bool traversal[mapWidth][mapHeight];
+	int winX = 0;
+	int winY = 0;
 
 } gameStateMaze;
 
-#define mapWidth 24
-#define mapHeight 24
 
 int worldMap[mapWidth][mapHeight]=
 {
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1,1},
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
 double posX = 22, posY = 12;  //x and y start position
@@ -52,14 +57,62 @@ double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
 	initTime();
+	Maze maze = Maze(mapWidth, mapHeight);
+	maze.copyMaze(worldMap);
+	worldMap[maze.endX][maze.endY] = 6;
+	worldMap[maze.startX][maze.startY] = 2;
+
+	// Setup end state win
+	posX = maze.endX;
+	posY = maze.endY;
+	if (posX == 0) {
+		posX += 1;
+	}
+	else if (posX == mapWidth) {
+		posX -= 1;
+	}
+
+	if (posY == 0) {
+		posY += 1;
+	}
+	else if (posY == mapHeight) {
+		posY -= 1;
+	}
+
+	gameStateMaze.winX = (int)posX;
+	gameStateMaze.winY = (int)posY;
+
+	// Setup start pos
+	posX = maze.startX;
+	posY = maze.startY;
+
+	if (posX == 0) {
+		posX += 1.2;
+	}
+	else if (posX == mapWidth) {
+		posX -= 1.2;
+	}
+
+	if (posY == 0) {
+		posY += 1.2;
+	}
+	else if (posY == mapHeight) {
+		posY -= 1.2;
+	}
+
 }
 
 void update(GameStateMaze* gameStateMaze) {
 	updateMinTime(0);
+	
+	// Check for win state
+	gameStateMaze->win = int(posX) == gameStateMaze->winX && int(posY) == gameStateMaze->winY;
+	gameStateMaze->traversal[int(posX)][int(posY)] = true;
 
 	//speed modifiers
-	double moveSpeed = 0.2; //the constant value is in squares/second
-	double rotSpeed = 0.1; //the constant value is in radians/second
+	double moveSpeed = 0.1; //the constant value is in squares/second
+	double rotSpeed = 0.05; //the constant value is in radians/second
+
 	//move forward if no wall in front of you
 	if (gameStateMaze->p1keys.up)
 	{
@@ -114,14 +167,14 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 	for (int x = 0; x < screenBuff->WIDTH; x++)
 	{
+		//which box of the map we're in
+		int mapX = int(posX);
+		int mapY = int(posY);
+
 		//calculate ray position and direction
 		double cameraX = 2 * x / double(screenBuff->WIDTH) - 1; //x-coordinate in camera space
 		double rayDirX = dirX + planeX * cameraX;
 		double rayDirY = dirY + planeY * cameraX;
-
-		//which box of the map we're in
-		int mapX = int(posX);
-		int mapY = int(posY);
 
 		//length of ray from current position to next x or y-side
 		double sideDistX;
@@ -139,7 +192,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		int hit = 0; //was there a wall hit?
 		int side; //was a NS or a EW wall hit?
 
-		   //calculate step and initial sideDist
+	   //calculate step and initial sideDist
 		if (rayDirX < 0)
 		{
 			stepX = -1;
@@ -219,14 +272,52 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 				// TODO: avoid the division to speed this up
 				int texY = ((d * defcon_width) / lineHeight) / 256;
 				bool color = defcon_image[texX + defcon_height * texY];
-				//make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
 				screenBuff->consoleBuffer[x + y * screenBuff->WIDTH] = color;
 			}
 		}
 	}
 
+	// Draw Win!
+	Dimensions dim;
+	if (gameStateMaze->win) {
+		dim.height = 100;
+		dim.width = 40;
+		dim.x = 10;
+		dim.y = 10;
+		drawBlock(screenBuff, dim, true);
+	};
+
+	//Draw map
+	dim.height = mapHeight;
+	dim.width = mapWidth;
+	dim.x = screenBuff->WIDTH - mapWidth - 1;
+	dim.y = screenBuff->HEIGHT- mapHeight - 1;
+	bool traverseMap[mapWidth * mapHeight];
+	for (int i = 0; i < mapWidth; i++) {
+		for (int j = 0; j < mapHeight; j++) {
+			traverseMap[i + j * mapWidth] = gameStateMaze->traversal[i][j];
+		}
+	}
+	
+	//which box of the map we're in
+	int mapX = int(posX);
+	int mapY = int(posY);
+
+	for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			if ( ((mapX + i) > 0) && ((mapX + i) < mapWidth)
+				&& ((mapY + j) > 0) && ((mapY + j) < mapHeight)
+				)
+			traverseMap[(mapX + i) + (mapY + j) * mapWidth] = 1;
+
+		}
+	}
+
+	drawObject(screenBuff, dim, traverseMap);
+
 	//timing for input and FPS counter
 	updateMinTime(0);
+
 }
 
 void mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {
