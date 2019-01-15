@@ -34,7 +34,7 @@ int worldMap[mapWidth][mapHeight]=
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
   {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -199,7 +199,30 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		int pattern = worldMap[mapX][mapY] - 1;
 
 		//draw the pixels of the stripe as a vertical line
-		drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
+		if (pattern < 5) {
+			drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
+		}
+		else {
+			double wallX; //where exactly the wall was hit
+			if (side == 0) wallX = posY + perpWallDist * rayDirY;
+			else           wallX = posX + perpWallDist * rayDirX;
+			wallX -= floor((wallX));
+
+			//x coordinate on the texture
+			int texX = int(wallX * double(defcon_width));
+			if (side == 0 && rayDirX > 0) texX = defcon_width - texX - 1;
+			if (side == 1 && rayDirY < 0) texX = defcon_width - texX - 1;
+
+			for (int y = drawStart; y < drawEnd; y++)
+			{
+				int d = y * 256 - defcon_height * 128 + lineHeight * 128;  //256 and 128 factors to avoid floats
+				// TODO: avoid the division to speed this up
+				int texY = ((d * defcon_width) / lineHeight) / 256;
+				bool color = defcon_image[texX + defcon_height * texY];
+				//make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+				screenBuff->consoleBuffer[x + y * screenBuff->WIDTH] = color;
+			}
+		}
 	}
 
 	//timing for input and FPS counter
