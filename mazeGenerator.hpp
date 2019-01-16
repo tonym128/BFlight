@@ -5,11 +5,6 @@
 #include "gameCommon.hpp"
 #endif
 
-#include <cctype>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-
 class Maze
 {
 private:
