@@ -23,7 +23,7 @@ struct GameStateMaze {
 } gameStateMaze;
 
 
-int worldMap[mapWidth][mapHeight]=
+int worldMap[mapWidth][mapHeight] =
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
@@ -57,56 +57,25 @@ double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
 	initTime();
-	Maze maze = Maze(mapWidth, mapHeight);
+	Maze maze = Maze();
+	maze.generateMaze();
 	maze.copyMaze(worldMap);
 	worldMap[maze.endX][maze.endY] = 6;
 	worldMap[maze.startX][maze.startY] = 2;
 
-	// Setup end state win
-	posX = maze.endX;
-	posY = maze.endY;
-	if (posX == 0) {
-		posX += 1;
-	}
-	else if (posX == mapWidth) {
-		posX -= 1;
-	}
-
-	if (posY == 0) {
-		posY += 1;
-	}
-	else if (posY == mapHeight) {
-		posY -= 1;
-	}
-
-	gameStateMaze.winX = (int)posX;
-	gameStateMaze.winY = (int)posY;
+	gameStateMaze.winX = maze.endX;
+	gameStateMaze.winY = maze.endY;
 
 	// Setup start pos
-	posX = maze.startX;
-	posY = maze.startY;
-
-	if (posX == 0) {
-		posX += 1.2;
-	}
-	else if (posX == mapWidth) {
-		posX -= 1.2;
-	}
-
-	if (posY == 0) {
-		posY += 1.2;
-	}
-	else if (posY == mapHeight) {
-		posY -= 1.2;
-	}
-
+	posX = maze.startX - 0.2;
+	posY = maze.startY - 0.2;
 }
 
 void update(GameStateMaze* gameStateMaze) {
 	updateMinTime(0);
-	
-	// Check for win state
-	gameStateMaze->win = int(posX) == gameStateMaze->winX && int(posY) == gameStateMaze->winY;
+
+	// Check for win state // Win is in the top left
+	gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
 	gameStateMaze->traversal[int(posX)][int(posY)] = true;
 
 	//speed modifiers
@@ -291,24 +260,24 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	dim.height = mapHeight;
 	dim.width = mapWidth;
 	dim.x = screenBuff->WIDTH - mapWidth - 1;
-	dim.y = screenBuff->HEIGHT- mapHeight - 1;
+	dim.y = screenBuff->HEIGHT - mapHeight - 1;
 	bool traverseMap[mapWidth * mapHeight];
 	for (int i = 0; i < mapWidth; i++) {
 		for (int j = 0; j < mapHeight; j++) {
 			traverseMap[i + j * mapWidth] = gameStateMaze->traversal[i][j];
 		}
 	}
-	
+
 	//which box of the map we're in
 	int mapX = int(posX);
 	int mapY = int(posY);
 
 	for (int i = -1; i < 2; i++) {
 		for (int j = -1; j < 2; j++) {
-			if ( ((mapX + i) > 0) && ((mapX + i) < mapWidth)
+			if (((mapX + i) > 0) && ((mapX + i) < mapWidth)
 				&& ((mapY + j) > 0) && ((mapY + j) < mapHeight)
 				)
-			traverseMap[(mapX + i) + (mapY + j) * mapWidth] = 1;
+				traverseMap[(mapX + i) + (mapY + j) * mapWidth] = 1;
 
 		}
 	}

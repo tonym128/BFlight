@@ -9,41 +9,22 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <vector>
-
-#define UP    0
-#define DOWN  1
-#define LEFT  2
-#define RIGHT 3
 
 class Maze
 {
 private:
-	int maze_size[2];
+	const static int WIDTH = 25;
+	const static int HEIGHT = 25;
+	int maze[WIDTH*HEIGHT];
+	void carveMaze(int x, int y);
 
-	int start_axis;
-	int start_side;
-	std::vector< std::vector< int > > dfs_path;
-
-	/*
-	 * Structure of the maze vector:
-	 *                     |--> Filled in?
-	 *   Row --> Collumn --|
-	 *                     |--> Has been visited?
-	 */
-	std::vector< std::vector< std::vector< bool > > > maze;
-	bool randomMove(bool first_move);
-	void generateMaze();
-	void initializeMaze();
-	void randomPoint(bool part);
 public:
-	int startX;
-	int startY;
-	int endX;
-	int endY;
+	int startX = WIDTH-2;
+	int startY = HEIGHT-1;
+	int endX = 1;
+	int endY = 0;
 
-	Maze(int width,int height);
-	void printMaze();
+	void generateMaze();
 	void copyMaze(int worldMap[25][25]);
 };
 
