@@ -6,6 +6,7 @@
 #include "driveGame.hpp"
 #include "rotoZoomer.hpp"
 #include "mazeRunner.hpp"
+#include "plasma.hpp"
 
 #ifdef _WIN32
 #elif __linux

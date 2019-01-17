@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 4;
+int Game = 5;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -260,7 +260,7 @@ void gameSetup() {
       break;
       case 4: mazeRunnerInit();
       break;
-      case 5: 
+	  case 5: plasmaInit();
       break;
   }
 }
@@ -283,6 +283,7 @@ void gameLoop() {
 	  mazeRunnerLoop(&screenBuff, buttonVals);
       break;
 	case 5:
+	  plasmaLoop(&screenBuff, buttonVals);
       break;
   }
 
