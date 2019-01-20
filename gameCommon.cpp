@@ -301,6 +301,16 @@ void flipObject(Dimensions dim, const bool* objectArray, bool* newObjectArray) {
 	}
 }
 
+void copyObject(Dimensions dim, const bool* objectArray, bool* newObjectArray) {
+	int counter = 0;
+	for (int j = dim.height - 1; j >= 0; j--) {
+		for (int i = dim.width - 1; i >= 0; i--) {
+			newObjectArray[counter] = objectArray[counter];
+			counter++;
+		}
+	}
+}
+
 void drawCharacter(ScreenBuff* screenBuff, char charPos, int x, int y, bool backFill) {
 	bool* character = font(charPos);
 	Dimensions dim;

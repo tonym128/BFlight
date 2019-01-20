@@ -32,6 +32,8 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #include "SSD1306.h" // Screen Library
 #endif
 
+#include <vector>
+
 // Fixed Point Math Helpers
 #define FP_SHIFT 16     // shifts to produce a fixed-point number
 #define FP_SCALE 65536  // scaling factor
@@ -100,6 +102,7 @@ void rotateObject(Dimensions, double, double, const bool*, bool*);
 void reverseObject(Dimensions, const bool*, bool*);
 void invertObject(Dimensions, const bool*, bool*);
 void flipObject(Dimensions, const bool*, bool*);
+void copyObject(Dimensions, const bool*, bool*);
 
 void drawVertLine(ScreenBuff*, int, int, int, bool, int = 0);
 void drawBlock(ScreenBuff*, Dimensions, bool);
