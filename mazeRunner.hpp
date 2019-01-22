@@ -17,7 +17,7 @@
 #include "mazeGenerator.hpp"
 #endif //MAZEGENERATOR_H
 
-void mazeRunnerLoop(ScreenBuff*, byte);
+bool mazeRunnerLoop(ScreenBuff*, byte);
 void mazeRunnerInit();
 
 #endif //MAZERUNNER_H

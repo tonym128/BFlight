@@ -12,10 +12,13 @@ struct Player1Keys {
 #define mapHeight 25
 
 struct GameStateMaze {
+	int currentState = 2;
+	int previousState = 2;
 	Player1Keys p1keys;
 	bool running = false;
 	bool restart = false;
 	bool win = false;
+	bool exit = false;
 	bool traversal[mapWidth][mapHeight];
 	int winX = 0;
 	int winY = 0;
@@ -249,11 +252,11 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	// Draw Win!
 	Dimensions dim;
 	if (gameStateMaze->win) {
-		dim.height = 100;
-		dim.width = 40;
-		dim.x = 10;
-		dim.y = 10;
-		drawBlock(screenBuff, dim, true);
+		char fps[30];
+		sprintf(fps, "YOU WIN!");
+		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+			drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
+		}
 	};
 
 	//Draw map
@@ -289,9 +292,27 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 }
 
-void mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {
-	processInput(&gameStateMaze, buttonVals);
-	update(&gameStateMaze);
-	display(screenBuff, &gameStateMaze);
-	return;
+bool mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {
+	switch (gameStateMaze.currentState) {
+		case 0:
+			// Start Story scroller
+		break;
+		case 1:
+			// Level bars
+		break;
+		case 2:
+			// Play
+			processInput(&gameStateMaze, buttonVals);
+			update(&gameStateMaze);
+			display(screenBuff, &gameStateMaze);
+		break;
+		case 3:
+			// Win Story Scroller
+		break;
+		case 4:
+			// Done and Exit
+			gameStateMaze.exit = true;
+		break;
+	}
+	return gameStateMaze.exit;
 }
