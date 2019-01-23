@@ -12,7 +12,7 @@ struct Player1Keys {
 #define mapHeight 25
 
 struct GameStateMaze {
-	int currentState = 1;
+	int currentState = 0;
 	int previousState = -1;
 	int frameCounter = 0;
 	int stageTime = 60;

@@ -5,6 +5,11 @@
 #include "gameCommon.hpp"
 #endif
 
+/* Shift Out ( 74HC595 ) */
+const int latchPin = 12; //Pin connected to latch pin (ST_CP) of 74HC595
+const int clockPin = 14; //Pin connected to clock pin (SH_CP) of 74HC595
+const int dataPin = 13; //Pin connected to Data in (DS) of 74HC595
+
 struct Star {
   Dimensions dim;
   int velocity = 0;
