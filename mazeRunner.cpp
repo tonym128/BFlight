@@ -16,6 +16,7 @@ struct GameStateMaze {
 	int previousState = -1;
 	int frameCounter = 0;
 	int stageTime = 60;
+	int currentTime = 0;
 	Player1Keys p1keys;
 	bool running = false;
 	bool restart = false;
@@ -143,7 +144,7 @@ bool displayLevelBars(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
 	displayClear(screenBuff, 1, false);
 	char fps[16] = "Final Level!";
-	
+
 	for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 		drawCharacter(screenBuff, fps[i], 16 + 8 * i, 10);
 	}
@@ -166,7 +167,7 @@ bool update(GameStateMaze* gameStateMaze) {
 	updateMinTime(0);
 
 	// Check for win state // Win is in the top left
-	if (!gameStateMaze->win) 
+	if (!gameStateMaze->win)
 		gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
 	else if (checkTime(gameStateMaze->stageTime)) {
 		// If we have run out of time
@@ -346,15 +347,24 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		}
 	}
 
-	// Draw Win!
+	// Draw Progress bar
 	Dimensions dim;
+	int seconds = getElapsedSeconds();
+	int percTimeLeft = 128 - seconds * 128/ gameStateMaze->stageTime;
+	dim.x = 0;
+	dim.y = 0;
+	dim.height = 5;
+	dim.width = percTimeLeft;
+	drawBlock(screenBuff, dim, 1);
+
+	// Draw Win!
 	if (gameStateMaze->win) {
 		char fps[30];
 		sprintf(fps, "YOU WIN!");
 		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 			drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
 		}
-	};
+	}
 
 	//Draw map
 	dim.height = mapHeight;
