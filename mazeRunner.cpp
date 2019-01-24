@@ -12,7 +12,7 @@ struct Player1Keys {
 #define mapHeight 25
 
 struct GameStateMaze {
-	int currentState = 2;
+	int currentState = 0;
 	int previousState = -1;
 	int frameCounter = 0;
 	int stageTime = 120;
@@ -97,7 +97,7 @@ bool displayScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	}
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
+		char scroller[17] = "You're rested!";
 		drawString(screenBuff, scroller, 0, y, false);
 		y += 8;
 	}

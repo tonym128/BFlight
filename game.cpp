@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 4;
+int Game = 5;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -274,7 +274,9 @@ void gameLoop() {
 	  driveGameLoop(&screenBuff,buttonVals);
 	  break;
 	case 2:
-	  flyGameLoop(&screenBuff,buttonVals);
+	  if (flyGameLoop(&screenBuff,buttonVals)) {
+			Game = 5;
+		}
 	  break;
 	case 3:
 	  rotoZoomerLoop(&screenBuff,buttonVals);
@@ -286,6 +288,11 @@ void gameLoop() {
 		}
 	  break;
 	case 5:
+		if (plasmaLoop(&screenBuff, buttonVals)) {
+			mazeRunnerInit();
+			Game = 4;
+		}
+
 	  break;
   }
 

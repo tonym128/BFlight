@@ -415,7 +415,7 @@ void displayFly(GameState* gameState, ScreenBuff* screenBuff) {
 	}
 }
 
-void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
+bool flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	processInput(&gameState, buttonVals);
 
 	switch (gameState.scene) {
@@ -439,10 +439,10 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 
 		updateOutroScroller(&gameState, screenBuff);
 		if (!displayOutroScroller(&gameState, screenBuff)) {
-			//TODO EXIT
 			gameState.frameCounter = 0;
 			gameState.level = 1;
 			gameState.scene = 1;
+			return true;
 		}
 
 		break;
@@ -534,4 +534,6 @@ void flyGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		displayFly(&gameState, screenBuff);
 		break;
 	}
+
+	return false;
 }

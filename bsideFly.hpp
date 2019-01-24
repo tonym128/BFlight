@@ -111,6 +111,6 @@ const static bool star10x4[40] = {
   0, 1, 1, 1, 1, 1, 1, 1, 0, 0
 };
 
-void flyGameLoop(ScreenBuff*, byte);
+bool flyGameLoop(ScreenBuff*, byte);
 
 #endif

@@ -63,13 +63,16 @@ class Stars3D
 Stars3D stars {256, 64.0f, 20.0f};//4096 // 3500 without optimalization ESP8266
 
 float delta = 0.055f;
+float delta2 = -0.001f;
+float delta3 = -0.00001f;
 
 void plasmaInit() {
 }
 
 bool plasmaLoop(ScreenBuff* screenBuff, byte buttonVals) {
-	delta -= 0.0001f;
+	delta2 -= delta3;
+  delta -= delta2;
 	displayClear(screenBuff, 1, false);
 	stars.UpdateAndRender(screenBuff, delta);
-	return delta > -0.03;
+	return delta < -0.5;
 }
