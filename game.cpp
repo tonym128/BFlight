@@ -280,7 +280,10 @@ void gameLoop() {
 	  rotoZoomerLoop(&screenBuff,buttonVals);
 	  break;
 	case 4:
-	  mazeRunnerLoop(&screenBuff, buttonVals);
+	  if (mazeRunnerLoop(&screenBuff, buttonVals)) {
+			rotoZoomerInit();
+			Game = 3;
+		}
 	  break;
 	case 5:
 	  break;

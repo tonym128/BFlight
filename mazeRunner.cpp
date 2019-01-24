@@ -12,11 +12,12 @@ struct Player1Keys {
 #define mapHeight 25
 
 struct GameStateMaze {
-	int currentState = 0;
+	int currentState = 2;
 	int previousState = -1;
 	int frameCounter = 0;
-	int stageTime = 60;
-	int currentTime = 0;
+	int stageTime = 120;
+	int endTimer = 0;
+	int endSeconds = 3;
 	Player1Keys p1keys;
 	bool running = false;
 	bool restart = false;
@@ -108,13 +109,19 @@ bool displayScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	}
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "1 minute to get";
+		char scroller[17] = "2 minutes to get";
 		drawString(screenBuff, scroller, 0, y, false);
 		y += 8;
 	}
 
 	if (y > -8 || y < screenBuff->HEIGHT) {
 		char scroller[17] = "to the keynote";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "";
 		drawString(screenBuff, scroller, 0, y, false);
 		y += 8;
 	}
@@ -140,10 +147,138 @@ bool displayScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	return true;
 }
 
+bool displayWinScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
+	gameState->frameCounter += 1;
+
+	displayClear(screenBuff, 1, 0);
+
+	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "You did it!";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "Grab a seat and";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "let these talks";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "blow your mind";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "     DefCon     ";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (1 == 1) {
+		char scroller[17] = "                ";
+		drawString(screenBuff, scroller, 0, 0, true);
+		drawString(screenBuff, scroller, 0, 8, true);
+	}
+
+	if (1 == 1) {
+		char scroller[17] = " -= WINNER =-  ";
+		drawString(screenBuff, scroller, 5, 2, true);
+	}
+
+	if (y < -8) return false;
+	return true;
+}
+
+bool displayLoseScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
+	gameState->frameCounter += 1;
+
+	displayClear(screenBuff, 1, 0);
+
+	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "U didn't make it";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "Make your way to";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "the next talk";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "it's a good 1";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (y > -8 || y < screenBuff->HEIGHT) {
+		char scroller[17] = "  ;-)     (-;  ";
+		drawString(screenBuff, scroller, 0, y, false);
+		y += 8;
+	}
+
+	if (1 == 1) {
+		char scroller[17] = "                ";
+		drawString(screenBuff, scroller, 0, 0, true);
+		drawString(screenBuff, scroller, 0, 8, true);
+	}
+
+	if (1 == 1) {
+		char scroller[17] = "-= TRY AGAIN =-";
+		drawString(screenBuff, scroller, 5, 2, true);
+	}
+
+	if (y < -8) return false;
+	return true;
+}
+
 bool displayLevelBars(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
 	displayClear(screenBuff, 1, false);
-	char fps[16] = "Final Level!";
+	char fps[16] = "Final Level";
 
 	for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 		drawCharacter(screenBuff, fps[i], 16 + 8 * i, 10);
@@ -167,11 +302,19 @@ bool update(GameStateMaze* gameStateMaze) {
 	updateMinTime(0);
 
 	// Check for win state // Win is in the top left
-	if (!gameStateMaze->win)
+	if (!gameStateMaze->win) {
 		gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
-	else if (checkTime(gameStateMaze->stageTime)) {
-		// If we have run out of time
+	}
+	else if (gameStateMaze->win) {
+		if (gameStateMaze->endSeconds == 0) { gameStateMaze->endSeconds = getElapsedSeconds();}
+		else if (getElapsedSeconds() - gameStateMaze->endSeconds > gameStateMaze->endTimer) {gameStateMaze->currentState = 3;}
+	}
+	
+	if (checkTime(gameStateMaze->stageTime)) {
+		// If we have run out of time, stop updating the game
 		gameStateMaze->win = false;
+		if (gameStateMaze->endSeconds == 0) {gameStateMaze->endSeconds = getElapsedSeconds();}
+		else if (getElapsedSeconds() - gameStateMaze->endSeconds > gameStateMaze->endTimer) {gameStateMaze->currentState = 5;}
 		return false;
 	}
 
@@ -364,6 +507,12 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 			drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
 		}
+	} else if (getElapsedSeconds() > gameStateMaze->stageTime) {
+		char fps[30];
+		sprintf(fps, "GAME OVER!");
+		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
+			drawCharacter(screenBuff, fps[i], 24 + 8 * i, 30);
+		}
 	}
 
 	//Draw map
@@ -427,17 +576,45 @@ bool mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		break;
 		case 2:
 			// Play
+			if (gameStateMaze.previousState != gameStateMaze.currentState) {
+				gameStateMaze.previousState = gameStateMaze.currentState;
+				gameStateMaze.frameCounter = 0;
+				initTime();
+			}
+
 			processInput(&gameStateMaze, buttonVals);
 			update(&gameStateMaze);
 			display(screenBuff, &gameStateMaze);
 		break;
 		case 3:
 			// Win Story Scroller
+			if (gameStateMaze.previousState != gameStateMaze.currentState) {
+				gameStateMaze.previousState = gameStateMaze.currentState;
+				gameStateMaze.frameCounter = 0;
+			}
+
+			updateScroller(&gameStateMaze, screenBuff);
+			if (!displayWinScroller(&gameStateMaze, screenBuff)) {
+				gameStateMaze.currentState = 4;
+			}
+		break;
+		case 5:
+			// Lose Story Scroller
+			if (gameStateMaze.previousState != gameStateMaze.currentState) {
+				gameStateMaze.previousState = gameStateMaze.currentState;
+				gameStateMaze.frameCounter = 0;
+			}
+
+			updateScroller(&gameStateMaze, screenBuff);
+			if (!displayLoseScroller(&gameStateMaze, screenBuff)) {
+				gameStateMaze.currentState = 1;
+			}
 		break;
 		case 4:
 			// Done and Exit
 			gameStateMaze.exit = true;
 		break;
 	}
+
 	return gameStateMaze.exit;
 }
