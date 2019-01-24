@@ -1,4 +1,8 @@
 #include "mazeRunner.hpp"
+// Tutorial and sample code, modified to my needs from here
+// https://lodev.org/cgtutor/files/raycaster_flat.cpp
+// Check the full tutorial here
+// https://lodev.org/cgtutor/raycasting.html
 
 struct Player1Keys {
 	bool up = false;
