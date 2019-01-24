@@ -1,4 +1,6 @@
 ﻿#include "mazeGenerator.hpp"
+// Found the original C code for carving the maze here - https://github.com/joewing/maze/
+// I hacked it to CPP, I think his CPP code is neater :)
 
 /*  Carve the maze starting at x, y. */
 void Maze::carveMaze(int x, int y) {
