@@ -1,4 +1,8 @@
 #include "plasma.hpp"
+// Mostly from, with minor edits
+// https://github.com/plrang/starfield_esp8266_demo
+// Please go check out their awesome demo.
+
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 

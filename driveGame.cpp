@@ -376,7 +376,7 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
 
 	displayClear(screenBuff, 0, 0);
 	char fps[16];
-	sprintf(fps, "Level %i", gameStateDrive->level);
+	sprintf(fps, "Level %i", gameStateDrive->level+2);
 	for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 		drawCharacter(screenBuff, fps[i], 40 + 8 * i, 10);
 	}
@@ -618,7 +618,7 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->restart = false;
 }
 
-void driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
+bool driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 	processInput(&gameStateDrive, buttonVals);
 
 	switch (gameStateDrive.scene) {
@@ -719,10 +719,11 @@ void driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		updateDriveScroller(&gameStateDrive, screenBuff);
 		if (!displayDriveOutroScroller(&gameStateDrive, screenBuff)) {
 			gameStateDrive.scene = 1;
+			return true;
 		}
 
 		break;
 	}
 
-	return;
+	return false;
 }

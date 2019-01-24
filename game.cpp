@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 5;
+int Game = 1;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -271,11 +271,14 @@ void gameLoop() {
 
 	switch (Game) {
 	case 1:
-	  driveGameLoop(&screenBuff,buttonVals);
+	  if (driveGameLoop(&screenBuff,buttonVals)) {
+			Game = 5;
+		}
 	  break;
 	case 2:
 	  if (flyGameLoop(&screenBuff,buttonVals)) {
-			Game = 5;
+			startRRush();
+			Game = 1;
 		}
 	  break;
 	case 3:

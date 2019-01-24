@@ -90,6 +90,12 @@ void resetGameState(ScreenBuff* screenBuff) {
 }
 
 void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
+	if (gameState->restartTimer) {
+		gameState->frameCounter += 1;
+		if (gameState->frameCounter > gameState->restartFrameCounter)
+			gameState->restart = true;
+	}
+
 	if (gameState->restart) {
 		resetGameState(screenBuff);
 		gameState->level = 1;
@@ -100,6 +106,7 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 		gameState->player1.inPlay = true;
 		gameState->collision = false;
 		gameState->frameCounter = 0;
+		gameState->restartTimer = false;
 		return;
 	}
 
@@ -139,6 +146,8 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 		if (gameState->player1.dim.y + gameState->player1.dim.height >= screenBuff->HEIGHT) {
 			gameState->player1.inPlay = false;
 			gameState->win = false;
+			gameState->restartTimer = true;
+			gameState->restartFrameCounter += gameState->frameCounter;
 		}
 	}
 

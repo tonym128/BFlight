@@ -46,9 +46,11 @@ struct GameState {
   int starMaxVelocity = 20;
   int level = 1;
   bool win = false;
+  bool restartTimer = false;
+  int restartFrameCounter = 100;
 
-  int frameCounter = 0;
   int backGroundColour = 0;
+  int frameCounter = 0;
 
   Star* stars = new Star[starCount];
   bool starField = 0;
