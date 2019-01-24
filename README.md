@@ -1,9 +1,15 @@
 # BFlight
-Flight game for an ESP8266 with SSD1306 and buttons (BSides Cape Town 2016 Badge)
+Game for an ESP8266 with SSD1306 and buttons.
 
-Hardware was provided by BSides 2016 and original source code is here 
+Hardware was originally inspired by the BSides Cape Town 2016 Badge and original source code is here 
 
 https://github.com/AndrewMohawk/BSidesBadge2016/branches
 
-For linux build you need ncurses-dev
+For Arduino, I was using SSD1306 Brzo libraries and I think that's it.
+
+For linux build you need ncurses-dev , cmake and gcc
 Most systems can install this with a 'sudo apt-get install ncurses-dev'
+
+For Windows build you will need cmake as well as Visual Studio and optionally Visual Studio Code.
+
+There's no tests, tut - tut, but I did a lot of play testing :)
