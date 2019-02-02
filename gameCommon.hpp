@@ -40,6 +40,7 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 typedef int FIXPOINT;
 #define INT_TO_FIXP(n) (FIXPOINT((n << FP_SHIFT)))
 #define FLOAT_TO_FIXP(n) (FIXPOINT((float)n * FP_SCALE))
+#define FP_MULT(n,n2) ((n * n2) >> FP_SHIFT)
 #define FIXP_INT_PART(n) (n >> FP_SHIFT)
 #define FIXP_DEC_PART(n) (n & 0x0000ffff)
 

@@ -62,9 +62,9 @@ int worldMap[mapWidth][mapHeight] =
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-double posX = 22, posY = 12;  //x and y start position
-double dirX = -1, dirY = 0; //initial direction vector
-double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+int posX = INT_TO_FIXP(22), posY = INT_TO_FIXP(12);  //x and y start position
+int dirX = INT_TO_FIXP(-1), dirY = INT_TO_FIXP(0); //initial direction vector
+int planeX = INT_TO_FIXP(0), planeY = FLOAT_TO_FIXP(0.66); //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
 	initTime();
@@ -78,8 +78,8 @@ void mazeRunnerInit() {
 	gameStateMaze.winY = maze.endY;
 
 	// Setup start pos
-	posX = maze.startX - 0.2;
-	posY = maze.startY - 0.2;
+	posX = FLOAT_TO_FIXP(maze.startX - 0.2);
+	posY = FLOAT_TO_FIXP(maze.startY - 0.2);
 }
 
 bool updateScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
@@ -307,7 +307,7 @@ bool update(GameStateMaze* gameStateMaze) {
 
 	// Check for win state // Win is in the top left
 	if (!gameStateMaze->win) {
-		gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
+//		gameStateMaze->win = FIXP_INT_PART(posX) - gameStateMaze->winX < 1.5 && FIXP_INT_PART(posY) - gameStateMaze->winY < 1.5;
 	}
 	else if (gameStateMaze->win) {
 		if (gameStateMaze->endSeconds == 0) { gameStateMaze->endSeconds = getElapsedSeconds();}
@@ -322,45 +322,51 @@ bool update(GameStateMaze* gameStateMaze) {
 		return false;
 	}
 
-	gameStateMaze->traversal[int(posX)][int(posY)] = true;
+	gameStateMaze->traversal[FIXP_INT_PART(posX)][FIXP_INT_PART(posY)] = true;
 
 	//speed modifiers
-	double moveSpeed = 0.1;
-	double rotSpeed = 0.05;
+	int moveSpeed = FLOAT_TO_FIXP(0.1);
+	int rotSpeed = FLOAT_TO_FIXP(0.05);
 
 	//move forward if no wall in front of you
 	if (gameStateMaze->p1keys.up)
 	{
-		if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
-		if (worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
+		if (worldMap[FIXP_INT_PART(posX + FP_MULT(dirX, moveSpeed))][FIXP_INT_PART(posY)] == false) posX += FP_MULT(dirX, moveSpeed);
+		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY + FP_MULT(dirY, moveSpeed))] == false) posY += FP_MULT(dirY, moveSpeed);
 	}
 	//move backwards if no wall behind you
 	if (gameStateMaze->p1keys.down)
 	{
-		if (worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
-		if (worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
+		if (worldMap[FIXP_INT_PART(posX - FP_MULT(dirX, moveSpeed))][FIXP_INT_PART(posY)] == false) posX -= FP_MULT(dirX,moveSpeed);
+		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY - FP_MULT(dirY, moveSpeed))] == false) posY -= FP_MULT(dirY,moveSpeed);
 	}
 	//rotate to the right
 	if (gameStateMaze->p1keys.right)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
-		dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
-		planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+		int oldDirX = dirX;
+		int cosRot = FLOAT_TO_FIXP(cos(-rotSpeed));
+		int sinRot = FLOAT_TO_FIXP(sin(-rotSpeed));
+
+		dirX = FP_MULT(dirX,cosRot) - FP_MULT(dirY,sinRot);
+		dirY = FP_MULT(oldDirX,sinRot) + FP_MULT(dirY,cosRot);
+		int oldPlaneX = planeX;
+		planeX = FP_MULT(planeX, cosRot) - FP_MULT(planeY,sinRot);
+		planeY = FP_MULT(oldPlaneX, sinRot) + FP_MULT(planeY,cosRot);
 	}
 	//rotate to the left
 	if (gameStateMaze->p1keys.left)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
-		dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
-		planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
+		int oldDirX = dirX;
+		int cosRot = FLOAT_TO_FIXP(cos(rotSpeed));
+		int sinRot = FLOAT_TO_FIXP(sin(rotSpeed));
+
+		dirX = FP_MULT(dirX,cosRot) - FP_MULT(dirY, sinRot);
+		dirY = FP_MULT(oldDirX,sinRot) + FP_MULT(dirY,cosRot);
+		int oldPlaneX = planeX;
+		planeX = FP_MULT(planeX,cosRot) - FP_MULT(planeY, sinRot);
+		planeY = FP_MULT(oldPlaneX, sinRot) + FP_MULT(planeY, cosRot);
 	}
 
 	return true;
@@ -389,18 +395,18 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		int mapY = int(posY);
 
 		//calculate ray position and direction
-		double cameraX = 2 * x / double(screenBuff->WIDTH) - 1; //x-coordinate in camera space
-		double rayDirX = dirX + planeX * cameraX;
-		double rayDirY = dirY + planeY * cameraX;
+		int cameraX = INT_TO_FIXP(2) * INT_TO_FIXP(x) / INT_TO_FIXP(screenBuff->WIDTH) - 1; //x-coordinate in camera space
+		int rayDirX = dirX + FP_MULT(planeX,cameraX);
+		int rayDirY = dirY + FP_MULT(planeY,cameraX);
 
 		//length of ray from current position to next x or y-side
-		double sideDistX;
-		double sideDistY;
+		int sideDistX;
+		int sideDistY;
 
 		//length of ray from one x or y-side to next x or y-side
-		double deltaDistX = std::abs(1 / rayDirX);
-		double deltaDistY = std::abs(1 / rayDirY);
-		double perpWallDist;
+		int deltaDistX = FLOAT_TO_FIXP(std::abs(1 / rayDirX));
+		int deltaDistY = FLOAT_TO_FIXP(std::abs(1 / rayDirY));
+		int perpWallDist;
 
 		//what direction to step in x or y-direction (either +1 or -1)
 		int stepX;
@@ -413,22 +419,22 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		if (rayDirX < 0)
 		{
 			stepX = -1;
-			sideDistX = (posX - mapX) * deltaDistX;
+			sideDistX = FP_MULT((posX - mapX),deltaDistX);
 		}
 		else
 		{
-			stepX = 1;
-			sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+			stepX = INT_TO_FIXP(1);
+			sideDistX = FP_MULT((mapX + INT_TO_FIXP(1) - posX), deltaDistX);
 		}
 		if (rayDirY < 0)
 		{
 			stepY = -1;
-			sideDistY = (posY - mapY) * deltaDistY;
+			sideDistY = FP_MULT((posY - mapY), deltaDistY);
 		}
 		else
 		{
-			stepY = 1;
-			sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+			stepY = INT_TO_FIXP(1);
+			sideDistY = FP_MULT((mapY + INT_TO_FIXP(1) - posY), deltaDistY);
 		}
 
 		//perform DDA
@@ -445,18 +451,18 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 			{
 				sideDistY += deltaDistY;
 				mapY += stepY;
-				side = 1;
+				side = INT_TO_FIXP(1);
 			}
 			//Check if ray has hit a wall
-			if (worldMap[mapX][mapY] > 0) hit = 1;
+			if (worldMap[FIXP_INT_PART(mapX)][FIXP_INT_PART(mapY)] > 0) hit = INT_TO_FIXP(1);
 		}
 
 		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
-		if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-		else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+		if (side == 0) perpWallDist = (mapX - posX + (INT_TO_FIXP(1) - stepX) / INT_TO_FIXP(2)) / rayDirX;
+		else           perpWallDist = (mapY - posY + (INT_TO_FIXP(1) - stepY) / INT_TO_FIXP(2)) / rayDirY;
 
 		//Calculate height of line to draw on screen
-		int lineHeight = (int)(screenBuff->HEIGHT / perpWallDist);
+		int lineHeight = (int)FIXP_INT_PART(INT_TO_FIXP(screenBuff->HEIGHT) / perpWallDist);
 
 		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart = -lineHeight / 2 + screenBuff->HEIGHT / 2;
@@ -466,20 +472,20 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 		//give x and y sides different brightness
 		// if (side == 1) {color = color / 2;}
-		int pattern = worldMap[mapX][mapY] - 1;
+		int pattern = worldMap[FIXP_INT_PART(mapX)][FIXP_INT_PART(mapY)] - 1;
 
 		//draw the pixels of the stripe as a vertical line
 		if (pattern < 5) {
 			drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
 		}
 		else {
-			double wallX; //where exactly the wall was hit
-			if (side == 0) wallX = posY + perpWallDist * rayDirY;
-			else           wallX = posX + perpWallDist * rayDirX;
+			int wallX; //where exactly the wall was hit
+			if (side == 0) wallX = posY + FP_MULT(perpWallDist, rayDirY);
+			else           wallX = posX + FP_MULT(perpWallDist, rayDirX);
 			wallX -= floor((wallX));
 
 			//x coordinate on the texture
-			int texX = int(wallX * double(defcon_width));
+			int texX = FIXP_INT_PART(wallX * INT_TO_FIXP(defcon_width));
 			if (side == 0 && rayDirX > 0) texX = defcon_width - texX - 1;
 			if (side == 1 && rayDirY < 0) texX = defcon_width - texX - 1;
 
