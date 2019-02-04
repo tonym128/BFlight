@@ -42,6 +42,8 @@ typedef int FIXPOINT;
 #define FLOAT_TO_FIXP(n) (FIXPOINT((float)n * FP_SCALE))
 #define FIXP_INT_PART(n) (n >> FP_SHIFT)
 #define FIXP_DEC_PART(n) (n & 0x0000ffff)
+#define FIXP_MULT(n,n2) (((int64_t)n * (int64_t)n2) >> FP_SHIFT)
+#define FIXP_DIV(n,n2) (((int64_t)n * (1 << FP_SHIFT)) / n2)
 
 #ifndef MYFONT_H_
 #include "myfont.hpp"

@@ -16,7 +16,7 @@ struct Player1Keys {
 #define mapHeight 25
 
 struct GameStateMaze {
-	int currentState = 0;
+	int currentState = 2;
 	int previousState = -1;
 	int frameCounter = 0;
 	int stageTime = 120;
@@ -28,8 +28,8 @@ struct GameStateMaze {
 	bool win = false;
 	bool exit = false;
 	bool traversal[mapWidth][mapHeight];
-	int winX = 0;
-	int winY = 0;
+	FIXPOINT winX = 0;
+	FIXPOINT winY = 0;
 
 } gameStateMaze;
 
@@ -62,9 +62,9 @@ int worldMap[mapWidth][mapHeight] =
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-double posX = 22, posY = 12;  //x and y start position
-double dirX = -1, dirY = 0; //initial direction vector
-double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+FIXPOINT posX = INT_TO_FIXP(22), posY = INT_TO_FIXP(12);  //x and y start position
+FIXPOINT dirX = INT_TO_FIXP(-1), dirY = 0; //initial direction vector
+FIXPOINT planeX = 0, planeY = FLOAT_TO_FIXP(0.66); //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
 	initTime();
@@ -78,8 +78,8 @@ void mazeRunnerInit() {
 	gameStateMaze.winY = maze.endY;
 
 	// Setup start pos
-	posX = maze.startX - 0.2;
-	posY = maze.startY - 0.2;
+	posX = FLOAT_TO_FIXP(maze.startX - 0.2);
+	posY = FLOAT_TO_FIXP(maze.startY - 0.2);
 }
 
 bool updateScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
@@ -307,7 +307,7 @@ bool update(GameStateMaze* gameStateMaze) {
 
 	// Check for win state // Win is in the top left
 	if (!gameStateMaze->win) {
-		gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
+		gameStateMaze->win = posX - gameStateMaze->winX < FLOAT_TO_FIXP(1.5) && posY - gameStateMaze->winY < FLOAT_TO_FIXP(1.5);
 	}
 	else if (gameStateMaze->win) {
 		if (gameStateMaze->endSeconds == 0) { gameStateMaze->endSeconds = getElapsedSeconds();}
@@ -322,45 +322,52 @@ bool update(GameStateMaze* gameStateMaze) {
 		return false;
 	}
 
-	gameStateMaze->traversal[int(posX)][int(posY)] = true;
+	gameStateMaze->traversal[FIXP_INT_PART(posX)][FIXP_INT_PART(posY)] = true;
 
 	//speed modifiers
-	double moveSpeed = 0.1;
+	FIXPOINT moveSpeed = 0.1;
 	double rotSpeed = 0.05;
 
 	//move forward if no wall in front of you
 	if (gameStateMaze->p1keys.up)
 	{
-		if (worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
-		if (worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
+		if (worldMap[FIXP_INT_PART(posX + FIXP_MULT(dirX, moveSpeed))][FIXP_INT_PART(posY)] == false) posX += FIXP_MULT(dirX, moveSpeed);
+		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY + FIXP_MULT(dirY, moveSpeed))] == false) posY += FIXP_MULT(dirY, moveSpeed);
 	}
 	//move backwards if no wall behind you
 	if (gameStateMaze->p1keys.down)
 	{
-		if (worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
-		if (worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
+		if (worldMap[FIXP_INT_PART(posX - FIXP_MULT(dirX, moveSpeed))][FIXP_INT_PART(posY)] == false) posX -= FIXP_MULT(dirX, moveSpeed);
+		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY - FIXP_MULT(dirY, moveSpeed))] == false) posY -= FIXP_MULT(dirY, moveSpeed);
 	}
 	//rotate to the right
 	if (gameStateMaze->p1keys.right)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
-		dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
-		planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+		FIXPOINT oldDirX = dirX;
+		FIXPOINT fCosRot = FLOAT_TO_FIXP(cos(-rotSpeed));
+		FIXPOINT fSinRot = FLOAT_TO_FIXP(sin(-rotSpeed));
+		FIXPOINT oldPlaneX = planeX;
+
+		dirX = FIXP_MULT(dirX, fCosRot) - FIXP_MULT(dirY, fSinRot);
+		dirY = FIXP_MULT(oldDirX, fSinRot) + FIXP_MULT(dirY, fCosRot);
+		planeX = FIXP_MULT(planeX, fCosRot) - FIXP_MULT(planeY, fSinRot);
+		planeY = FIXP_MULT(oldPlaneX, fSinRot) + FIXP_MULT(planeY, fCosRot);
 	}
+
 	//rotate to the left
 	if (gameStateMaze->p1keys.left)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
-		dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
-		planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
+		FIXPOINT oldDirX = dirX;
+		FIXPOINT fCosRot = FLOAT_TO_FIXP(cos(rotSpeed));
+		FIXPOINT fSinRot = FLOAT_TO_FIXP(sin(rotSpeed));
+		FIXPOINT oldPlaneX = planeX;
+
+		dirX = FIXP_MULT(dirX, fCosRot) - FIXP_MULT(dirY, fSinRot);
+		dirY = FIXP_MULT(oldDirX, fSinRot) + FIXP_MULT(dirY, fCosRot);
+		planeX = FIXP_MULT(planeX, fCosRot) - FIXP_MULT(planeY, fSinRot);
+		planeY = FIXP_MULT(oldPlaneX, fSinRot) + FIXP_MULT(planeY, fCosRot);
 	}
 
 	return true;
@@ -385,22 +392,22 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	for (int x = 0; x < screenBuff->WIDTH; x++)
 	{
 		//which box of the map we're in
-		int mapX = int(posX);
-		int mapY = int(posY);
+		int mapX = FIXP_INT_PART(posX);
+		int mapY = FIXP_INT_PART(posY);
 
 		//calculate ray position and direction
-		double cameraX = 2 * x / double(screenBuff->WIDTH) - 1; //x-coordinate in camera space
-		double rayDirX = dirX + planeX * cameraX;
-		double rayDirY = dirY + planeY * cameraX;
+		FIXPOINT cameraX = FLOAT_TO_FIXP(2 * x / double(screenBuff->WIDTH) - 1); //x-coordinate in camera space
+		FIXPOINT rayDirX = dirX + FIXP_MULT(planeX, cameraX);
+		FIXPOINT rayDirY = dirY + FIXP_MULT(planeY, cameraX);
 
 		//length of ray from current position to next x or y-side
-		double sideDistX;
-		double sideDistY;
+		FIXPOINT sideDistX;
+		FIXPOINT sideDistY;
 
 		//length of ray from one x or y-side to next x or y-side
-		double deltaDistX = std::abs(1 / rayDirX);
-		double deltaDistY = std::abs(1 / rayDirY);
-		double perpWallDist;
+		FIXPOINT deltaDistX = std::abs(FIXP_DIV(1, rayDirX));
+		FIXPOINT deltaDistY = std::abs(FIXP_DIV(1, rayDirY));
+		FIXPOINT perpWallDist;
 
 		//what direction to step in x or y-direction (either +1 or -1)
 		int stepX;
@@ -413,22 +420,22 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		if (rayDirX < 0)
 		{
 			stepX = -1;
-			sideDistX = (posX - mapX) * deltaDistX;
+			sideDistX = FIXP_MULT((posX - INT_TO_FIXP(mapX)), deltaDistX);
 		}
 		else
 		{
 			stepX = 1;
-			sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+			sideDistX = FIXP_MULT((INT_TO_FIXP(mapX + 1) - posX), deltaDistX);
 		}
 		if (rayDirY < 0)
 		{
 			stepY = -1;
-			sideDistY = (posY - mapY) * deltaDistY;
+			sideDistY = FIXP_MULT((posY - INT_TO_FIXP(mapY)), deltaDistY);
 		}
 		else
 		{
 			stepY = 1;
-			sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+			sideDistY = FIXP_MULT((INT_TO_FIXP(mapY) + 1 - posY), deltaDistY);
 		}
 
 		//perform DDA
@@ -452,11 +459,11 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		}
 
 		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
-		if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-		else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+		if (side == 0) perpWallDist = FIXP_DIV((INT_TO_FIXP(mapX) - posX + FLOAT_TO_FIXP((1 - stepX) / 2)), rayDirX);
+		else           perpWallDist = FIXP_DIV((INT_TO_FIXP(mapY) - posY + FLOAT_TO_FIXP((1 - stepY) / 2)), rayDirY);
 
 		//Calculate height of line to draw on screen
-		int lineHeight = (int)(screenBuff->HEIGHT / perpWallDist);
+		int lineHeight = (int)(screenBuff->HEIGHT / FIXP_INT_PART(perpWallDist));
 
 		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart = -lineHeight / 2 + screenBuff->HEIGHT / 2;
@@ -473,13 +480,13 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 			drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
 		}
 		else {
-			double wallX; //where exactly the wall was hit
-			if (side == 0) wallX = posY + perpWallDist * rayDirY;
-			else           wallX = posX + perpWallDist * rayDirX;
-			wallX -= floor((wallX));
+			FIXPOINT wallX; //where exactly the wall was hit
+			if (side == 0) wallX = posY + FIXP_MULT(perpWallDist, rayDirY);
+			else           wallX = posX + FIXP_MULT(perpWallDist, rayDirX);
+			wallX -= INT_TO_FIXP(FIXP_INT_PART(wallX));
 
 			//x coordinate on the texture
-			int texX = int(wallX * double(defcon_width));
+			int texX = FIXP_INT_PART(FIXP_MULT(wallX, FLOAT_TO_FIXP(defcon_width)));
 			if (side == 0 && rayDirX > 0) texX = defcon_width - texX - 1;
 			if (side == 1 && rayDirY < 0) texX = defcon_width - texX - 1;
 
@@ -532,8 +539,8 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	}
 
 	//which box of the map we're in
-	int mapX = int(posX);
-	int mapY = int(posY);
+	int mapX = FIXP_INT_PART(posX);
+	int mapY = FIXP_INT_PART(posY);
 
 	for (int i = -1; i < 2; i++) {
 		for (int j = -1; j < 2; j++) {
@@ -549,7 +556,6 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 	//timing for input and FPS counter
 	updateMinTime(0);
-
 }
 
 bool mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {

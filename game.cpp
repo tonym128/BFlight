@@ -14,7 +14,7 @@ const int pinDataIn = 16; // Data
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 1;
+int Game = 4;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -141,7 +141,7 @@ byte getReadShift()
 	inputPin = digitalRead(pinDataIn);
 	if(inputPin == buttonPressedVal)
 	 {
-	  Serial.println("[.] Button " + String(i) + " pressed!");
+	  //Serial.println("[.] Button " + String(i) + " pressed!");
 	  buttonVals = buttonVals | (1 << i);
 	 }
 
