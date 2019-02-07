@@ -15,7 +15,7 @@ bool analog = true;
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 2;
+int Game = 4;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -147,61 +147,81 @@ void sendToScreen()
 }
 
 #else
+int inputVal = 0;
+bool readAnalogSensor(int pin)
+{
+  digitalWrite(pin, HIGH);
+
+  inputVal = analogRead(A0);
+
+  digitalWrite(pin, LOW);
+  return inputVal > 20;
+}
+
+byte getReadShiftAnalog()
+{
+  byte buttonVals = 0;
+  if (readAnalogSensor(D6)) {
+    Serial.println("[.] Button Left pressed!");
+    buttonVals = buttonVals | (1 << P1_Left);
+  }
+  if (readAnalogSensor(D8)) {
+    Serial.println("[.] Button Up pressed!");
+    buttonVals = buttonVals | (1 << P1_Top);
+  }
+  if (readAnalogSensor(D5)) {
+    Serial.println("[.] Button Right pressed!");
+    buttonVals = buttonVals | (1 << P1_Right);
+  }
+  if (readAnalogSensor(D7)) {
+    Serial.println("[.] Button Down pressed!");
+    buttonVals = buttonVals | (1 << P1_Bottom);
+  }
+/*
+  if (readAnalogSensor(D5))
+    buttonVals = buttonVals | (1 << P2_Left);
+  if (readAnalogSensor(D6))
+    buttonVals = buttonVals | (1 << P2_Top);
+  if (readAnalogSensor(D7))
+    buttonVals = buttonVals | (1 << P2_Right);
+  if (readAnalogSensor(D8))
+    buttonVals = buttonVals | (1 << P2_Bottom);
+ */
+
+ return buttonVals;
+}
+
+byte getReadShiftDigital()
+{
+  int inputPin = 1;
+  int buttonPressedVal = 1; //Depending on how buttons are wired
+  digitalWrite(pinStcp, LOW);
+  delayMicroseconds(20);
+  digitalWrite(pinStcp, HIGH);
+
+  byte buttonVals = 0;
+  for (int i = 0; i < 8; i++)
+  {
+    digitalWrite(pinShcp, LOW);
+    delayMicroseconds(20);
+    inputPin = digitalRead(pinDataIn);
+    if (inputPin == buttonPressedVal)
+    {
+      buttonVals = buttonVals | (1 << i);
+    }
+
+    digitalWrite(pinShcp, HIGH);
+  }
+
+  return buttonVals;
+}
+
 byte getReadShift()
 {
 	if (analog)
 		return getReadShiftAnalog();
 
 	return getReadShiftDigital();
-}
-
-byte getReadShiftAnalog()
-{
-	byte buttonVals = 0;
-	if (readAnalogSensor(D5))
-		buttonVals = buttonVals | (1 << P1_Left);
-	if (readAnalogSensor(D6))
-		buttonVals = buttonVals | (1 << P1_Top);
-	if (readAnalogSensor(D7))
-		buttonVals = buttonVals | (1 << P1_Right);
-	if (readAnalogSensor(D8))
-		buttonVals = buttonVals | (1 << P1_Bottom);
-}
-
-int readAnalogSensor(int pin)
-{
-	digitalWrite(pin, HIGH);
-	delay(10);
-
-	inputVal = analogRead(ain);
-
-	digitalWrite(pin, LOW);
-	return inputVal;
-}
-
-byte getReadShiftDigital()
-{
-	int inputPin = 1;
-	int buttonPressedVal = 1; //Depending on how buttons are wired
-	digitalWrite(pinStcp, LOW);
-	delayMicroseconds(20);
-	digitalWrite(pinStcp, HIGH);
-
-	byte buttonVals = 0;
-	for (int i = 0; i < 8; i++)
-	{
-		digitalWrite(pinShcp, LOW);
-		delayMicroseconds(20);
-		inputPin = digitalRead(pinDataIn);
-		if (inputPin == buttonPressedVal)
-		{
-			buttonVals = buttonVals | (1 << i);
-		}
-
-		digitalWrite(pinShcp, HIGH);
-	}
-
-	return buttonVals;
 }
 
 void sendToScreen()
