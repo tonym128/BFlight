@@ -376,5 +376,11 @@ bool checkTime(int Seconds) {
 }
 
 int getElapsedSeconds() {
+ #ifdef _WIN32
 	return (int)(currentTime - startTime)/1000;
+ #elif __linux
+	return (int)(currentTime - startTime)/1000;
+ #else
+	return (int)(currentTime - startTime);
+ #endif
 }

@@ -252,7 +252,7 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 }
 
 bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
-	updateMinTime(25);
+	updateMinTime(10);
 	return true;
 }
 
