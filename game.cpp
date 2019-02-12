@@ -15,7 +15,7 @@ bool analog = true;
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 4;
+int Game = 2;
 
 #ifdef _WIN32
 COORD charBufSize;

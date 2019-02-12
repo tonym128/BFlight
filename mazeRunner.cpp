@@ -99,194 +99,50 @@ bool updateScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 
 bool displayScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"You're here!");
+	strcpy(scrollerText[1],"You're rested!");
+	strcpy(scrollerText[2],"But u only have");
+	strcpy(scrollerText[3],"2 minutes to get");
+	strcpy(scrollerText[4],"to the keynote");
+	strcpy(scrollerText[5],"");
+	strcpy(scrollerText[6],"   Good Luck!  ");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= mRunnr =-  ");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "You're here!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "You're rested!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "But u only have";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "2 minutes to get";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "to the keynote";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "   Good Luck!  ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = " -= mRunnr =-  ";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameStateMaze.frameCounter, scrollerText);
 }
 
 bool displayWinScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"You did it!");
+	strcpy(scrollerText[1],"");
+	strcpy(scrollerText[2],"Grab a seat and");
+	strcpy(scrollerText[3],"let these talks");
+	strcpy(scrollerText[4],"blow your mind");
+	strcpy(scrollerText[5],"     DefCon     ");
+	strcpy(scrollerText[6],"  Accomplished  ");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= WINNER =-  ");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "You did it!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Grab a seat and";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "let these talks";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "blow your mind";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "     DefCon     ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = " -= WINNER =-  ";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameStateMaze.frameCounter, scrollerText);
 }
 
 bool displayLoseScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"U didn't make it");
+	strcpy(scrollerText[1],"");
+	strcpy(scrollerText[2],"Make your way to");
+	strcpy(scrollerText[3],"the next talk");
+	strcpy(scrollerText[4],"it's a good 1");
+	strcpy(scrollerText[5],"");
+	strcpy(scrollerText[6]," ;-)     (-; ");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8],"-= TRY AGAIN =-");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "U didn't make it";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Make your way to";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "the next talk";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "it's a good 1";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "  ;-)     (-;  ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "-= TRY AGAIN =-";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameStateMaze.frameCounter, scrollerText);
 }
 
 bool displayLevelBars(GameStateMaze* gameState, ScreenBuff* screenBuff) {

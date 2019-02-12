@@ -4,7 +4,7 @@ int FrameCounter = 0;
 Dimensions imageDim;
 Dimensions imageDimWinner;
 bool direction = false;
-const int zoomFactor = 200;
+const int zoomFactor = 180;
 double zoomWinner = 0.8;
 bool zoomWinnerDirection = false;
 double PI_180 = PI / 180;

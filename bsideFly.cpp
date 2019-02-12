@@ -195,60 +195,18 @@ bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"The journey to");
+	strcpy(scrollerText[1],"DefCon starts");
+	strcpy(scrollerText[2],"with a single");
+	strcpy(scrollerText[3],"step.");
+	strcpy(scrollerText[4],"");
+	strcpy(scrollerText[5],"  Fly To Vegas  ");
+	strcpy(scrollerText[6],"   Good Luck!  ");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= dFlight =-  ");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameState->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "The journey to";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "DefCon starts";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "with a single ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "step.";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "  Fly To Vegas  ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "   Good Luck!  ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = " -= dFlight =-  ";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameState->frameCounter, scrollerText);
 }
 
 bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
@@ -258,61 +216,18 @@ bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 
 bool displayOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
 	gameState->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"Well done on");
+	strcpy(scrollerText[1],"completing the");
+	strcpy(scrollerText[2],"first leg of");
+	strcpy(scrollerText[3],"your journey.");
+	strcpy(scrollerText[4],"");
+	strcpy(scrollerText[5],"Keep your head");
+	strcpy(scrollerText[6],"high & go onward");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= Congrats =- ");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameState->frameCounter;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = " -= Congrats =- ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Well done on";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "completing the";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "first leg of ";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "your journey.";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Push forwards!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameState->frameCounter, scrollerText);
 }
 
 bool flyin(GameState* gameState, ScreenBuff* screenBuff) {

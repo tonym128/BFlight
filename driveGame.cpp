@@ -260,115 +260,34 @@ bool updateDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff)
 
 bool displayDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"You made it to");
+	strcpy(scrollerText[1],"Las Vegas,");
+	strcpy(scrollerText[2],"America,");
+	strcpy(scrollerText[3],"F#%k Yeah!");
+	strcpy(scrollerText[4],"Now get to the");
+	strcpy(scrollerText[5],"Hotel for some");
+	strcpy(scrollerText[6],"rest");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= Road Rush =-");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameStateDrive->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "You made it to";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Las Vegas,";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "America,";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	y += 8;
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "F#%k Yeah!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	y += 8;
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Now get to the";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Hotel ASAP.";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = " -= Road Rush =-";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameStateDrive->frameCounter, scrollerText);
 }
 
 bool displayDriveOutroScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->frameCounter += 1;
+	char scrollerText[9][17];
+	strcpy(scrollerText[0],"Hotel mission");
+	strcpy(scrollerText[1],"accomplished.");
+	strcpy(scrollerText[2],"");
+	strcpy(scrollerText[3],"Get some rest");
+	strcpy(scrollerText[4],"then head out to");
+	strcpy(scrollerText[5],"the conference!");
+	strcpy(scrollerText[6],"");
+	strcpy(scrollerText[7],"");
+	strcpy(scrollerText[8]," -= Winner! =-");
 
-	displayClear(screenBuff, 1, 0);
-
-	int y = screenBuff->HEIGHT - gameStateDrive->frameCounter + 10;
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Hotel mission";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "accomplished.";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	y += 8;
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "Get some rest";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "then head out to";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (y > -8 || y < screenBuff->HEIGHT) {
-		char scroller[17] = "the conference!";
-		drawString(screenBuff, scroller, 0, y, false);
-		y += 8;
-	}
-
-	if (1 == 1) {
-		char scroller[17] = "                ";
-		drawString(screenBuff, scroller, 0, 0, true);
-		drawString(screenBuff, scroller, 0, 8, true);
-	}
-
-	if (1 == 1) {
-		char scroller[17] = " -= Winner! =-";
-		drawString(screenBuff, scroller, 5, 2, true);
-	}
-
-	if (y < -8) return false;
-	return true;
+	return drawScroller(screenBuff, gameStateDrive->frameCounter, scrollerText);
 }
 
 bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {

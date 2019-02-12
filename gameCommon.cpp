@@ -12,6 +12,28 @@ void displayNoise(ScreenBuff* screenBuff, int amountInverse = 0) {
 			}
 }
 
+
+bool drawScroller(ScreenBuff* screenBuff, int frameCounter, char scrollerText[9][17]) {
+	displayClear(screenBuff, 1, 0);
+
+	int y = screenBuff->HEIGHT - frameCounter + 10;
+
+	int i = 0;
+	for (int j = 0; j < 7; j++) {
+		if (y > -8 || y < screenBuff->HEIGHT) {
+			drawString(screenBuff, scrollerText[i++], 0, y, false);
+			y += 8;
+		}
+	}
+
+	drawString(screenBuff, scrollerText[i], 0, 0, false);
+	drawString(screenBuff, scrollerText[i++], 0, 8, false);
+	drawString(screenBuff, scrollerText[i++], 5, 2, true);
+
+	if (y < -8) return false;
+	return true;
+}
+
 void displayNoise(ScreenBuff* screenBuff, Dimensions dim, int amountInverse = 0) {
 	int counter = 0;
 	for (int j = dim.y; j < dim.y + dim.height; j++) {

@@ -104,6 +104,7 @@ void invertObject(Dimensions, const bool*, bool*);
 void flipObject(Dimensions, const bool*, bool*);
 void copyObject(Dimensions, const bool*, bool*);
 
+bool drawScroller(ScreenBuff*, int, char[9][17]);
 void drawVertLine(ScreenBuff*, int, int, int, bool, int = 0);
 void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);
