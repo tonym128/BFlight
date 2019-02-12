@@ -28,7 +28,7 @@ struct Car {
 
 struct GameStateDrive {
 	const int MaxOffRoadSpeed = 25;
-	const int maxRoadSpeed = 50;
+	const int maxRoadSpeed = 70;
 	const int crashSpeed = 0;
 	const int udpateSpeed = 30;
 

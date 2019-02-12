@@ -67,6 +67,10 @@ double dirX = -1, dirY = 0; //initial direction vector
 double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
+  posX = 22, posY = 12;  //x and y start position
+  dirX = -1, dirY = 0; //initial direction vector
+  planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+
 	initTime();
 	Maze maze = Maze();
 	maze.generateMaze();
@@ -80,6 +84,12 @@ void mazeRunnerInit() {
 	// Setup start pos
 	posX = maze.startX - 0.2;
 	posY = maze.startY - 0.2;
+
+  for (int i = 0; i < mapWidth; i++) {
+    for (int j = 0; j < mapHeight; j++) {
+      gameStateMaze.traversal[i][j] = 0;
+    }
+  }
 }
 
 bool updateScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
@@ -612,7 +622,8 @@ bool mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {
 			updateScroller(&gameStateMaze, screenBuff);
 			if (!displayLoseScroller(&gameStateMaze, screenBuff)) {
 				gameStateMaze.currentState = 1;
-			}
+	      mazeRunnerInit();
+    	}
 		break;
 		case 4:
 			// Done and Exit
