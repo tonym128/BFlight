@@ -351,6 +351,67 @@ void drawString(ScreenBuff* screenBuff, char* scrollText, int x, int y, bool bac
 	}
 }
 
+#ifdef FPS
+int fpsArray[100];
+int fpsItem = 0;
+int fpsItems = 0;
+int fpsMaxItems = 100;
+#endif // FPS
+
+void drawFPS(ScreenBuff* screenBuff) {
+#ifdef FPS
+// If we have hit the max items loop around
+if (fpsItem == fpsMaxItems) {
+	fpsItem = 0;
+}
+
+// Get Time
+#ifdef _WIN32
+	fpsTimer2 = fpsTimer1;
+    std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
+	auto now = std::chrono::system_clock::now().time_since_epoch();
+	auto t100ms = std::chrono::milliseconds(100);
+	auto time = now + t100ms;
+	fpsTimer1 = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+#else
+	fpsTimer2 = fpsTimer1;
+	fpsTimer1 = time(nullptr);
+#endif
+
+// Calc Diff MS
+double diff = 0;
+if ((abs(fpsTimer1) - abs(fpsTimer2)) > 0) {
+	diff = (abs(fpsTimer1) - abs(fpsTimer2));
+
+	// Add Item to Array
+	fpsArray[fpsItem] = (int)diff;
+
+	// Move pointer forwards
+	fpsItem += 1;
+	if (fpsItems < fpsMaxItems) {
+		fpsItems += 1;
+	}
+
+	// Calculate Moving Average Time
+	double averageFPS = 0;
+	for (int i = 0; i < fpsItems; i++) {
+		averageFPS += fpsArray[i];
+	}
+
+	if (fpsItems < fpsMaxItems) {
+		char string[17] = "...";
+		drawString(screenBuff, string, 0,screenBuff->HEIGHT-8, true);
+	} else {
+		averageFPS /= fpsItems;
+		char fpsString[17];
+		sprintf(fpsString, "%3.2f FPS", (1.0f / (int)averageFPS) * 1000.0f);
+		drawString(screenBuff, fpsString, 0,screenBuff->HEIGHT-8, true);
+	}
+}
+
+#endif // FPS
+}
+
 void setCurrentTime() {
 #ifdef _WIN32
     std::chrono::system_clock::time_point t = std::chrono::system_clock::now();

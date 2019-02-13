@@ -33,7 +33,7 @@ void SetConsoleFont()
 	cfi.dwFontSize.Y = 6; // Height
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_NORMAL;
-	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+	//wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
 	SetCurrentConsoleFontEx(wHnd, FALSE, &cfi);
 }
 
@@ -405,6 +405,7 @@ void gameLoop()
 		break;
 	}
 
+	drawFPS(&screenBuff);
 	sendToScreen();
 }
 

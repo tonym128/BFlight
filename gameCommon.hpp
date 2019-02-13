@@ -1,3 +1,5 @@
+#define FPS // Define this to show the FPS for the game
+
 #ifndef GAMECOMMON_H
 #define GAMECOMMON_H
 
@@ -13,6 +15,7 @@
 #include <Windows.h>
 #include <cwchar>
 #include <stdint.h>
+#include <math.h> // Added for GCC
 #define localtime_r(_Time, _Tm) localtime_s(_Tm, _Time)
 #elif __linux
 #include <iostream>
@@ -110,6 +113,7 @@ void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);
+void drawFPS(ScreenBuff*);
 
 void setCurrentTime();
 void initTime();
@@ -121,10 +125,16 @@ int getElapsedSeconds();
 	static long long frameTime = 0;
 	static long long startTime = 0;
 	static long long currentTime = 0;
+
+	static long long fpsTimer1 = 0;
+	static long long fpsTimer2 = 0;
 #else
 	static time_t frameTime = time(nullptr);
 	static time_t startTime = time(nullptr);
 	static time_t currentTime = time(nullptr);
+
+	static time_t fpsTimer1 = time(nullptr);
+	static time_t fpsTimer2 = time(nullptr);
 #endif
 
 #endif // !GAMECOMMON_H
