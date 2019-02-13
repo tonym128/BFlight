@@ -136,9 +136,9 @@ int getElapsedSeconds();
   static time_t fpsTimer1 = time(nullptr);
   static time_t fpsTimer2 = time(nullptr);
 #else
-	static time_t frameTime = time(nullptr);
-	static time_t startTime = time(nullptr);
-	static time_t currentTime = time(nullptr);
+	static int frameTime = millis();
+	static int startTime = millis();
+	static int currentTime = millis();
 
 	static int fpsTimer1 = millis();
 	static int fpsTimer2 = millis();

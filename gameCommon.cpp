@@ -422,8 +422,10 @@ void setCurrentTime() {
 	auto t100ms = std::chrono::milliseconds(100);
 	auto time = now + t100ms;
 	currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-#else
+#elif __linux
 	currentTime = time(nullptr);
+#else
+	currentTime = millis();
 #endif
 }
 
@@ -452,21 +454,9 @@ void updateMinTime(int sleepMiliseconds) {
 }
 
 bool checkTime(int Seconds) {
- #ifdef _WIN32
-	return (currentTime - startTime > Seconds * 1000);
- #elif __linux
-  return (currentTime - startTime > Seconds * 1000);
- #else
-  return (currentTime - startTime > Seconds);
- #endif
+ 	return (currentTime - startTime > Seconds * 1000);
 }
 
 int getElapsedSeconds() {
- #ifdef _WIN32
-	return (int)(currentTime - startTime)/1000;
- #elif __linux
-	return (int)(currentTime - startTime)/1000;
- #else
-	return (int)(currentTime - startTime);
- #endif
+	return (int)(currentTime - startTime) / 1000;
 }
