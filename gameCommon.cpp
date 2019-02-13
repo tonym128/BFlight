@@ -373,9 +373,12 @@ if (fpsItem == fpsMaxItems) {
 	auto t100ms = std::chrono::milliseconds(100);
 	auto time = now + t100ms;
 	fpsTimer1 = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+#elif __linux
+  fpsTimer2 = fpsTimer1;
+  fpsTimer1 = time(nullptr);
 #else
 	fpsTimer2 = fpsTimer1;
-	fpsTimer1 = time(nullptr);
+	fpsTimer1 = millis();
 #endif
 
 // Calc Diff MS

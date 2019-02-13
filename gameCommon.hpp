@@ -128,13 +128,20 @@ int getElapsedSeconds();
 
 	static long long fpsTimer1 = 0;
 	static long long fpsTimer2 = 0;
+#elif __linux
+  static time_t frameTime = time(nullptr);
+  static time_t startTime = time(nullptr);
+  static time_t currentTime = time(nullptr);
+
+  static time_t fpsTimer1 = time(nullptr);
+  static time_t fpsTimer2 = time(nullptr);
 #else
 	static time_t frameTime = time(nullptr);
 	static time_t startTime = time(nullptr);
 	static time_t currentTime = time(nullptr);
 
-	static time_t fpsTimer1 = time(nullptr);
-	static time_t fpsTimer2 = time(nullptr);
+	static int fpsTimer1 = millis();
+	static int fpsTimer2 = millis();
 #endif
 
 #endif // !GAMECOMMON_H
