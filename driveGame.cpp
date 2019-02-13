@@ -92,7 +92,6 @@ void initCar(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff, Car* car) {
 }
 
 bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
-	updateMinTime(0);
 	gameStateDrive->frameCounter += 1;
 	if (gameStateDrive->playerCar.x < screenBuff->WIDTH / 5 || gameStateDrive->playerCar.x + gameStateDrive->playerCar.width > screenBuff->WIDTH - screenBuff->WIDTH / 5) {
 		if (gameStateDrive->MaxOffRoadSpeed < gameStateDrive->carSpeed) gameStateDrive->carSpeed -= 2;
@@ -249,12 +248,10 @@ bool drawWavingFlag(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 	drawObjectWavy(screenBuff, dimFlag, -4, 0, gameStateDrive->flagCount, gameStateDrive->flagFrameCounter, gameStateDrive->flagUp, flag);
 
-	updateMinTime(10);
 	return !checkTime(3);
 }
 
 bool updateDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
-	updateMinTime(10);
 	return true;
 }
 
@@ -310,8 +307,6 @@ bool displayLevelSlider(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) 
 			screenBuff->consoleBuffer[screenBuff->WIDTH * 20 - i] = 1;
 		}
 	}
-
-	updateMinTime(0);
 
 	return !checkTime(2);
 }
@@ -608,7 +603,6 @@ bool driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 		}
 
 		gameStateDrive.frameCounter++;
-		updateMinTime(100);
 
 		if (!displayWinLose(&gameStateDrive, screenBuff)) {
 			if (gameStateDrive.win) {

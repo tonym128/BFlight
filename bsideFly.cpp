@@ -189,7 +189,6 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 }
 
 bool updateScroller(GameState* gameState, ScreenBuff* screenBuff) {
-	updateMinTime(10);
 	return true;
 }
 
@@ -210,7 +209,6 @@ bool displayScroller(GameState* gameState, ScreenBuff* screenBuff) {
 }
 
 bool updateOutroScroller(GameState* gameState, ScreenBuff* screenBuff) {
-	updateMinTime(10);
 	return true;
 }
 

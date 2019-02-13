@@ -93,7 +93,6 @@ void mazeRunnerInit() {
 }
 
 bool updateScroller(GameStateMaze* gameState, ScreenBuff* screenBuff) {
-	updateMinTime(10);
 	return true;
 }
 
@@ -169,8 +168,6 @@ bool displayLevelBars(GameStateMaze* gameState, ScreenBuff* screenBuff) {
 }
 
 bool update(GameStateMaze* gameStateMaze) {
-	updateMinTime(0);
-
 	// Check for win state // Win is in the top left
 	if (!gameStateMaze->win) {
 		gameStateMaze->win = posX - gameStateMaze->winX < 1.5 && posY - gameStateMaze->winY < 1.5;
@@ -412,10 +409,6 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	}
 
 	drawObject(screenBuff, dim, traverseMap);
-
-	//timing for input and FPS counter
-	updateMinTime(0);
-
 }
 
 bool mazeRunnerLoop(ScreenBuff* screenBuff, byte buttonVals) {

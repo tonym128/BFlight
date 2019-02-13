@@ -407,6 +407,7 @@ void gameLoop()
 
 	drawFPS(&screenBuff);
 	sendToScreen();
+	updateMinTime(33);
 }
 
 #ifdef _WIN32
@@ -415,7 +416,6 @@ int main()
 	gameSetup();
 	while (1)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		gameLoop();
 	}
 	return 1;
@@ -426,7 +426,6 @@ int main()
 	gameSetup();
 	while (1)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		gameLoop();
 	}
 
