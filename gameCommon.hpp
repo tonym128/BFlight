@@ -1,5 +1,3 @@
-#define FPS // Define this to show the FPS for the game
-
 #ifndef GAMECOMMON_H
 #define GAMECOMMON_H
 
@@ -117,6 +115,9 @@ void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);
 void drawCharacter(ScreenBuff*, char, int, int, bool = true);
 void drawString(ScreenBuff*, char*, int, int, bool = true);
+
+void getCurrentFPS();
+void calcFPS();
 void drawFPS(ScreenBuff*);
 
 void setCurrentTime();

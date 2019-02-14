@@ -342,7 +342,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 			wallX -= floor((wallX));
 
 			//x coordinate on the texture
-			int texX = int(wallX * double(defcon_width));
+			int texX = int(wallX * defcon_width);
 			if (side == 0 && rayDirX > 0) texX = defcon_width - texX - 1;
 			if (side == 1 && rayDirY < 0) texX = defcon_width - texX - 1;
 

@@ -371,7 +371,10 @@ void gameLoop()
 		break;
 	}
 
+	calcFPS();
+#ifdef FPS // Define this to show the FPS for the game
 	drawFPS(&screenBuff);
+#endif
 	sendToScreen();
 	updateMinTime(33);
 }

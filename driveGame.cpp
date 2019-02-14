@@ -42,7 +42,7 @@ struct GameStateDrive {
 	int flagFrameCounter = 0;
 	bool flagUp = true;
 
-	Car* cars = new Car[10];
+	Car* cars = new Car[5];
 
 	int scene = 1;
 
@@ -134,7 +134,7 @@ bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 	// Setup Road speed and distance travelled.
 	gameStateDrive->roadSpeed = gameStateDrive->maxRoadSpeed + 1 - gameStateDrive->carSpeed;
-	gameStateDrive->distance += gameStateDrive->carSpeed / 10;
+	gameStateDrive->distance += gameStateDrive->carSpeed / 8;
 
 	// Do turning logic
 	if (gameStateDrive->turning) {
@@ -199,7 +199,7 @@ bool updateDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 		return false;
 	}
 	// If we have hit the required distance
-	if (gameStateDrive->stageDistance - gameStateDrive->distance / 10 < 0)
+	if (gameStateDrive->stageDistance - gameStateDrive->distance / 8 < 0)
 	{
 		gameStateDrive->win = true;
 		return false;
@@ -361,7 +361,7 @@ void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 	int turnOffset = gameStateDrive->turnOffset;
 	int fullHeight = screenBuff->HEIGHT - (screenBuff->HEIGHT / 3);
-	BufferedDrawObject bufDraw[10];
+	BufferedDrawObject bufDraw[5];
 
 	while (y < screenBuff->HEIGHT) {
 		// Draw Off Road
@@ -484,7 +484,7 @@ void displayDrive(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 
 	// Draw console
 	char speed[20];
-	sprintf(speed, "%i mph, %i feet", gameStateDrive->carSpeed, gameStateDrive->stageDistance - gameStateDrive->distance / 10);
+	sprintf(speed, "%i mph, %i feet", gameStateDrive->carSpeed, gameStateDrive->stageDistance - gameStateDrive->distance / 8);
 	drawString(screenBuff, speed, 0, 0, false);
 	sprintf(speed, "%i s", (int)gameStateDrive->stageTime - getElapsedSeconds());
 	drawString(screenBuff, speed, 0, 8, false);
