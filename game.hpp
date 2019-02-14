@@ -19,6 +19,7 @@
 #include "FS.h"
 #endif
 
+void gameInit();
 void gameSetup();
 void gameLoop();
 
