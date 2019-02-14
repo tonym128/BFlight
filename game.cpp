@@ -245,34 +245,20 @@ void sendToScreen()
 }
 #endif
 
-void startBFlight()
-{
+void showLogo(const bool logo[]) {
 	Dimensions dim;
 	dim.height = logo_height;
 	dim.width = logo_width;
 	dim.x = 0;
 	dim.y = 0;
 	
-	drawObject(&screenBuff, dim, logo_fly);
+	drawObject(&screenBuff, dim, logo);
 	initTime();
 	sendToScreen();
-	updateMinTime(2000);
+	updateMinTime(4000);
 }
 
-void startRRush()
-{
-	Dimensions dim;
-	dim.height = logo_height;
-	dim.width = logo_width;
-	
-	drawObject(&screenBuff, dim, logo_drive);
-	initTime();
-	sendToScreen();
-	updateMinTime(2000);
-}
-
-void gameSetup()
-{
+void gameInit() {
 #ifdef _WIN32
 #elif __linux
 	setlocale(LC_ALL, "");
@@ -320,20 +306,24 @@ void gameSetup()
 	display.displayOn();
 	display.flipScreenVertically();
 #endif
+}
 
+void gameSetup()
+{
 	switch (Game)
 	{
 	case 1:
-		startBFlight();
+		showLogo(logo_fly);
 		break;
 	case 2:
-		startRRush();
+		showLogo(logo_drive);
 		break;
 	case 3:
-		rotoZoomerInit();
+		showLogo(logo_maze);
+		mazeRunnerInit();
 		break;
 	case 4:
-		mazeRunnerInit();
+		rotoZoomerInit();
 		break;
 	case 5:
 		break;
@@ -348,33 +338,34 @@ void gameLoop()
 	switch (Game)
 	{
 	case 1:
-		if (driveGameLoop(&screenBuff, buttonVals))
+		if (flyGameLoop(&screenBuff, buttonVals))
 		{
-			Game = 5;
+			Game = 2;
+			gameSetup();
 		}
 		break;
 	case 2:
-		if (flyGameLoop(&screenBuff, buttonVals))
+		if (driveGameLoop(&screenBuff, buttonVals))
 		{
-			startRRush();
-			Game = 1;
+			Game = 5;
+			gameSetup();
 		}
 		break;
 	case 3:
-		rotoZoomerLoop(&screenBuff, buttonVals);
-		break;
-	case 4:
 		if (mazeRunnerLoop(&screenBuff, buttonVals))
 		{
-			rotoZoomerInit();
-			Game = 3;
+			Game = 4;
+			gameSetup();
 		}
+		break;
+	case 4:
+		rotoZoomerLoop(&screenBuff, buttonVals);
 		break;
 	case 5:
 		if (plasmaLoop(&screenBuff, buttonVals))
 		{
-			mazeRunnerInit();
-			Game = 4;
+			Game = 3;
+			gameSetup();
 		}
 
 		break;
@@ -388,6 +379,7 @@ void gameLoop()
 #ifdef _WIN32
 int main()
 {
+	gameInit();
 	gameSetup();
 	while (1)
 	{
@@ -398,6 +390,7 @@ int main()
 #elif __linux
 int main()
 {
+	gameInit();
 	gameSetup();
 	while (1)
 	{

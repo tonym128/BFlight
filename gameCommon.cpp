@@ -352,10 +352,10 @@ void drawString(ScreenBuff* screenBuff, char* scrollText, int x, int y, bool bac
 }
 
 #ifdef FPS
-int fpsArray[100];
+int fpsArray[10];
 int fpsItem = 0;
 int fpsItems = 0;
-int fpsMaxItems = 100;
+int fpsMaxItems = 10;
 #endif // FPS
 
 void drawFPS(ScreenBuff* screenBuff) {
@@ -384,7 +384,7 @@ if (fpsItem == fpsMaxItems) {
 // Calc Diff MS
 double diff = 0;
 if ((abs(fpsTimer1) - abs(fpsTimer2)) > 0) {
-	diff = (abs(fpsTimer1) - abs(fpsTimer2));
+	diff = (double)(abs(fpsTimer1) - abs(fpsTimer2));
 
 	// Add Item to Array
 	fpsArray[fpsItem] = (int)diff;

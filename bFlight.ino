@@ -1,6 +1,7 @@
 #include "game.hpp"
 
 void setup() {
+  gameInit();
   gameSetup();
 }
 
