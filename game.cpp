@@ -128,7 +128,6 @@ byte getReadShift()
 
 void sendToScreen()
 {
-
 	for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
 	{
 		int x = i % screenBuff.WIDTH;
@@ -248,52 +247,28 @@ void sendToScreen()
 
 void startBFlight()
 {
-#ifdef _WIN32
-#elif __linux
-#else
-	File f;
-	f = SPIFFS.open("/bFSLogo.XBM", "r");
-
-	if (f)
-	{
-		int s = f.size();
-		Serial.printf("File Opened , Size=%d\r\n", s);
-
-		String data = f.readString();
-		//Serial.println(data);
-		f.close();
-
-		const char *data1 = data.c_str();
-		display.drawXbm(0, 0, 128, 64, (uint8_t *)data1);
-		display.display();
-		delay(2000);
-	}
-#endif
+	Dimensions dim;
+	dim.height = logo_height;
+	dim.width = logo_width;
+	dim.x = 0;
+	dim.y = 0;
+	
+	drawObject(&screenBuff, dim, logo_fly);
+	initTime();
+	sendToScreen();
+	updateMinTime(2000);
 }
 
 void startRRush()
 {
-#ifdef _WIN32
-#elif __linux
-#else
-	File f;
-	f = SPIFFS.open("/RoadRushLogo.XBM", "r");
-
-	if (f)
-	{
-		int s = f.size();
-		Serial.printf("File Opened , Size=%d\r\n", s);
-
-		String data = f.readString();
-		//Serial.println(data);
-		f.close();
-
-		const char *data1 = data.c_str();
-		display.drawXbm(0, 0, 128, 64, (uint8_t *)data1);
-		display.display();
-		delay(2000);
-	}
-#endif
+	Dimensions dim;
+	dim.height = logo_height;
+	dim.width = logo_width;
+	
+	drawObject(&screenBuff, dim, logo_drive);
+	initTime();
+	sendToScreen();
+	updateMinTime(2000);
 }
 
 void gameSetup()

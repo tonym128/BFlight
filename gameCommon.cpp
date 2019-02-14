@@ -432,6 +432,7 @@ void setCurrentTime() {
 void initTime() {
 	setCurrentTime();	
 	startTime = currentTime;
+	frameTime = currentTime;
 }
 
 void updateMinTime(int sleepMiliseconds) {

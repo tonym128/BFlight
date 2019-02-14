@@ -50,6 +50,10 @@ typedef int FIXPOINT;
 #include "myfont.hpp"
 #endif
 
+#ifndef STARTUPLOGOS_H_
+#include "startupLogos.hpp"
+#endif
+
 #include <stdlib.h>
 #include <time.h>
 
