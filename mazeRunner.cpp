@@ -62,9 +62,9 @@ int worldMap[mapWidth][mapHeight] =
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-double posX = 22, posY = 12;  //x and y start position
-double dirX = -1, dirY = 0; //initial direction vector
-double planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+FIXPOINT posX = 22, posY = 12;  //x and y start position
+FIXPOINT dirX = -1, dirY = 0; //initial direction vector
+FIXPOINT planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
 
 void mazeRunnerInit() {
   posX = 22, posY = 12;  //x and y start position
@@ -185,11 +185,11 @@ bool update(GameStateMaze* gameStateMaze) {
 		return false;
 	}
 
-	gameStateMaze->traversal[int(posX)][int(posY)] = true;
+	gameStateMaze->traversal[FIXP_TO_INT(posX)][FIXP_TO_INT(posY)] = true;
 
 	//speed modifiers
-	double moveSpeed = 0.1;
-	double rotSpeed = 0.05;
+	FIXPOINT moveSpeed = FLOAT_TO_FIXP(0.1);
+	FIXPOINT rotSpeed = FLOAT_TO_FIXP(0.05);
 
 	//move forward if no wall in front of you
 	if (gameStateMaze->p1keys.up)
@@ -207,10 +207,10 @@ bool update(GameStateMaze* gameStateMaze) {
 	if (gameStateMaze->p1keys.right)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
+		FIXPOINT oldDirX = dirX;
 		dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
 		dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
-		double oldPlaneX = planeX;
+		FIXPOINT oldPlaneX = planeX;
 		planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
 		planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
 	}
@@ -218,10 +218,10 @@ bool update(GameStateMaze* gameStateMaze) {
 	if (gameStateMaze->p1keys.left)
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
+		FIXPOINT oldDirX = dirX;
 		dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
 		dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
-		double oldPlaneX = planeX;
+		FIXPOINT oldPlaneX = planeX;
 		planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
 		planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 	}
@@ -336,22 +336,32 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 			drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
 		}
 		else {
-			double wallX; //where exactly the wall was hit
-			if (side == 0) wallX = posY + perpWallDist * rayDirY;
-			else           wallX = posX + perpWallDist * rayDirX;
-			wallX -= floor((wallX));
+			FIXPOINT fwallX; //where exactly the wall was hit
+			FIXPOINT fposY = FLOAT_TO_FIXP(posY);
+			FIXPOINT fperpWallDist = FLOAT_TO_FIXP(perpWallDist);
+			FIXPOINT frayDirY = FLOAT_TO_FIXP(rayDirY);
+			FIXPOINT fposX = FLOAT_TO_FIXP(posX);
+			FIXPOINT frayDirX = FLOAT_TO_FIXP(rayDirX);
+
+			if (side == 0) {
+				fwallX = (FIXP_MULT(fperpWallDist, frayDirY)) + fposY;
+			}
+			else {
+				fwallX = (FIXP_MULT(fperpWallDist, frayDirX)) + fposX;
+			}   
+			fwallX = FIXP_DEC_PART((fwallX));
 
 			//x coordinate on the texture
-			int texX = int(wallX * defcon_width);
-			if (side == 0 && rayDirX > 0) texX = defcon_width - texX - 1;
-			if (side == 1 && rayDirY < 0) texX = defcon_width - texX - 1;
+			int ftexX = FIXP_TO_INT(fwallX * defcon_width);
+			if (side == 0 && frayDirX > 0) ftexX = defcon_width - 1 - ftexX;
+			if (side == 1 && frayDirY < 0) ftexX = defcon_width - 1 - ftexX;
 
 			for (int y = drawStart; y < drawEnd; y++)
 			{
 				int d = y * 256 - defcon_height * 128 + lineHeight * 128;  //256 and 128 factors to avoid floats
 				// TODO: avoid the division to speed this up
 				int texY = ((d * defcon_width) / lineHeight) / 256;
-				bool color = defcon_image[texX + defcon_height * texY];
+				bool color = defcon_image[ftexX + defcon_height * texY];
 				screenBuff->consoleBuffer[x + y * screenBuff->WIDTH] = color;
 			}
 		}

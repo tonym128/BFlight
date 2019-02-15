@@ -445,7 +445,7 @@ double currentFPS()
 	if (fpsItems > 0)
 		averageFPS /= fpsItems;
 
-	return ((double)averageFPS) / 65536.0f;
+	return FIXP_TO_FLOAT(averageFPS);
 	;
 }
 
