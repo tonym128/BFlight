@@ -255,7 +255,7 @@ void showLogo(const bool logo[]) {
 	drawObject(&screenBuff, dim, logo);
 	initTime();
 	sendToScreen();
-	updateMinTime(4000);
+	updateMinTime(1000);
 }
 
 void gameInit() {

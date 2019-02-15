@@ -247,23 +247,36 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 	for (int x = 0; x < screenBuff->WIDTH; x++)
 	{
+		// Position on map
+		FIXPOINT fposX = FLOAT_TO_FIXP(posX);
+		FIXPOINT fposY = FLOAT_TO_FIXP(posY); 
+
 		//which box of the map we're in
-		int mapX = int(posX);
-		int mapY = int(posY);
+		FIXPOINT fmapX = INT_TO_FIXP(int(posX));
+		FIXPOINT fmapY = INT_TO_FIXP(int(posY)); 
 
 		//calculate ray position and direction
-		double cameraX = 2 * x / double(screenBuff->WIDTH) - 1; //x-coordinate in camera space
-		double rayDirX = dirX + planeX * cameraX;
-		double rayDirY = dirY + planeY * cameraX;
+		FIXPOINT fplaneX = FLOAT_TO_FIXP(planeX);
+		FIXPOINT fplaneY = FLOAT_TO_FIXP(planeY); 
+		FIXPOINT fdirX = FLOAT_TO_FIXP(dirX);
+		FIXPOINT fdirY = FLOAT_TO_FIXP(dirY); 
+
+		FIXPOINT fcameraX = FIXP_DIV(INT_TO_FIXP(2 * x), INT_TO_FIXP(screenBuff->WIDTH)) - INT_TO_FIXP(1); //x-coordinate in camera space
+		FIXPOINT frayDirX = fdirX + FIXP_MULT(fplaneX, fcameraX);
+		FIXPOINT frayDirY = fdirY + FIXP_MULT(fplaneY, fcameraX);
 
 		//length of ray from current position to next x or y-side
-		double sideDistX;
-		double sideDistY;
+		FIXPOINT fsideDistX;
+		FIXPOINT fsideDistY;
 
 		//length of ray from one x or y-side to next x or y-side
-		double deltaDistX = std::abs(1 / rayDirX);
-		double deltaDistY = std::abs(1 / rayDirY);
-		double perpWallDist;
+		FIXPOINT fdeltaDistX = frayDirX == 0 ? INT32_MAX : FIXP_DIV(INT_TO_FIXP(1), frayDirX);
+		FIXPOINT fdeltaDistY = frayDirY == 0 ? INT32_MAX : FIXP_DIV(INT_TO_FIXP(1), frayDirY);
+
+		if (fdeltaDistX < 0) fdeltaDistX = -fdeltaDistX;
+		if (fdeltaDistY < 0) fdeltaDistY = -fdeltaDistY;
+
+		FIXPOINT fperpWallDist;
 
 		//what direction to step in x or y-direction (either +1 or -1)
 		int stepX;
@@ -273,53 +286,53 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		int side; //was a NS or a EW wall hit?
 
 	   //calculate step and initial sideDist
-		if (rayDirX < 0)
+		if (frayDirX < 0)
 		{
 			stepX = -1;
-			sideDistX = (posX - mapX) * deltaDistX;
+			fsideDistX = FIXP_MULT((fposX - fmapX), fdeltaDistX);
 		}
 		else
 		{
 			stepX = 1;
-			sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+			fsideDistX = FIXP_MULT((fmapX + INT_TO_FIXP(1) - fposX), fdeltaDistX);
 		}
-		if (rayDirY < 0)
+		if (frayDirY < 0)
 		{
 			stepY = -1;
-			sideDistY = (posY - mapY) * deltaDistY;
+			fsideDistY = FIXP_MULT((fposY - fmapY), fdeltaDistY);
 		}
 		else
 		{
 			stepY = 1;
-			sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+			fsideDistY = FIXP_MULT((fmapY + INT_TO_FIXP(1) - fposY), fdeltaDistY);
 		}
 
 		//perform DDA
 		while (hit == 0)
 		{
 			//jump to next map square, OR in x-direction, OR in y-direction
-			if (sideDistX < sideDistY)
+			if (fsideDistX < fsideDistY)
 			{
-				sideDistX += deltaDistX;
-				mapX += stepX;
+				fsideDistX += fdeltaDistX;
+				fmapX += INT_TO_FIXP(stepX);
 				side = 0;
 			}
 			else
 			{
-				sideDistY += deltaDistY;
-				mapY += stepY;
+				fsideDistY += fdeltaDistY;
+				fmapY += INT_TO_FIXP(stepY);
 				side = 1;
 			}
 			//Check if ray has hit a wall
-			if (worldMap[mapX][mapY] > 0) hit = 1;
+			if (worldMap[FIXP_TO_INT(fmapX)][FIXP_TO_INT(fmapY)] > 0) hit = 1;
 		}
 
 		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
-		if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-		else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+		if (side == 0) fperpWallDist = frayDirX == 0 ? INT32_MAX : FIXP_DIV(fmapX - fposX + FIXP_DIV(INT_TO_FIXP(1 - stepX) , INT_TO_FIXP(2)), frayDirX);
+		else           fperpWallDist = frayDirY == 0 ? INT32_MAX : FIXP_DIV(fmapY - fposY + FIXP_DIV(INT_TO_FIXP(1 - stepY) , INT_TO_FIXP(2)), frayDirY);
 
 		//Calculate height of line to draw on screen
-		int lineHeight = (int)(screenBuff->HEIGHT / perpWallDist);
+		int lineHeight = fperpWallDist == 0 ? INT32_MAX : FIXP_TO_INT(FIXP_DIV(INT_TO_FIXP(screenBuff->HEIGHT) , fperpWallDist));
 
 		//calculate lowest and highest pixel to fill in current stripe
 		int drawStart = -lineHeight / 2 + screenBuff->HEIGHT / 2;
@@ -329,7 +342,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 
 		//give x and y sides different brightness
 		// if (side == 1) {color = color / 2;}
-		int pattern = worldMap[mapX][mapY] - 1;
+		int pattern = worldMap[FIXP_TO_INT(fmapX)][FIXP_TO_INT(fmapY)] - 1;
 
 		//draw the pixels of the stripe as a vertical line
 		if (pattern == 80) {
@@ -338,11 +351,6 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		else {
 // Fixed
 			FIXPOINT fwallX; //where exactly the wall was hit
-			FIXPOINT fposY = FLOAT_TO_FIXP(posY);
-			FIXPOINT fperpWallDist = FLOAT_TO_FIXP(perpWallDist);
-			FIXPOINT frayDirY = FLOAT_TO_FIXP(rayDirY);
-			FIXPOINT fposX = FLOAT_TO_FIXP(posX);
-			FIXPOINT frayDirX = FLOAT_TO_FIXP(rayDirX);
 
 			if (side == 0) {
 				fwallX = (FIXP_MULT(fperpWallDist, frayDirY)) + fposY;

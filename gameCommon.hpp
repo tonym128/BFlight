@@ -48,8 +48,8 @@ typedef int FIXPOINT;
 #define FIXP_INT_PART(n) (n >> FP_SHIFT)
 #define FIXP_FIXP_INT_PART(n) (n & 0xffff0000)
 #define FIXP_DEC_PART(n) (n & 0x0000ffff)
-#define FIXP_MULT(n,n2) ((n * n2) >> FP_SHIFT)
-#define FIXP_DIV(n,n2) ((n / n2))
+#define FIXP_MULT(n,n2) ((((int64_t)(n)) * n2) >> FP_SHIFT)
+#define FIXP_DIV(n,n2) (((((int64_t)(n)) << FP_SHIFT) / n2))
 #define FIXEDPT_PI FLOAT_TO_FIXP(PI)
 #define FIXEDPT_HALF_PI FLOAT_TO_FIXP(PI/2)
 
