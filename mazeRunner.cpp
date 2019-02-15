@@ -244,6 +244,14 @@ void processInput(GameStateMaze* gameStateMaze, byte buttonVals) {
 
 void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	displayClear(screenBuff, 1, false);
+	
+	Dimensions floor;
+	floor.x = 0;
+	floor.y = screenBuff->HEIGHT/2;
+	floor.height = screenBuff->HEIGHT-floor.y;
+	floor.width = screenBuff->WIDTH;
+
+	drawBlock(screenBuff, floor, true);
 
 	for (int x = 0; x < screenBuff->WIDTH; x++)
 	{
@@ -345,11 +353,35 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		int pattern = worldMap[FIXP_TO_INT(fmapX)][FIXP_TO_INT(fmapY)] - 1;
 
 		//draw the pixels of the stripe as a vertical line
-		if (pattern == 80) {
-			drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
+		if (pattern < 5) {
+			// drawVertLine(screenBuff, x, drawStart, drawEnd - drawStart, true, pattern);
+			FIXPOINT fwallX; //where exactly the wall was hit
+
+			if (side == 0) {
+				fwallX = (FIXP_MULT(fperpWallDist, frayDirY)) + fposY;
+			}
+			else {
+				fwallX = (FIXP_MULT(fperpWallDist, frayDirX)) + fposX;
+			}   
+
+			fwallX = FIXP_DEC_PART((fwallX));
+
+			//x coordinate on the texture
+			int ftexX = FIXP_TO_INT(fwallX * wall_width);
+			if (side == 0 && frayDirX > 0) ftexX = wall_width - 1 - ftexX;
+			if (side == 1 && frayDirY < 0) ftexX = wall_width - 1 - ftexX;
+
+			for (int y = drawStart; y < drawEnd; y++)
+			{
+				int d = y * 256 - wall_height * 128 + lineHeight * 128;  //256 and 128 factors to avoid floats
+				// TODO: avoid the division to speed this up
+				int texY = ((d * wall_width) / lineHeight) / 256;
+				bool color = wall_image[ftexX + wall_height * texY];
+				screenBuff->consoleBuffer[x + y * screenBuff->WIDTH] = color;
+			}
+
 		}
 		else {
-// Fixed
 			FIXPOINT fwallX; //where exactly the wall was hit
 
 			if (side == 0) {
