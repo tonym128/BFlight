@@ -17,6 +17,13 @@
 #include "SSD1306Brzo.h"
 #include <ESP8266WiFi.h>
 #include "FS.h"
+
+// Audio
+#include "AudioFileSourceSPIFFS.h"
+#include "AudioFileSourceID3.h"
+#include "AudioGeneratorMP3.h"
+#include "AudioOutputI2SNoDAC.h"
+
 #endif
 
 void gameInit();

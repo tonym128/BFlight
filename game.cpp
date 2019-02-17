@@ -1,3 +1,4 @@
+#define AUDIO
 #include "game.hpp"
 
 #ifdef _WIN32
@@ -146,6 +147,14 @@ void sendToScreen()
 }
 
 #else
+
+#ifdef AUDIO
+AudioGeneratorMP3 *mp3;
+AudioFileSourceSPIFFS *file;
+AudioOutputI2SNoDAC *out;
+AudioFileSourceID3 *id3;
+#endif
+
 int inputVal = 0;
 bool readAnalogSensor(int pin)
 {
@@ -305,6 +314,15 @@ void gameInit() {
 	display.init();
 	display.displayOn();
 	display.flipScreenVertically();
+
+#ifdef AUDIO
+	// Play song
+	file = new AudioFileSourceSPIFFS("/pno-cs.mp3");
+	out = new AudioOutputI2SNoDAC();
+	mp3 = new AudioGeneratorMP3();
+	mp3->begin(id3, out);
+#endif
+
 #endif
 }
 
@@ -375,7 +393,15 @@ void gameLoop()
 #ifdef FPS // Define this to show the FPS for the game
 	drawFPS(&screenBuff);
 #endif
+#ifdef AUDIO
+#ifdef ARDUINO
+	if (mp3->isRunning()) {
+    if (!mp3->loop()) mp3->stop();
+#endif // ARDUINO
+#endif // AUDIO
+
 	sendToScreen();
+
 	updateMinTime(33);
 }
 
