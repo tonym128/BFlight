@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #elif __linux
-#else
+#elif ARDUINO
 SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */
@@ -145,7 +145,7 @@ void sendToScreen()
 	}
 }
 
-#else
+#elif ARDUINO
 int inputVal = 0;
 bool readAnalogSensor(int pin)
 {
@@ -271,7 +271,7 @@ void gameInit() {
 	raw();
 	noecho();
 	nodelay(stdscr, TRUE);
-#else
+#elif ARDUINO
 	/* shift in */
 	if (analog)
 	{

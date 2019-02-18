@@ -1,6 +1,6 @@
 #ifndef _GAME_H
 #define _GAME_H
-// #define FPS // Define this to show the FPS for the game
+#define FPS // Define this to show the FPS for the game
 
 #include "gameCommon.hpp"
 #include "bsideFly.hpp"
@@ -12,7 +12,7 @@
 #ifdef _WIN32
 #elif __linux
 #include <ncurses.h>
-#else
+#elif ARDUINO
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
 #include <ESP8266WiFi.h>
