@@ -492,7 +492,7 @@ void calcFPS()
 void drawFPS(ScreenBuff *screenBuff)
 {
 	char fpsString[17];
-	sprintf(fpsString, "%3.2f FPS", (1.0f / currentFPS()) * 1000.0f);
+	sprintf(fpsString, "%3.2f %d", (1.0f / currentFPS()) * 1000.0f,ESP.getFreeHeap());
 	drawString(screenBuff, fpsString, 0, screenBuff->HEIGHT - 8, true);
 }
 
@@ -521,7 +521,6 @@ void initTime()
 void updateMinTime(int sleepMiliseconds)
 {
 	setCurrentTime();
-
 	if (currentTime - frameTime < sleepMiliseconds)
 	{
 #ifdef _WIN32
