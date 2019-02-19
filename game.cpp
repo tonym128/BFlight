@@ -1,5 +1,10 @@
 // #define AUDIO
-#define SDL
+#ifdef __linux
+  #ifdef SDL2_FOUND
+    #define SDL
+  #endif
+#endif
+
 #include "game.hpp"
 
 #ifdef _WIN32
