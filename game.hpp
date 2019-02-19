@@ -1,6 +1,6 @@
 #ifndef _GAME_H
 #define _GAME_H
-// #define FPS // Define this to show the FPS for the game
+#define FPS // Define this to show the FPS for the game
 
 #include "gameCommon.hpp"
 #include "bsideFly.hpp"
@@ -17,6 +17,14 @@
 #include "SSD1306Brzo.h"
 #include <ESP8266WiFi.h>
 #include "FS.h"
+
+// Audio
+#ifdef AUDIO
+#include "AudioFileSourceSPIFFS.h"
+#include "AudioGeneratorWAV.h"
+#include "AudioOutputI2SNoDAC.h"
+
+#endif //AUDIO
 #endif
 
 void gameInit();
