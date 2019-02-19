@@ -326,6 +326,7 @@ void gameInit()
 {
 #ifdef _WIN32
 #elif __linux
+#ifdef SDL
   SDL_Init(SDL_INIT_VIDEO);
   window = SDL_CreateWindow(
       "ESP8266Gamer",
@@ -341,6 +342,19 @@ void gameInit()
   SDL_RenderPresent(renderer);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
   SDL_RenderClear(renderer);
+#elif
+    setlocale(LC_ALL, "");
+    initscr();
+    start_color();
+
+    init_pair(3, COLOR_YELLOW, COLOR_WHITE);
+
+    curs_set(FALSE);
+    raw();
+    noecho();
+    nodelay(stdscr, TRUE);
+
+#endif // SDL
 
 #elif ARDUINO
   /* shift in */
