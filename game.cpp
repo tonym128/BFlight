@@ -1,11 +1,13 @@
 // #define AUDIO
+#define SDL
 #include "game.hpp"
 
 #ifdef _WIN32
 #elif __linux
+#ifdef SDL
 SDL_Renderer *renderer;
 SDL_Window *window;
-
+#endif //SDL
 #elif ARDUINO
 SSD1306Brzo display(0x3c, D1, D4);
 
@@ -95,6 +97,7 @@ void sendToScreen()
 #elif __linux
 byte getReadShift()
 {
+#ifdef SDL
   SDL_Event event;
 
   byte buttonVals = 0;
@@ -117,13 +120,47 @@ byte getReadShift()
   if (keystate[SDL_SCANCODE_D])
     buttonVals = buttonVals | (1 << P2_Right);
   if (keystate[SDL_SCANCODE_Q])
+    SDL_DestroyWindow(window);
     exit(0);
+#else
+switch (getch())
+  {
+    case 68: // key left
+      buttonVals = buttonVals | (1 << P1_Left);
+      break;
+    case 65: // key up
+      buttonVals = buttonVals | (1 << P1_Top);
+      break;
+    case 67: // key right
+      buttonVals = buttonVals | (1 << P1_Right);
+      break;
+    case 66: // key down
+      buttonVals = buttonVals | (1 << P1_Bottom);
+      break;
+    case 'd':
+      buttonVals = buttonVals | (1 << P2_Right);
+      break;
+    case 's':
+      buttonVals = buttonVals | (1 << P2_Bottom);
+      break;
+    case 'a':
+      buttonVals = buttonVals | (1 << P2_Left);
+      break;
+    case 'w':
+      buttonVals = buttonVals | (1 << P2_Top);
+      break;
+    case 'q':
+      exit(0);
+      break;
+  }
+#endif
 
   return buttonVals;
 }
 
 void sendToScreen()
 {
+#ifdef SDL
   for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
   {
     int x = i % screenBuff.WIDTH;
@@ -140,6 +177,23 @@ void sendToScreen()
     SDL_RenderDrawPoint(renderer, x * 4, y * 4);
   }
   SDL_RenderPresent(renderer);
+#elif
+	for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
+	{
+		int x = i % screenBuff.WIDTH;
+		int y = i / screenBuff.WIDTH;
+		if (screenBuff.consoleBuffer[i])
+		{
+			attron(COLOR_PAIR(3));
+			mvaddch(y, x, ' ');
+			attroff(COLOR_PAIR(3));
+		}
+		else
+		{
+			mvaddch(y, x, ' ');
+		}
+	}
+#endif //SDL
 }
 
 #elif ARDUINO
@@ -272,7 +326,7 @@ void gameInit()
 #elif __linux
   SDL_Init(SDL_INIT_VIDEO);
   window = SDL_CreateWindow(
-      "SDL2Test",
+      "ESP8266Gamer",
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       512,
@@ -448,7 +502,6 @@ int main()
     gameLoop();
   }
 
-  SDL_DestroyWindow(window);
   return 1;
 }
 #else
