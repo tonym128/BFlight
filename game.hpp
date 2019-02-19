@@ -10,7 +10,12 @@
 #include "plasma.hpp"
 
 #ifdef SDL
-#include "SDL2\SDL.h"
+#ifdef _WIN32
+    #include "SDL2\SDL.h"
+#else
+    #include "SDL.h"
+#endif
+
 #undef main
 #endif
 
