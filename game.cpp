@@ -1,18 +1,15 @@
 // #define AUDIO
-#ifdef __linux
-  #ifdef SDL2_FOUND
-    #define SDL
-  #endif
+#ifdef SDL2_FOUND
+  #define SDL
 #endif
 
 #include "game.hpp"
 
-#ifdef _WIN32
-#elif __linux
 #ifdef SDL
 SDL_Renderer *renderer;
 SDL_Window *window;
-#endif //SDL
+#elif _WIN32
+#elif __linux
 #elif ARDUINO
 SSD1306Brzo display(0x3c, D1, D4);
 
@@ -26,9 +23,60 @@ bool analog = true;
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 3;
+int Game = 1;
 
-#ifdef _WIN32
+#ifdef SDL
+byte getReadShift()
+{
+	SDL_Event event;
+
+	byte buttonVals = 0;
+	SDL_PumpEvents();
+	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+	if (keystate[SDL_SCANCODE_UP])
+		buttonVals = buttonVals | (1 << P1_Top);
+	if (keystate[SDL_SCANCODE_DOWN])
+		buttonVals = buttonVals | (1 << P1_Bottom);
+	if (keystate[SDL_SCANCODE_LEFT])
+		buttonVals = buttonVals | (1 << P1_Left);
+	if (keystate[SDL_SCANCODE_RIGHT])
+		buttonVals = buttonVals | (1 << P1_Right);
+	if (keystate[SDL_SCANCODE_W])
+		buttonVals = buttonVals | (1 << P2_Top);
+	if (keystate[SDL_SCANCODE_A])
+		buttonVals = buttonVals | (1 << P2_Left);
+	if (keystate[SDL_SCANCODE_S])
+		buttonVals = buttonVals | (1 << P2_Bottom);
+	if (keystate[SDL_SCANCODE_D])
+		buttonVals = buttonVals | (1 << P2_Right);
+	if (keystate[SDL_SCANCODE_Q]) {
+		SDL_DestroyWindow(window);
+		exit(0);
+	}
+
+	return buttonVals;
+}
+
+void sendToScreen()
+{
+	for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
+	{
+		int x = i % screenBuff.WIDTH;
+		int y = i / screenBuff.WIDTH;
+		if (screenBuff.consoleBuffer[i])
+		{
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+		}
+		else
+		{
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+		}
+
+		SDL_RenderDrawPoint(renderer, x * 4, y * 4);
+	}
+	SDL_RenderPresent(renderer);
+}
+#elif _WIN32
 COORD charBufSize;
 COORD characterPos;
 SMALL_RECT writeArea;
@@ -100,58 +148,6 @@ void sendToScreen()
 }
 
 #elif __linux
-#ifdef SDL
-byte getReadShift()
-{
-  SDL_Event event;
-
-  byte buttonVals = 0;
-  SDL_PumpEvents();
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_UP])
-    buttonVals = buttonVals | (1 << P1_Top);
-  if (keystate[SDL_SCANCODE_DOWN])
-    buttonVals = buttonVals | (1 << P1_Bottom);
-  if (keystate[SDL_SCANCODE_LEFT])
-    buttonVals = buttonVals | (1 << P1_Left);
-  if (keystate[SDL_SCANCODE_RIGHT])
-    buttonVals = buttonVals | (1 << P1_Right);
-  if (keystate[SDL_SCANCODE_W])
-    buttonVals = buttonVals | (1 << P2_Top);
-  if (keystate[SDL_SCANCODE_A])
-    buttonVals = buttonVals | (1 << P2_Left);
-  if (keystate[SDL_SCANCODE_S])
-    buttonVals = buttonVals | (1 << P2_Bottom);
-  if (keystate[SDL_SCANCODE_D])
-    buttonVals = buttonVals | (1 << P2_Right);
-  if (keystate[SDL_SCANCODE_Q]) {
-    SDL_DestroyWindow(window);
-    exit(0);
-  }
-
-  return buttonVals;
-}
-
-void sendToScreen()
-{
-  for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
-  {
-    int x = i % screenBuff.WIDTH;
-    int y = i / screenBuff.WIDTH;
-    if (screenBuff.consoleBuffer[i])
-    {
-      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    }
-    else
-    {
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    }
-
-    SDL_RenderDrawPoint(renderer, x * 4, y * 4);
-  }
-  SDL_RenderPresent(renderer);
-}
-#else //NO SDL
 byte getReadShift() {
 	byte buttonVals = 0;
 
@@ -201,8 +197,6 @@ void sendToScreen() {
 	  }
   }
 }
-#endif //SDL
-
 #elif ARDUINO
 #ifdef AUDIO
 AudioGeneratorWAV *wav;
@@ -329,25 +323,24 @@ void showLogo(const bool logo[])
 
 void gameInit()
 {
-#ifdef _WIN32
-#elif __linux
 #ifdef SDL
-  SDL_Init(SDL_INIT_VIDEO);
-  window = SDL_CreateWindow(
-      "ESP8266Gamer",
-      SDL_WINDOWPOS_UNDEFINED,
-      SDL_WINDOWPOS_UNDEFINED,
-      512,
-      256,
-      0);
+	SDL_Init(SDL_INIT_VIDEO);
+	window = SDL_CreateWindow(
+		"ESP8266Gamer",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		512,
+		256,
+		0);
 
-  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderClear(renderer);
-  SDL_RenderPresent(renderer);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-  SDL_RenderClear(renderer);
-#else
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+#elif _WIN32
+#elif __linux
     setlocale(LC_ALL, "");
     initscr();
     start_color();
@@ -358,9 +351,6 @@ void gameInit()
     raw();
     noecho();
     nodelay(stdscr, TRUE);
-
-#endif // SDL
-
 #elif ARDUINO
   /* shift in */
   if (analog)

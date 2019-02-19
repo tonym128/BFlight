@@ -15,7 +15,11 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64",
             "configurationProvider": "vector-of-bool.cmake-tools",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "variables": [{
+                "name": "CMAKE_TOOLCHAIN_FILE",
+                "value": "$env:userprofile\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+              }]
         }
     ],
     "version": 4

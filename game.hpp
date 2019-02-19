@@ -9,10 +9,16 @@
 #include "mazeRunner.hpp"
 #include "plasma.hpp"
 
+#ifdef SDL
+#include "SDL2\SDL.h"
+#undef main
+#endif
+
 #ifdef _WIN32
 #elif __linux
-#include <SDL2/SDL.h>
-#include <ncurses.h>
+	#ifndef SDL
+	#include <ncurses.h>
+	#endif
 #elif ARDUINO
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
