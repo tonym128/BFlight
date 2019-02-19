@@ -28,8 +28,6 @@ int Game = 1;
 #ifdef SDL
 byte getReadShift()
 {
-	SDL_Event event;
-
 	byte buttonVals = 0;
 	SDL_PumpEvents();
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
