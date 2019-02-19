@@ -11,6 +11,7 @@
 
 #ifdef _WIN32
 #elif __linux
+#include "SDL2/SDL.h"
 #include <ncurses.h>
 #elif ARDUINO
 #include <brzo_i2c.h>

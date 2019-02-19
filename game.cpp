@@ -1,14 +1,17 @@
-#define AUDIO
+// #define AUDIO
 #include "game.hpp"
 
 #ifdef _WIN32
 #elif __linux
+SDL_Renderer *renderer;
+SDL_Window *window;
+
 #elif ARDUINO
 SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */
-const int pinShcp = 15;		//Clock
-const int pinStcp = 0;		//Latch
+const int pinShcp = 15;   //Clock
+const int pinStcp = 0;    //Latch
 const int pinDataIn = 16; // Data
 bool analog = true;
 #endif
@@ -16,7 +19,7 @@ bool analog = true;
 ScreenBuff screenBuff;
 byte buttonVals;
 
-int Game = 1;
+int Game = 3;
 
 #ifdef _WIN32
 COORD charBufSize;
@@ -92,38 +95,29 @@ void sendToScreen()
 #elif __linux
 byte getReadShift()
 {
-  byte buttonVals = 0;
+  SDL_Event event;
 
-  switch (getch())
-  {
-    case 68: // key left
-      buttonVals = buttonVals | (1 << P1_Left);
-      break;
-    case 65: // key up
-      buttonVals = buttonVals | (1 << P1_Top);
-      break;
-    case 67: // key right
-      buttonVals = buttonVals | (1 << P1_Right);
-      break;
-    case 66: // key down
-      buttonVals = buttonVals | (1 << P1_Bottom);
-      break;
-    case 'd':
-      buttonVals = buttonVals | (1 << P2_Right);
-      break;
-    case 's':
-      buttonVals = buttonVals | (1 << P2_Bottom);
-      break;
-    case 'a':
-      buttonVals = buttonVals | (1 << P2_Left);
-      break;
-    case 'w':
-      buttonVals = buttonVals | (1 << P2_Top);
-      break;
-    case 'q':
-      exit(0);
-      break;
-  }
+  byte buttonVals = 0;
+  SDL_PumpEvents();
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  if (keystate[SDL_SCANCODE_UP])
+    buttonVals = buttonVals | (1 << P1_Top);
+  if (keystate[SDL_SCANCODE_DOWN])
+    buttonVals = buttonVals | (1 << P1_Bottom);
+  if (keystate[SDL_SCANCODE_LEFT])
+    buttonVals = buttonVals | (1 << P1_Left);
+  if (keystate[SDL_SCANCODE_RIGHT])
+    buttonVals = buttonVals | (1 << P1_Right);
+  if (keystate[SDL_SCANCODE_W])
+    buttonVals = buttonVals | (1 << P2_Top);
+  if (keystate[SDL_SCANCODE_A])
+    buttonVals = buttonVals | (1 << P2_Left);
+  if (keystate[SDL_SCANCODE_S])
+    buttonVals = buttonVals | (1 << P2_Bottom);
+  if (keystate[SDL_SCANCODE_D])
+    buttonVals = buttonVals | (1 << P2_Right);
+  if (keystate[SDL_SCANCODE_Q])
+    exit(0);
 
   return buttonVals;
 }
@@ -136,15 +130,16 @@ void sendToScreen()
     int y = i / screenBuff.WIDTH;
     if (screenBuff.consoleBuffer[i])
     {
-      attron(COLOR_PAIR(3));
-      mvaddch(y, x, ' ');
-      attroff(COLOR_PAIR(3));
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     }
     else
     {
-      mvaddch(y, x, ' ');
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     }
+
+    SDL_RenderDrawPoint(renderer, x * 4, y * 4);
   }
+  SDL_RenderPresent(renderer);
 }
 
 #elif ARDUINO
@@ -168,19 +163,23 @@ bool readAnalogSensor(int pin)
 byte getReadShiftAnalog()
 {
   byte buttonVals = 0;
-  if (readAnalogSensor(D6)) {
+  if (readAnalogSensor(D6))
+  {
     Serial.println("[.] Button Left pressed!");
     buttonVals = buttonVals | (1 << P1_Left);
   }
-  if (readAnalogSensor(D8)) {
+  if (readAnalogSensor(D8))
+  {
     Serial.println("[.] Button Up pressed!");
     buttonVals = buttonVals | (1 << P1_Top);
   }
-  if (readAnalogSensor(D5)) {
+  if (readAnalogSensor(D5))
+  {
     Serial.println("[.] Button Right pressed!");
     buttonVals = buttonVals | (1 << P1_Right);
   }
-  if (readAnalogSensor(D7)) {
+  if (readAnalogSensor(D7))
+  {
     Serial.println("[.] Button Down pressed!");
     buttonVals = buttonVals | (1 << P1_Bottom);
   }
@@ -253,7 +252,8 @@ void sendToScreen()
 }
 #endif
 
-void showLogo(const bool logo[]) {
+void showLogo(const bool logo[])
+{
   Dimensions dim;
   dim.height = logo_height;
   dim.width = logo_width;
@@ -266,19 +266,26 @@ void showLogo(const bool logo[]) {
   updateMinTime(4000);
 }
 
-void gameInit() {
+void gameInit()
+{
 #ifdef _WIN32
 #elif __linux
-  setlocale(LC_ALL, "");
-  initscr();
-  start_color();
+  SDL_Init(SDL_INIT_VIDEO);
+  window = SDL_CreateWindow(
+      "SDL2Test",
+      SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_UNDEFINED,
+      512,
+      256,
+      0);
 
-  init_pair(3, COLOR_YELLOW, COLOR_WHITE);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer);
+  SDL_RenderPresent(renderer);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+  SDL_RenderClear(renderer);
 
-  curs_set(FALSE);
-  raw();
-  noecho();
-  nodelay(stdscr, TRUE);
 #elif ARDUINO
   /* shift in */
   if (analog)
@@ -329,21 +336,21 @@ void gameSetup()
 {
   switch (Game)
   {
-    case 1:
-      showLogo(logo_fly);
-      break;
-    case 2:
-      showLogo(logo_drive);
-      break;
-    case 3:
-      showLogo(logo_maze);
-      mazeRunnerInit();
-      break;
-    case 4:
-      rotoZoomerInit();
-      break;
-    case 5:
-      break;
+  case 1:
+    showLogo(logo_fly);
+    break;
+  case 2:
+    showLogo(logo_drive);
+    break;
+  case 3:
+    showLogo(logo_maze);
+    mazeRunnerInit();
+    break;
+  case 4:
+    rotoZoomerInit();
+    break;
+  case 5:
+    break;
   }
 }
 
@@ -354,38 +361,38 @@ void gameLoop()
 
   switch (Game)
   {
-    case 1:
-      if (flyGameLoop(&screenBuff, buttonVals))
-      {
-        Game = 2;
-        gameSetup();
-      }
-      break;
-    case 2:
-      if (driveGameLoop(&screenBuff, buttonVals))
-      {
-        Game = 5;
-        gameSetup();
-      }
-      break;
-    case 3:
-      if (mazeRunnerLoop(&screenBuff, buttonVals))
-      {
-        Game = 4;
-        gameSetup();
-      }
-      break;
-    case 4:
-      rotoZoomerLoop(&screenBuff, buttonVals);
-      break;
-    case 5:
-      if (plasmaLoop(&screenBuff, buttonVals))
-      {
-        Game = 3;
-        gameSetup();
-      }
+  case 1:
+    if (flyGameLoop(&screenBuff, buttonVals))
+    {
+      Game = 2;
+      gameSetup();
+    }
+    break;
+  case 2:
+    if (driveGameLoop(&screenBuff, buttonVals))
+    {
+      Game = 5;
+      gameSetup();
+    }
+    break;
+  case 3:
+    if (mazeRunnerLoop(&screenBuff, buttonVals))
+    {
+      Game = 4;
+      gameSetup();
+    }
+    break;
+  case 4:
+    rotoZoomerLoop(&screenBuff, buttonVals);
+    break;
+  case 5:
+    if (plasmaLoop(&screenBuff, buttonVals))
+    {
+      Game = 3;
+      gameSetup();
+    }
 
-      break;
+    break;
   }
 
   calcFPS();
@@ -394,26 +401,30 @@ void gameLoop()
 #endif
 #ifdef AUDIO
 #ifdef ARDUINO
-  if (wav->isRunning()) {
-    if (!wav->loop()) wav->stop();
-    if (processKey(buttonVals,P1_Top)) {
+  if (wav->isRunning())
+  {
+    if (!wav->loop())
+      wav->stop();
+    if (processKey(buttonVals, P1_Top))
+    {
       wav->stop();
     }
   }
-  else {
-    if (processKey(buttonVals,P1_Bottom)) {
-       //file = new AudioFileSourceSPIFFS("/carStart.wav");
-       //out = new AudioOutputI2SNoDAC();
-       //wav = new AudioGeneratorWAV();
-       wav->begin(file, out);
-   }
+  else
+  {
+    if (processKey(buttonVals, P1_Bottom))
+    {
+      //file = new AudioFileSourceSPIFFS("/carStart.wav");
+      //out = new AudioOutputI2SNoDAC();
+      //wav = new AudioGeneratorWAV();
+      wav->begin(file, out);
+    }
   }
 #endif // ARDUINO
 #endif // AUDIO
 
   sendToScreen();
   updateMinTime(33);
-
 }
 
 #ifdef _WIN32
@@ -437,6 +448,7 @@ int main()
     gameLoop();
   }
 
+  SDL_DestroyWindow(window);
   return 1;
 }
 #else
