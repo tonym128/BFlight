@@ -492,7 +492,13 @@ void calcFPS()
 void drawFPS(ScreenBuff *screenBuff)
 {
 	char fpsString[17];
+	#ifdef _WIN32
+	sprintf(fpsString, "%3.2f FPS", (1.0f / currentFPS()) * 1000.0f);
+	#elif __linux
+	sprintf(fpsString, "%3.2f FPS", (1.0f / currentFPS()) * 1000.0f);
+	#elif ARDUINO
 	sprintf(fpsString, "%3.2f %d", (1.0f / currentFPS()) * 1000.0f,ESP.getFreeHeap());
+	#endif
 	drawString(screenBuff, fpsString, 0, screenBuff->HEIGHT - 8, true);
 }
 
@@ -506,7 +512,7 @@ void setCurrentTime()
 	currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 #elif __linux
 	currentTime = time(nullptr);
-#else
+#elif ARDUINO
 	currentTime = millis();
 #endif
 }
@@ -530,7 +536,7 @@ void updateMinTime(int sleepMiliseconds)
 		ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
 		ts.tv_nsec = (sleepMiliseconds - (currentTime - frameTime)) % 1000 * 1000000;
 		nanosleep(&ts, NULL);
-#else
+#elif ARDUINO
 		delay(sleepMiliseconds - (currentTime - frameTime));
 #endif
 	}

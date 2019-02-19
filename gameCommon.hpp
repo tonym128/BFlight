@@ -28,7 +28,7 @@
 //typedef uint32_t DWORD;   // DWORD = unsigned 32 bit value
 //typedef uint16_t WORD;    // WORD = unsigned 16 bit value
 typedef uint8_t byte;     // BYTE = unsigned 8 bit value
-#else
+#elif ARDUINO
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
 #endif
@@ -197,7 +197,7 @@ int getElapsedSeconds();
 
   static time_t fpsTimer1 = time(nullptr);
   static time_t fpsTimer2 = time(nullptr);
-#else
+#elif ARDUINO
 	static int frameTime = millis();
 	static int startTime = millis();
 	static int currentTime = millis();

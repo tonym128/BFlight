@@ -3,7 +3,7 @@
 
 #ifdef _WIN32
 #elif __linux
-#else
+#elif ARDUINO
 SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */
@@ -88,6 +88,7 @@ void sendToScreen()
 
   WriteConsoleOutputA(wHnd, console, charBufSize, characterPos, &writeArea);
 }
+
 #elif __linux
 byte getReadShift()
 {
@@ -146,8 +147,7 @@ void sendToScreen()
   }
 }
 
-#else
-
+#elif ARDUINO
 #ifdef AUDIO
 AudioGeneratorWAV *wav;
 AudioFileSourceSPIFFS *file;
@@ -279,7 +279,7 @@ void gameInit() {
   raw();
   noecho();
   nodelay(stdscr, TRUE);
-#else
+#elif ARDUINO
   /* shift in */
   if (analog)
   {

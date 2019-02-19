@@ -12,7 +12,7 @@
 #ifdef _WIN32
 #elif __linux
 #include <ncurses.h>
-#else
+#elif ARDUINO
 #include <brzo_i2c.h>
 #include "SSD1306Brzo.h"
 #include <ESP8266WiFi.h>
