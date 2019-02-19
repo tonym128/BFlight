@@ -347,7 +347,7 @@ void gameInit()
   SDL_RenderPresent(renderer);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
   SDL_RenderClear(renderer);
-#elif
+#else
     setlocale(LC_ALL, "");
     initscr();
     start_color();
