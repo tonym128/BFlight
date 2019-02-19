@@ -15,7 +15,7 @@
 	#include "SDL_Main.h"
 #else
     #include "SDL.h"
-	#include "SDL_Main.h"
+	#include "SDL_main.h"
 #endif
 #endif
 
