@@ -491,7 +491,7 @@ void gameLoop()
 }
 
 #ifdef _WIN32
-int main()
+int main(int argc, char*argv[])
 {
   gameInit();
   gameSetup();
@@ -502,7 +502,7 @@ int main()
   return 1;
 }
 #elif __linux
-int main()
+int main(int argc, char*argv[])
 {
   gameInit();
   gameSetup();

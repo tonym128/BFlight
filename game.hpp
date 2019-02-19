@@ -12,11 +12,11 @@
 #ifdef SDL
 #ifdef _WIN32
     #include "SDL2\SDL.h"
+	#include "SDL_Main.h"
 #else
     #include "SDL.h"
+	#include "SDL_Main.h"
 #endif
-
-#undef main
 #endif
 
 #ifdef _WIN32
