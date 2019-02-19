@@ -337,6 +337,11 @@ void gameInit()
 	SDL_RenderPresent(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
+
+  #ifdef _WIN32
+  HWND hWnd = GetConsoleWindow();
+  ShowWindow(hWnd, SW_HIDE);
+  #endif
 #elif _WIN32
 #elif __linux
     setlocale(LC_ALL, "");
@@ -487,7 +492,7 @@ void gameLoop()
 #endif // AUDIO
 
   sendToScreen();
-  updateMinTime(33);
+  updateMinTime(50);
 }
 
 #ifdef _WIN32
