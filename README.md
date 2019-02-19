@@ -5,11 +5,16 @@ Hardware was originally inspired by the BSides Cape Town 2016 Badge and original
 
 https://github.com/AndrewMohawk/BSidesBadge2016/branches
 
-For Arduino, I was using SSD1306 Brzo libraries and I think that's it.
+For Arduino, I was using SSD1306 Brzo as well as ESP8266AUDIO and ESP8266SAM libraries and I think that's it. You will need to install the two audio libraries manually unfortunately. They can be located here https://github.com/earlephilhower/ESP8266Audio and 
+https://github.com/earlephilhower/ESP8266SAM
 
-For linux build you need ncurses-dev , cmake and gcc
-Most systems can install this with a 'sudo apt-get install ncurses-dev'
+For linux build you need cmake, gcc and either SDL or ncurses-dev
 
-For Windows build you will need cmake as well as Visual Studio and optionally Visual Studio Code.
+SDL - 'sudo apt-get install libsdl2-devel'
+NCurses - Most systems can install this with a 'sudo apt-get install ncurses-dev'
+
+For Windows console build you will need cmake as well as Visual Studio and optionally Visual Studio Code.
+Console - Should require nothing additional.
+SDL - I found https://github.com/Microsoft/vcpkg invaluable, the example install is even for SDL2.
 
 There's no tests, tut - tut, but I did a lot of play testing :)
