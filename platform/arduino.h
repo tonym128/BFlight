@@ -17,7 +17,6 @@ SSD1306Brzo display(0x3c, D1, D4);
 const int pinShcp = 15;   //Clock
 const int pinStcp = 0;    //Latch
 const int pinDataIn = 16; // Data
-bool analog = true;
 
 #ifdef AUDIO
 AudioGeneratorWAV *wav;
@@ -100,10 +99,11 @@ byte getReadShiftDigital()
 
 byte getReadShift()
 {
-  if (analog)
+#ifdef ANALOG
     return getReadShiftAnalog();
-
+#else
   return getReadShiftDigital();
+#endif
 }
 
 void sendToScreen()
@@ -128,10 +128,9 @@ void sendToScreen()
 }
 
 void gameInit()
-
+{
   /* shift in */
-  if (analog)
-  {
+#ifdef ANALOG
     pinMode(D5, OUTPUT);
     pinMode(D6, OUTPUT);
     pinMode(D7, OUTPUT);
@@ -140,9 +139,7 @@ void gameInit()
     digitalWrite(D6, LOW);
     digitalWrite(D7, LOW);
     digitalWrite(D8, LOW);
-  }
-  else
-  {
+#else 
     pinMode(pinStcp, OUTPUT);
     pinMode(pinShcp, OUTPUT);
     pinMode(pinDataIn, INPUT);
@@ -151,7 +148,7 @@ void gameInit()
     pinMode(latchPin, OUTPUT);
     pinMode(dataPin, OUTPUT);
     pinMode(clockPin, OUTPUT);
-  }
+#endif
 
   // Startup SPIFFS Storage
   SPIFFS.begin();
