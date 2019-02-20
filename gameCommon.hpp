@@ -33,6 +33,11 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #include "SSD1306.h" // Screen Library
 #endif
 
+#ifdef __EMSCRIPTEN__
+typedef int byte;
+#define SDL
+#endif
+
 #include <vector>
 
 #define PI 3.14159265
@@ -204,6 +209,13 @@ int getElapsedSeconds();
 
 	static int fpsTimer1 = millis();
 	static int fpsTimer2 = millis();
+#elif __EMSCRIPTEN__
+  static time_t frameTime = time(nullptr);
+  static time_t startTime = time(nullptr);
+  static time_t currentTime = time(nullptr);
+
+  static time_t fpsTimer1 = time(nullptr);
+  static time_t fpsTimer2 = time(nullptr);
 #endif
 
 #endif // !GAMECOMMON_H

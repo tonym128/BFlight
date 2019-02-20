@@ -131,6 +131,7 @@ void gameInit()
 {
   /* shift in */
 #ifdef ANALOG
+    // PINS and Analog buttons
     pinMode(D5, OUTPUT);
     pinMode(D6, OUTPUT);
     pinMode(D7, OUTPUT);
@@ -140,6 +141,7 @@ void gameInit()
     digitalWrite(D7, LOW);
     digitalWrite(D8, LOW);
 #else 
+    // BSide Cape Town 2016 Badge
     pinMode(pinStcp, OUTPUT);
     pinMode(pinShcp, OUTPUT);
     pinMode(pinDataIn, INPUT);
@@ -158,6 +160,7 @@ void gameInit()
   Serial.println("Startup");
 
 #ifdef AUDIO
+  // TODO audioInit
   file = new AudioFileSourceSPIFFS("/carStart.wav");
   out = new AudioOutputI2SNoDAC();
   wav = new AudioGeneratorWAV();

@@ -1,9 +1,15 @@
 // #define AUDIO
 // #define FPS
-#define ANALOG
+#define ANALOG 1
 
 #ifdef SDL2_FOUND
-  #define SDL
+  #define SDL 1
+#endif
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+typedef int byte;
+#define SDL
 #endif
 
 #include "game.hpp"
@@ -11,7 +17,9 @@ ScreenBuff screenBuff;
 byte buttonVals;
 int Game = 1;
 
-#ifdef SDL
+#ifdef __EMSCRIPTEN__
+  #include "platform/plat_emscripten.h"
+#elif SDL
   #include "platform/sdl.h"
 #elif _WIN32
   #include "platform/win32.h"

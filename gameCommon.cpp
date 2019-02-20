@@ -70,6 +70,8 @@ void rotateObject(Dimensions dim, double angle, double zoom, const bool *object,
 	FIXPOINT cosmax;
 	FIXPOINT sinmax;
 
+	//FIXPOINT sinma = FIXP_MULT(FIXPOINT_SIN(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
+	//FIXPOINT cosma = FIXP_MULT(FIXPOINT_COS(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
 	FIXPOINT sinma = FLOAT_TO_FIXP(sin(-angle) * zoom);
 	FIXPOINT cosma = FLOAT_TO_FIXP(cos(-angle) * zoom);
 
@@ -475,9 +477,12 @@ void calcFPS()
 #elif __linux
 	fpsTimer2 = fpsTimer1;
 	fpsTimer1 = time(nullptr);
-#else
+#elif ARDUINO
 	fpsTimer2 = fpsTimer1;
 	fpsTimer1 = millis();
+#elif __EMSCRIPTEN__
+	fpsTimer2 = fpsTimer1;
+	fpsTimer1 = time(nullptr);
 #endif
 
 	// Calc Diff MS
