@@ -15,6 +15,16 @@
 #include <stdint.h>
 #include <math.h> // Added for GCC
 #define localtime_r(_Time, _Tm) localtime_s(_Tm, _Time)
+#elif __EMSCRIPTEN__
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <ctime>
+#include <cwchar>
+#include <stdint.h>
+#include <string.h>
+#include <math.h>
+typedef int byte;
 #elif __linux
 #include <iostream>
 #include <chrono>
@@ -31,11 +41,6 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #elif ARDUINO
 #include <Arduino.h>  // for type definitions
 #include "SSD1306.h" // Screen Library
-#endif
-
-#ifdef __EMSCRIPTEN__
-typedef int byte;
-#define SDL
 #endif
 
 #include <vector>
@@ -188,7 +193,14 @@ void updateMinTime(int);
 bool checkTime(int);
 int getElapsedSeconds();
 
-#ifdef _WIN32
+#ifdef __EMSCRIPTEN__
+  static time_t frameTime = time(nullptr);
+  static time_t startTime = time(nullptr);
+  static time_t currentTime = time(nullptr);
+
+  static time_t fpsTimer1 = time(nullptr);
+  static time_t fpsTimer2 = time(nullptr);
+#elif _WIN32
 	static long long frameTime = 0;
 	static long long startTime = 0;
 	static long long currentTime = 0;
@@ -209,13 +221,6 @@ int getElapsedSeconds();
 
 	static int fpsTimer1 = millis();
 	static int fpsTimer2 = millis();
-#elif __EMSCRIPTEN__
-  static time_t frameTime = time(nullptr);
-  static time_t startTime = time(nullptr);
-  static time_t currentTime = time(nullptr);
-
-  static time_t fpsTimer1 = time(nullptr);
-  static time_t fpsTimer2 = time(nullptr);
 #endif
 
 #endif // !GAMECOMMON_H

@@ -1,15 +1,22 @@
-// #define AUDIO
-// #define FPS
+#define FPS 1
 #define ANALOG 1
+// #define AUDIO
 
 #ifdef SDL2_FOUND
   #define SDL 1
+#ifdef _WIN32
+    #include "SDL2\SDL.h"
+	#include "SDL_Main.h"
+#else
+    #include "SDL.h"
+	#include "SDL_main.h"
+#endif
 #endif
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 typedef int byte;
-#define SDL
+#define SDL 1
 #endif
 
 #include "game.hpp"
@@ -40,7 +47,7 @@ void showLogo(const bool logo[])
   drawObject(&screenBuff, dim, logo);
   initTime();
   sendToScreen();
-  updateMinTime(4000);
+  updateMinTime(2000);
 }
 
 void gameSetup()

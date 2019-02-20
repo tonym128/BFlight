@@ -1,11 +1,3 @@
-#ifdef _WIN32
-    #include "SDL2\SDL.h"
-	#include "SDL_Main.h"
-#else
-    #include "SDL.h"
-	#include "SDL_main.h"
-#endif
-
 SDL_Renderer *renderer;
 SDL_Window *window;
 

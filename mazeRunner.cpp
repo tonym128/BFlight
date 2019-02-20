@@ -422,13 +422,13 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 	// Draw Win!
 	if (gameStateMaze->win) {
 		char fps[30];
-		sprintf(fps, "YOU WIN!");
+		//sprintf(fps, "YOU WIN!");
 		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 			drawCharacter(screenBuff, fps[i], 32 + 8 * i, 30);
 		}
 	} else if (getElapsedSeconds() > gameStateMaze->stageTime) {
 		char fps[30];
-		sprintf(fps, "GAME OVER!");
+		//sprintf(fps, "GAME OVER!");
 		for (int i = 0; i < static_cast<int>(strlen(fps)); i++) {
 			drawCharacter(screenBuff, fps[i], 24 + 8 * i, 30);
 		}

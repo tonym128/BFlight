@@ -70,10 +70,13 @@ void rotateObject(Dimensions dim, double angle, double zoom, const bool *object,
 	FIXPOINT cosmax;
 	FIXPOINT sinmax;
 
-	//FIXPOINT sinma = FIXP_MULT(FIXPOINT_SIN(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
-	//FIXPOINT cosma = FIXP_MULT(FIXPOINT_COS(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
+	#ifdef __EMSCRIPTEN__
+	FIXPOINT sinma = FIXP_MULT(FIXPOINT_SIN(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
+	FIXPOINT cosma = FIXP_MULT(FIXPOINT_COS(FLOAT_TO_FIXP(-angle)), FLOAT_TO_FIXP(zoom));
+	#else
 	FIXPOINT sinma = FLOAT_TO_FIXP(sin(-angle) * zoom);
 	FIXPOINT cosma = FLOAT_TO_FIXP(cos(-angle) * zoom);
+	#endif
 
 	int hwidth = dim.width / 2;
 	int hheight = dim.height / 2;
@@ -466,50 +469,52 @@ void calcFPS()
 		fpsItem = 0;
 	}
 
+	fpsTimer2 = fpsTimer1;
 // Get Time
 #ifdef _WIN32
-	fpsTimer2 = fpsTimer1;
 	std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
 	auto now = std::chrono::system_clock::now().time_since_epoch();
 	auto t100ms = std::chrono::milliseconds(100);
 	auto time = now + t100ms;
 	fpsTimer1 = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 #elif __linux
-	fpsTimer2 = fpsTimer1;
 	fpsTimer1 = time(nullptr);
 #elif ARDUINO
 	fpsTimer2 = fpsTimer1;
 	fpsTimer1 = millis();
 #elif __EMSCRIPTEN__
-	fpsTimer2 = fpsTimer1;
 	fpsTimer1 = time(nullptr);
 #endif
 
 	// Calc Diff MS
-	double diff = 0;
-	if ((abs(fpsTimer1) - abs(fpsTimer2)) > 0)
+	double diff = abs(fpsTimer1) - abs(fpsTimer2);
+	if (diff > 0)
 	{
 		// Add Item to Array
-		fpsArray[fpsItem] = INT_TO_FIXP(abs(fpsTimer1) - abs(fpsTimer2));
+		fpsArray[fpsItem] = FLOAT_TO_FIXP(diff);
 	}
 }
 
 void drawFPS(ScreenBuff *screenBuff)
 {
 	char fpsString[17];
-	#ifdef _WIN32
-	sprintf(fpsString, "%3.2f FPS", (1.0f / currentFPS()) * 1000.0f);
+	#ifdef __EMSCRIPTEN__
+	sprintf(fpsString, "%3.2f ms", currentFPS());
+	#elif _WIN32
+	sprintf(fpsString, "%3.2f ms", currentFPS());
 	#elif __linux
-	sprintf(fpsString, "%3.2f FPS", (1.0f / currentFPS()) * 1000.0f);
+	sprintf(fpsString, "%3.2f ms", currentFPS());
 	#elif ARDUINO
-	sprintf(fpsString, "%3.2f %d", (1.0f / currentFPS()) * 1000.0f,ESP.getFreeHeap());
+	sprintf(fpsString, "%3.2f %d", currentFPS(), ESP.getFreeHeap());
 	#endif
 	drawString(screenBuff, fpsString, 0, screenBuff->HEIGHT - 8, true);
 }
 
 void setCurrentTime()
 {
-#ifdef _WIN32
+#ifdef __EMSCRIPTEN__
+	currentTime = time(nullptr);
+#elif _WIN32
 	std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
 	auto now = std::chrono::system_clock::now().time_since_epoch();
 	auto t100ms = std::chrono::milliseconds(100);
@@ -536,6 +541,11 @@ void updateMinTime(int sleepMiliseconds)
 	{
 #ifdef _WIN32
 		std::this_thread::sleep_for(std::chrono::milliseconds(sleepMiliseconds - (currentTime - frameTime)));
+#elif __EMSCRIPTEN__
+		struct timespec ts;
+		ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
+		ts.tv_nsec = (sleepMiliseconds - (currentTime - frameTime)) % 1000 * 1000000;
+		nanosleep(&ts, NULL);
 #elif __linux
 		struct timespec ts;
 		ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
