@@ -1,6 +1,5 @@
 #ifndef _GAME_H
 #define _GAME_H
-#define FPS // Define this to show the FPS for the game
 
 #include "gameCommon.hpp"
 #include "bsideFly.hpp"

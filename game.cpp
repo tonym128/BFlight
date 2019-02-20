@@ -1,4 +1,6 @@
 // #define AUDIO
+// #define FPS
+
 #ifdef SDL2_FOUND
   #define SDL
 #endif
