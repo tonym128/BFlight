@@ -1,3 +1,16 @@
+#include <brzo_i2c.h>
+#include "SSD1306Brzo.h"
+#include <ESP8266WiFi.h>
+#include "FS.h"
+
+// Audio
+#ifdef AUDIO
+#include "AudioFileSourceSPIFFS.h"
+#include "AudioGeneratorWAV.h"
+#include "AudioOutputI2SNoDAC.h"
+
+#endif //AUDIO
+
 SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */

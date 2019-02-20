@@ -1,3 +1,5 @@
+#include <ncurses.h>
+
 byte getReadShift() {
 	byte buttonVals = 0;
 

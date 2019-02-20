@@ -9,36 +9,6 @@
 #include "mazeRunner.hpp"
 #include "plasma.hpp"
 
-#ifdef SDL
-#ifdef _WIN32
-    #include "SDL2\SDL.h"
-	#include "SDL_Main.h"
-#else
-    #include "SDL.h"
-	#include "SDL_main.h"
-#endif
-#endif
-
-#ifdef _WIN32
-#elif __linux
-	#ifndef SDL
-	#include <ncurses.h>
-	#endif
-#elif ARDUINO
-#include <brzo_i2c.h>
-#include "SSD1306Brzo.h"
-#include <ESP8266WiFi.h>
-#include "FS.h"
-
-// Audio
-#ifdef AUDIO
-#include "AudioFileSourceSPIFFS.h"
-#include "AudioGeneratorWAV.h"
-#include "AudioOutputI2SNoDAC.h"
-
-#endif //AUDIO
-#endif
-
 void gameInit();
 void gameSetup();
 void gameLoop();

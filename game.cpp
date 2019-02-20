@@ -9,13 +9,13 @@ byte buttonVals;
 int Game = 1;
 
 #ifdef SDL
-  #include "platform\sdl.h"
+  #include "platform/sdl.h"
 #elif _WIN32
-  #include "platform\win32.h"
+  #include "platform/win32.h"
 #elif __linux
-  #include "platform\linux.h"
+  #include "platform/linux.h"
 #elif ARDUINO
-  #include "platform\arduino.h"
+  #include "platform/arduino.h"
 #endif
 
 void showLogo(const bool logo[])
