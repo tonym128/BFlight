@@ -6,12 +6,12 @@ void gameSleep(int sleepMS) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(sleepMS));
 }
 
-int getTimeInMillis() {
+long getTimeInMillis() {
 	std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
 	auto now = std::chrono::system_clock::now().time_since_epoch();
 	auto t100ms = std::chrono::milliseconds(100);
 	auto time = now + t100ms;
-    return static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(time).count());
+    return static_cast<long>(std::chrono::duration_cast<std::chrono::milliseconds>(time).count());
 }
 
 #elif __EMSCRIPTEN__
@@ -22,7 +22,7 @@ void gameSleep(int sleepMS) {
 		nanosleep(&ts, NULL);
 }
 
-int getTimeInMillis() {
+long getTimeInMillis() {
     long            ms; // Milliseconds
     time_t          s;  // Seconds
     struct timespec spec;
@@ -31,7 +31,7 @@ int getTimeInMillis() {
 
     s  = spec.tv_sec;
     ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
-    return ms;
+    return s*1000 + ms;
 }
 #elif __linux
 void gameSleep(int sleepMS) {
@@ -41,7 +41,7 @@ void gameSleep(int sleepMS) {
 		nanosleep(&ts, NULL);
 }
 
-int getTimeInMillis() {
+long getTimeInMillis() {
     long            ms; // Milliseconds
     time_t          s;  // Seconds
     struct timespec spec;
@@ -50,14 +50,14 @@ int getTimeInMillis() {
 
     s  = spec.tv_sec;
     ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
-    return ms;
+    return s*1000 + ms;
 }
 #elif ARDUINO
-int gameSleep(int sleepMS) {
+void gameSleep(int sleepMS) {
 	delay(sleepMs);
 }
 
-int getTimeInMillis() {
+long getTimeInMillis() {
 	return millis();
 }
 #endif

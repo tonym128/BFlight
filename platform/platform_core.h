@@ -36,11 +36,11 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 #include "SSD1306.h" // Screen Library
 #endif
 
-int getTimeInMillis();
+long getTimeInMillis();
 void gameSleep(int);
 
-static int frameTime = getTimeInMillis();
-static int startTime = getTimeInMillis();
-static int currentTime = getTimeInMillis();
-static int fpsTimer1 = getTimeInMillis();
-static int fpsTimer2 = getTimeInMillis();
+static long frameTime = getTimeInMillis();
+static long startTime = getTimeInMillis();
+static long currentTime = getTimeInMillis();
+static long fpsTimer1 = getTimeInMillis();
+static long fpsTimer2 = getTimeInMillis();
