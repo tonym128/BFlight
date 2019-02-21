@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(bFlight64 VERSION 0.1.0)
 include_directories( ${MY_SOURCE_DIR} )
 
-add_executable(${PROJECT_NAME} game.cpp myfont.cpp gameCommon.cpp bsideFly.cpp driveGame.cpp rotoZoomer.cpp mazeRunner.cpp mazeGenerator.cpp plasma.cpp)
+add_executable(${PROJECT_NAME} game.cpp myfont.cpp gameCommon.cpp bsideFly.cpp driveGame.cpp rotoZoomer.cpp mazeRunner.cpp mazeGenerator.cpp plasma.cpp platform/platform_core.cpp)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})

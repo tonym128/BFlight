@@ -4,7 +4,7 @@
 
 #ifdef SDL2_FOUND
   #define SDL 1
-#ifdef _WIN32
+  #ifdef _WIN32
     #include "SDL2\SDL.h"
 	#include "SDL_Main.h"
 #else

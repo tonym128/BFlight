@@ -70,7 +70,7 @@ void gameInit()
 
   #ifdef _WIN32
   HWND hWnd = GetConsoleWindow();
-  ShowWindow(hWnd, SW_HIDE);
+  //ShowWindow(hWnd, SW_HIDE);
   #endif
 }
 

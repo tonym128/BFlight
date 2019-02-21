@@ -470,42 +470,24 @@ void calcFPS()
 	}
 
 	fpsTimer2 = fpsTimer1;
-// Get Time
-#ifdef _WIN32
-	std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
-	auto now = std::chrono::system_clock::now().time_since_epoch();
-	auto t100ms = std::chrono::milliseconds(100);
-	auto time = now + t100ms;
-	fpsTimer1 = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-#elif __linux
-	fpsTimer1 = time(nullptr);
-#elif ARDUINO
-	fpsTimer2 = fpsTimer1;
-	fpsTimer1 = millis();
-#elif __EMSCRIPTEN__
-	fpsTimer1 = time(nullptr);
-#endif
+	fpsTimer1 = getTimeInMillis();
 
 	// Calc Diff MS
-	double diff = abs(fpsTimer1) - abs(fpsTimer2);
+	int diff = (int)(abs(fpsTimer1) - abs(fpsTimer2));
 	if (diff > 0)
 	{
 		// Add Item to Array
-		fpsArray[fpsItem] = FLOAT_TO_FIXP(diff);
+		fpsArray[fpsItem] = INT_TO_FIXP(diff);
 	}
 }
 
 void drawFPS(ScreenBuff *screenBuff)
 {
 	char fpsString[17];
-	#ifdef __EMSCRIPTEN__
-	sprintf(fpsString, "%3.2f ms", currentFPS());
-	#elif _WIN32
-	sprintf(fpsString, "%3.2f ms", currentFPS());
-	#elif __linux
-	sprintf(fpsString, "%3.2f ms", currentFPS());
-	#elif ARDUINO
+	#ifdef ARDUINO
 	sprintf(fpsString, "%3.2f %d", currentFPS(), ESP.getFreeHeap());
+	#else
+	sprintf(fpsString, "%3.2f ms", currentFPS());
 	#endif
 	drawString(screenBuff, fpsString, 0, screenBuff->HEIGHT - 8, true);
 }
@@ -513,19 +495,7 @@ void drawFPS(ScreenBuff *screenBuff)
 void setCurrentTime()
 {
 	frameTime = currentTime;
-#ifdef __EMSCRIPTEN__
-	currentTime = time(nullptr);
-#elif _WIN32
-	std::chrono::system_clock::time_point t = std::chrono::system_clock::now();
-	auto now = std::chrono::system_clock::now().time_since_epoch();
-	auto t100ms = std::chrono::milliseconds(100);
-	auto time = now + t100ms;
-	currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-#elif __linux
-	currentTime = time(nullptr);
-#elif ARDUINO
-	currentTime = millis();
-#endif
+	currentTime = getTimeInMillis();
 }
 
 void initTime()
@@ -540,21 +510,7 @@ void updateMinTime(int sleepMiliseconds)
 	setCurrentTime();
 	if (currentTime - frameTime < sleepMiliseconds)
 	{
-#ifdef _WIN32
-		std::this_thread::sleep_for(std::chrono::milliseconds(sleepMiliseconds - (currentTime - frameTime)));
-#elif __EMSCRIPTEN__
-		struct timespec ts;
-		ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
-		ts.tv_nsec = (sleepMiliseconds - (currentTime - frameTime)) % 1000 * 1000000;
-		nanosleep(&ts, NULL);
-#elif __linux
-		struct timespec ts;
-		ts.tv_sec = (sleepMiliseconds - (currentTime - frameTime)) / 1000;
-		ts.tv_nsec = (sleepMiliseconds - (currentTime - frameTime)) % 1000 * 1000000;
-		nanosleep(&ts, NULL);
-#elif ARDUINO
-		delay(sleepMiliseconds - (currentTime - frameTime));
-#endif
+		gameSleep(sleepMiliseconds - (currentTime - frameTime));
 	}
 
 	frameTime = currentTime;
