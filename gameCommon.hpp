@@ -5,7 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "platform/platform_core.h"
+#include "platform_core.h"
 #include "fixpoint.h"
 
 #include <stdlib.h>

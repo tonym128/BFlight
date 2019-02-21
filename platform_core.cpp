@@ -54,7 +54,7 @@ long getTimeInMillis() {
 }
 #elif ARDUINO
 void gameSleep(int sleepMS) {
-	delay(sleepMs);
+	delay(sleepMS);
 }
 
 long getTimeInMillis() {
