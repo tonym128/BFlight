@@ -36,14 +36,6 @@ else(ALUT_FOUND)
     MESSAGE(FATAL_ERROR "OpenAL not found")
 endif (OPENAL_FOUND)
 
-find_package(ALUT REQUIRED)
-if (ALUT_FOUND)
-    include_directories(${ALUT_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} ${ALUT_LIBRARY})
-else(ALUT_FOUND)
-    MESSAGE(FATAL_ERROR "ALUT not found")
-endif (ALUT_FOUND)
-
 if (WIN32)
     find_package(SDL2 CONFIG REQUIRED)
 
