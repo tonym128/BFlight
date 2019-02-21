@@ -1,4 +1,6 @@
-#include <SDL2/SDL.h>
+#include "SDL.h"
+#include "SDL_main.h"
+
 #include <emscripten.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -36,20 +38,18 @@ byte getReadShift()
 
 void sendToScreen()
 {
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+	
 	for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
 	{
 		int x = i % screenBuff.WIDTH;
 		int y = i / screenBuff.WIDTH;
 		if (screenBuff.consoleBuffer[i])
 		{
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+			SDL_RenderDrawPoint(renderer, x * 4, y * 4);
 		}
-		else
-		{
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-		}
-
-		SDL_RenderDrawPoint(renderer, x * 4, y * 4);
 	}
 	SDL_RenderPresent(renderer);
 }
