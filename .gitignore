@@ -43,3 +43,6 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 .vs/
+
+# Ignore the failure of getting git to run via vcpkg and cmake on Windows
+SDL2/
