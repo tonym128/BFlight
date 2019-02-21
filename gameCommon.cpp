@@ -512,6 +512,7 @@ void drawFPS(ScreenBuff *screenBuff)
 
 void setCurrentTime()
 {
+	frameTime = currentTime;
 #ifdef __EMSCRIPTEN__
 	currentTime = time(nullptr);
 #elif _WIN32
