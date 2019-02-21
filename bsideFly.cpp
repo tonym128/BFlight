@@ -133,8 +133,13 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 
 					if (maskCollisionCheck(gameState->player1.dim, gameState->stars[i].dim, player, star)) {
 						gameState->collision = true;
+
+						char sound[] = "data/cloud2.wav";
+						audioPlay(sound);
+
 						break; // Only single collision needed / supported
 					}
+
 				}
 			}
 		}

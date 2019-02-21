@@ -1,5 +1,5 @@
 #ifndef STARTUPLOGOS_H_
-#define STARTUPLOGOS_H_
+#define STARTUPLOGOS_H_ 1
 
 const static int logo_height = 64;
 const static int logo_width = 128;

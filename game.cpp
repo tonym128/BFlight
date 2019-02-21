@@ -1,32 +1,19 @@
 #define FPS 1
 #define ANALOG 1
-// #define AUDIO
-
-#ifdef SDL2_FOUND
-  #define SDL 1
-  #ifdef _WIN32
-    #include "SDL2\SDL.h"
-	#include "SDL_Main.h"
-#else
-    #include "SDL.h"
-	#include "SDL_main.h"
-#endif
-#endif
-
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-typedef int byte;
-#define SDL 1
-#endif
+#define AUDIO 1
 
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
 int Game = 1;
 
+#ifdef AUDIO
+#include "platform_audio.h"
+#endif
+
 #ifdef __EMSCRIPTEN__
   #include "platform/plat_emscripten.h"
-#elif SDL
+#elif SDL2_FOUND
   #include "platform/sdl.h"
 #elif _WIN32
   #include "platform/win32.h"
@@ -52,6 +39,15 @@ void showLogo(const bool logo[])
 
 void gameSetup()
 {
+  #ifdef AUDIO 
+  #ifdef OPENAL_FOUND
+  audioInit();
+  char sound[] = "data/startup.wav";
+  audioPlay(sound);
+  #elif ARDUINO
+  #endif
+  #endif
+
   switch (Game)
   {
   case 1:
@@ -74,6 +70,10 @@ void gameSetup()
 
 void gameLoop()
 {
+  #ifdef AUDIO 
+  audioLoop();
+  #endif
+
   // put your main code here, to run repeatedly:
   buttonVals = getReadShift();
 
@@ -118,6 +118,9 @@ void gameLoop()
   drawFPS(&screenBuff);
 #endif
 #ifdef AUDIO
+#ifdef OPENAL_FOUND
+
+#endif
 #ifdef ARDUINO
   if (wav->isRunning())
   {

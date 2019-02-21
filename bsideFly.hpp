@@ -1,5 +1,5 @@
 #ifndef BSIDEFLY_H
-#define BSIDEFLY_H
+#define BSIDEFLY_H 1
 
 #ifndef GAMECOMMON_H
 #include "gameCommon.hpp"

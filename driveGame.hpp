@@ -1,5 +1,5 @@
 #ifndef DRIVEGAME_H
-#define DRIVEGAME_H
+#define DRIVEGAME_H 1
 
 #ifndef GAMECOMMON_H
 #include "gameCommon.hpp"

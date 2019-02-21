@@ -1,3 +1,9 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+typedef int byte;
+#define SDL 1
+#endif
+
 #include "SDL.h"
 #include "SDL_main.h"
 

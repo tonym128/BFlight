@@ -1,5 +1,5 @@
 #ifndef MAZERUNNER_H
-#define MAZERUNNER_H
+#define MAZERUNNER_H 1
 
 #ifndef GAMECOMMON_H
 #include "gameCommon.hpp"

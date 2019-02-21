@@ -2,7 +2,19 @@ cmake_minimum_required(VERSION 3.0.0)
 project(bFlight64 VERSION 0.1.0)
 include_directories( ${MY_SOURCE_DIR} )
 
-add_executable(${PROJECT_NAME} game.cpp myfont.cpp gameCommon.cpp bsideFly.cpp driveGame.cpp rotoZoomer.cpp mazeRunner.cpp mazeGenerator.cpp plasma.cpp platform_core.cpp)
+add_executable(${PROJECT_NAME} 
+    game.cpp 
+    myfont.cpp 
+    gameCommon.cpp 
+    bsideFly.cpp 
+    driveGame.cpp 
+    rotoZoomer.cpp 
+    mazeRunner.cpp 
+    mazeGenerator.cpp 
+    plasma.cpp 
+    platform_core.cpp 
+    platform_audio.cpp)
+
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -11,6 +23,26 @@ if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       CACHE STRING "")
 endif()
+
+find_package(OpenAL QUIET)
+if (OPENAL_FOUND)
+    find_package(OpenAL REQUIRED)
+    add_definitions(-DOPENAL_FOUND)
+    include_directories(${ALUT_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} ${ALUT_LIBRARY})
+    include_directories(${OPENAL_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} ${OPENAL_LIBRARY})
+else(ALUT_FOUND)
+    MESSAGE(FATAL_ERROR "OpenAL not found")
+endif (OPENAL_FOUND)
+
+find_package(ALUT REQUIRED)
+if (ALUT_FOUND)
+    include_directories(${ALUT_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} ${ALUT_LIBRARY})
+else(ALUT_FOUND)
+    MESSAGE(FATAL_ERROR "ALUT not found")
+endif (ALUT_FOUND)
 
 if (WIN32)
     find_package(SDL2 CONFIG REQUIRED)

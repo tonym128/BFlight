@@ -5,6 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "platform_audio.h"
 #include "platform_core.h"
 #include "fixpoint.h"
 
