@@ -1,5 +1,5 @@
-#ifndef PLATFORM_AUDIO_H
-#define PLATFORM_AUDIO_H 1
+#ifndef _PLATFORM_AUDIO_H
+#define _PLATFORM_AUDIO_H 1
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <stdio.h>
@@ -112,4 +112,4 @@ inline bool audioPlay(char* filename)
     return true;
 }
 
-#endif // PLATFORM_AUDIO_H
+#endif // _PLATFORM_AUDIO_H

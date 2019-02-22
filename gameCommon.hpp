@@ -9,7 +9,7 @@
   #ifdef OPENAL_FOUND
   #include "platform/platform_audio_openal.h"
   #elif ARDUINO
-  #include "platform/platform_audio_esp8266.h"
+  #include "platform_audio_esp8266.h"
   #endif
 #else
 #include "platform/platform_noaudio.h"

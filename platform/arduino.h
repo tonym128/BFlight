@@ -3,26 +3,12 @@
 #include <ESP8266WiFi.h>
 #include "FS.h"
 
-// Audio
-#ifdef AUDIO
-#include "AudioFileSourceSPIFFS.h"
-#include "AudioGeneratorWAV.h"
-#include "AudioOutputI2SNoDAC.h"
-
-#endif //AUDIO
-
 SSD1306Brzo display(0x3c, D1, D4);
 
 /* Shift In  */
 const int pinShcp = 15;   //Clock
 const int pinStcp = 0;    //Latch
 const int pinDataIn = 16; // Data
-
-#ifdef AUDIO
-AudioGeneratorWAV *wav;
-AudioFileSourceSPIFFS *file;
-AudioOutputI2S *out;
-#endif
 
 int inputVal = 0;
 bool readAnalogSensor(int pin)
@@ -129,7 +115,9 @@ void sendToScreen()
 
 void gameInit()
 {
-  /* shift in */
+  //Serial.begin(114200);
+  Serial.println("gameInit");
+ /* shift in */
 #ifdef ANALOG
     // PINS and Analog buttons
     pinMode(D5, OUTPUT);
@@ -154,18 +142,6 @@ void gameInit()
 
   // Startup SPIFFS Storage
   SPIFFS.begin();
-
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  Serial.println("Startup");
-
-#ifdef AUDIO
-  // TODO audioInit
-  file = new AudioFileSourceSPIFFS("/carStart.wav");
-  out = new AudioOutputI2SNoDAC();
-  wav = new AudioGeneratorWAV();
-  wav->begin(file, out);
-#endif
 
   display.init();
   display.displayOn();

@@ -2,16 +2,6 @@
 #define ANALOG 1
 #define AUDIO 1
 
-#ifdef AUDIO
-  #ifdef OPENAL_FOUND
-  #include "platform/platform_audio_openal.h"
-  #elif ARDUINO
-  #include "platform/platform_audio_esp8266.h"
-  #endif
-#else
-#include "platform/platform_noaudio.h"
-#endif
-
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
@@ -43,12 +33,14 @@ void showLogo(const bool logo[])
   updateMinTime(2000);
 }
 
-void gameSetup()
-{
+void audioSetup() {
   audioInit();
   char sound[] = "data/startup.wav";
   audioPlay(sound);
+}
 
+void gameSetup()
+{
   switch (Game)
   {
   case 1:

@@ -8,6 +8,7 @@
 #include "mazeRunner.hpp"
 #include "plasma.hpp"
 
+void audioSetup();
 void gameInit();
 void gameSetup();
 void gameLoop();
