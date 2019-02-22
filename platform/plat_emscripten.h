@@ -35,7 +35,8 @@ byte getReadShift()
 		buttonVals = buttonVals | (1 << P2_Bottom);
 	if (keystate[SDL_SCANCODE_D])
 		buttonVals = buttonVals | (1 << P2_Right);
-	if (keystate[SDL_SCANCODE_Q]) {
+	if (keystate[SDL_SCANCODE_Q])
+	{
 		exit(0);
 	}
 
@@ -47,7 +48,7 @@ void sendToScreen()
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-	
+
 	for (int i = 0; i < screenBuff.WIDTH * screenBuff.HEIGHT; i++)
 	{
 		int x = i % screenBuff.WIDTH;
@@ -62,25 +63,25 @@ void sendToScreen()
 
 void gameInit()
 {
-    
 }
 
 int main()
 {
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_CreateWindowAndRenderer(512, 256, 0, &window, &renderer);
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_CreateWindowAndRenderer(512, 256, 0, &window, &renderer);
 
-    const int simulate_infinite_loop = 1; // call the function repeatedly
-    const int fps = 30; // call the function as fast as the browser wants to render (typically 60fps)
-    gameInit();
-    gameSetup();
+	const int simulate_infinite_loop = 1; // call the function repeatedly
+	const int fps = 30;										// call the function as fast as the browser wants to render (typically 60fps)
+	audioSetup();
+	gameInit();
+	gameSetup();
 
-    emscripten_set_main_loop(gameLoop,fps,simulate_infinite_loop);
-    
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+	emscripten_set_main_loop(gameLoop, fps, simulate_infinite_loop);
 
-    return EXIT_SUCCESS;
-  return 1;
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+
+	return EXIT_SUCCESS;
+	return 1;
 }

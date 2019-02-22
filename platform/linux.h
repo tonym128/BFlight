@@ -66,6 +66,7 @@ void gameInit()
 
 int main(int argc, char*argv[])
 {
+  audioSetup();
   gameInit();
   gameSetup();
   while (1)
