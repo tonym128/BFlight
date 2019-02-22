@@ -5,7 +5,16 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "platform_audio.h"
+#ifdef AUDIO
+  #ifdef OPENAL_FOUND
+  #include "platform/platform_audio_openal.h"
+  #elif ARDUINO
+  #include "platform/platform_audio_esp8266.h"
+  #endif
+#else
+#include "platform/platform_noaudio.h"
+#endif
+
 #include "platform_core.h"
 #include "fixpoint.h"
 

@@ -1,10 +1,15 @@
-#include "platform_audio.h"
-ALuint source;
-ALint state;
-ALuint buffers[5];
+#ifndef PLATFORM_AUDIO_H
+#define PLATFORM_AUDIO_H 1
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <stdio.h>
+#include <iostream>
 
-void audioInit()
-{
+inline ALuint source;
+inline ALint state;
+inline ALuint buffers[5];
+
+inline void audioInit() {
     // Initialize the environment
     ALCdevice *device = alcOpenDevice(NULL);
     ALCcontext *context = alcCreateContext(device, NULL);
@@ -26,7 +31,31 @@ void audioInit()
               << "\r\n";
 }
 
-bool audioPlay(char *filename)
+inline void audioDestroy() 
+{
+}
+
+inline void audioLoop()
+{
+    /*
+    if (buffers == nullptr) return;
+
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+    if (state != AL_PLAYING) {
+        // Clean up sources and buffers
+        alDeleteSources(1, &source);
+        alDeleteBuffers(1, buffers);
+        buffers = nullptr;
+        std::cout << "OpenAL Done" << "\r\n";
+        return;
+    }
+
+    std::cout << "OpenAL Playing" << "\r\n";
+    */
+}
+
+inline bool audioPlay(char* filename)
 {
     alGetSourcei(source, AL_SOURCE_STATE, &state);
     if (state == AL_PLAYING) return false;
@@ -99,32 +128,4 @@ bool audioPlay(char *filename)
     return true;
 }
 
-void audioLoop()
-{
-    /*
-    if (buffers == nullptr) return;
-
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-
-    if (state != AL_PLAYING) {
-        // Clean up sources and buffers
-        alDeleteSources(1, &source);
-        alDeleteBuffers(1, buffers);
-        buffers = nullptr;
-        std::cout << "OpenAL Done" << "\r\n";
-        return;
-    }
-
-    std::cout << "OpenAL Playing" << "\r\n";
-    */
-}
-
-void audioDestroy()
-{
-}
-/*
-void audioInit() {}
-void audioDestroy() {}
-void audioLoop() {}
-bool audioPlay(char*) {return true;}
-*/
+#endif // PLATFORM_AUDIO_H

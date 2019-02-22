@@ -2,14 +2,20 @@
 #define ANALOG 1
 #define AUDIO 1
 
+#ifdef AUDIO
+  #ifdef OPENAL_FOUND
+  #include "platform/platform_audio_openal.h"
+  #elif ARDUINO
+  #include "platform/platform_audio_esp8266.h"
+  #endif
+#else
+#include "platform/platform_noaudio.h"
+#endif
+
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
 int Game = 1;
-
-#ifdef AUDIO
-#include "platform_audio.h"
-#endif
 
 #ifdef __EMSCRIPTEN__
   #include "platform/plat_emscripten.h"
@@ -39,14 +45,9 @@ void showLogo(const bool logo[])
 
 void gameSetup()
 {
-  #ifdef AUDIO 
-  #ifdef OPENAL_FOUND
   audioInit();
   char sound[] = "data/startup.wav";
   audioPlay(sound);
-  #elif ARDUINO
-  #endif
-  #endif
 
   switch (Game)
   {
@@ -70,9 +71,7 @@ void gameSetup()
 
 void gameLoop()
 {
-  #ifdef AUDIO 
   audioLoop();
-  #endif
 
   // put your main code here, to run repeatedly:
   buttonVals = getReadShift();
@@ -117,32 +116,6 @@ void gameLoop()
 #ifdef FPS // Define this to show the FPS for the game
   drawFPS(&screenBuff);
 #endif
-#ifdef AUDIO
-#ifdef OPENAL_FOUND
-
-#endif
-#ifdef ARDUINO
-  if (wav->isRunning())
-  {
-    if (!wav->loop())
-      wav->stop();
-    if (processKey(buttonVals, P1_Top))
-    {
-      wav->stop();
-    }
-  }
-  else
-  {
-    if (processKey(buttonVals, P1_Bottom))
-    {
-      //file = new AudioFileSourceSPIFFS("/carStart.wav");
-      //out = new AudioOutputI2SNoDAC();
-      //wav = new AudioGeneratorWAV();
-      wav->begin(file, out);
-    }
-  }
-#endif // ARDUINO
-#endif // AUDIO
 
   sendToScreen();
   updateMinTime(33);

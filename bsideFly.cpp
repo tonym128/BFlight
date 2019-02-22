@@ -136,10 +136,9 @@ void updateFly(GameState* gameState, ScreenBuff* screenBuff) {
 
 						char sound[] = "data/cloud2.wav";
 						audioPlay(sound);
-
+						
 						break; // Only single collision needed / supported
 					}
-
 				}
 			}
 		}

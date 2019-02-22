@@ -12,8 +12,7 @@ add_executable(${PROJECT_NAME}
     mazeRunner.cpp 
     mazeGenerator.cpp 
     plasma.cpp 
-    platform_core.cpp 
-    platform_audio.cpp)
+    platform_core.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -32,8 +31,7 @@ if (OPENAL_FOUND)
     target_link_libraries(${PROJECT_NAME} ${ALUT_LIBRARY})
     include_directories(${OPENAL_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} ${OPENAL_LIBRARY})
-else(ALUT_FOUND)
-    MESSAGE(FATAL_ERROR "OpenAL not found")
+else (OPENAL_FOUND)
 endif (OPENAL_FOUND)
 
 if (WIN32)
