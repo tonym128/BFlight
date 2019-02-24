@@ -261,7 +261,7 @@ bool displayDriveScroller(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff
 	strcpy(scrollerText[0],"You made it to");
 	strcpy(scrollerText[1],"Las Vegas,");
 	strcpy(scrollerText[2],"America,");
-	strcpy(scrollerText[3],"F#%k Yeah!");
+	strcpy(scrollerText[3],"Hell Yeah!");
 	strcpy(scrollerText[4],"Now get to the");
 	strcpy(scrollerText[5],"Hotel for some");
 	strcpy(scrollerText[6],"rest");
@@ -497,11 +497,8 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->playerCar.y = screenBuff->HEIGHT - playerCar_height - 4;
 	gameStateDrive->playerCar.width = playerCar_width;
 	gameStateDrive->playerCar.height = playerCar_height;
-	
-	// Play the car starting sound
-	char sound[] = "data/carStart.wav";
-	audioPlay(sound);
 
+	
 	switch (gameStateDrive->level)  {
 	case 1:
 		gameStateDrive->maxCars = 1;
@@ -578,6 +575,10 @@ bool driveGameLoop(ScreenBuff* screenBuff, byte buttonVals) {
 
 	case 3: //Drive
 		if (gameStateDrive.scene != gameStateDrive.lastscene) {
+			// Play the car starting sound
+			char sound[] = "data/carStart.wav";
+			audioPlay(sound);
+			
 			startUpGame(&gameStateDrive, screenBuff);
 			gameStateDrive.lastscene = gameStateDrive.scene;
 		}

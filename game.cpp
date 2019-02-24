@@ -5,18 +5,18 @@
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
-int Game = 3;
+int Game = 2;
 
 #ifdef __EMSCRIPTEN__
-  #include "platform/plat_emscripten.h"
+#include "platform/plat_emscripten.h"
 #elif SDL2_FOUND
-  #include "platform/sdl.h"
+#include "platform/sdl.h"
 #elif _WIN32
-  #include "platform/win32.h"
+#include "platform/win32.h"
 #elif __linux
-  #include "platform/linux.h"
+#include "platform/linux.h"
 #elif ARDUINO
-  #include "platform/arduino.h"
+#include "platform/arduino.h"
 #endif
 
 void showLogo(const bool logo[])
@@ -33,7 +33,8 @@ void showLogo(const bool logo[])
   updateMinTime(2000);
 }
 
-void audioSetup() {
+void audioSetup()
+{
   audioInit();
   char sound[] = "data/startup.wav";
   audioPlay(sound);
