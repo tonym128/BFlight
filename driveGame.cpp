@@ -498,6 +498,10 @@ void startUpGame(GameStateDrive* gameStateDrive, ScreenBuff* screenBuff) {
 	gameStateDrive->playerCar.width = playerCar_width;
 	gameStateDrive->playerCar.height = playerCar_height;
 	
+	// Play the car starting sound
+	char sound[] = "data/carStart.wav";
+	audioPlay(sound);
+
 	switch (gameStateDrive->level)  {
 	case 1:
 		gameStateDrive->maxCars = 1;

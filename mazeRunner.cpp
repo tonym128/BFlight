@@ -196,12 +196,16 @@ bool update(GameStateMaze* gameStateMaze) {
 	{
 		if (worldMap[FIXP_INT_PART(posX + FIXP_MULT(dirX, moveSpeed))][FIXP_TO_INT(posY)] == false) posX += FIXP_MULT(dirX, moveSpeed);
 		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY + FIXP_MULT(dirY, moveSpeed))] == false) posY += FIXP_MULT(dirY, moveSpeed);
+		char sound[] = "data/walking.wav";
+		audioPlay(sound);
 	}
 	//move backwards if no wall behind you
 	if (gameStateMaze->p1keys.down)
 	{
 		if (worldMap[FIXP_INT_PART(posX - FIXP_MULT(dirX, moveSpeed))][FIXP_INT_PART(posY)] == false) posX -= FIXP_MULT(dirX, moveSpeed);
 		if (worldMap[FIXP_INT_PART(posX)][FIXP_INT_PART(posY - FIXP_MULT(dirY, moveSpeed))] == false) posY -= FIXP_MULT(dirY, moveSpeed);
+		char sound[] = "data/walking.wav";
+		audioPlay(sound);
 	}
 	//rotate to the right
 	if (gameStateMaze->p1keys.right)
