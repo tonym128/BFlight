@@ -1,11 +1,11 @@
 #define FPS 1
-#define ANALOG 1
+// #define ANALOG 1
 // #define AUDIO 1
 
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
-int Game = 2;
+int Game = 6;
 
 #ifdef __EMSCRIPTEN__
 #include "platform/plat_emscripten.h"
@@ -59,6 +59,9 @@ void gameSetup()
     break;
   case 5:
     break;
+  case 6:
+    voxelInit();
+    break;
   }
 }
 
@@ -102,6 +105,11 @@ void gameLoop()
       gameSetup();
     }
 
+    break;
+  case 6:
+    if (voxelLoop(&screenBuff, buttonVals)) {
+
+    }
     break;
   }
 

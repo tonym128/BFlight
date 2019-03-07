@@ -272,8 +272,23 @@ void drawObject(ScreenBuff *screenBuff, Dimensions dim, bool *objectArray, bool 
 	}
 }
 
+void drawVertLine2(ScreenBuff *screenBuff, int x, int y1, int y2, bool colour) {
+	if (y1<0) y1 = 0;
+	if (y1>y2) return;
+	int pixel = x + screenBuff->WIDTH * y1;
+	int end = x + screenBuff->WIDTH * y2;
+	if (pixel >= screenBuff->MAXPIXEL) return;
+	if (end > screenBuff->MAXPIXEL) end = (screenBuff->HEIGHT-1) * screenBuff->WIDTH + x;
+	while (pixel <= end) {
+		screenBuff->consoleBuffer[pixel] = colour;
+		pixel += screenBuff->WIDTH;
+	}
+}
+
 void drawVertLine(ScreenBuff *screenBuff, int x, int y, int length, bool colour, int pattern)
 {
+	if (x < 0 || x > screenBuff->WIDTH) return;
+	if (y < 0 || y > screenBuff->HEIGHT) return;
 	int pixel = x + screenBuff->WIDTH * y;
 
 	switch (pattern)
@@ -285,7 +300,7 @@ void drawVertLine(ScreenBuff *screenBuff, int x, int y, int length, bool colour,
 		break;
 	case 1:
 		// All pixels
-		while (pixel <= x + (y + length) * screenBuff->WIDTH)
+		while (pixel <= screenBuff->MAXPIXEL && pixel <= x + (y + length) * screenBuff->WIDTH)
 		{
 			screenBuff->consoleBuffer[pixel] = colour;
 			pixel += screenBuff->WIDTH;

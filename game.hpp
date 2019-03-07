@@ -7,6 +7,7 @@
 #include "rotoZoomer.hpp"
 #include "mazeRunner.hpp"
 #include "plasma.hpp"
+#include "voxel.hpp"
 
 void audioSetup();
 void gameInit();

@@ -11,7 +11,9 @@ add_executable(${PROJECT_NAME}
     rotoZoomer.cpp 
     mazeRunner.cpp 
     mazeGenerator.cpp 
+    voxel.cpp 
     plasma.cpp 
+    rotoZoomer.cpp
     platform_core.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
