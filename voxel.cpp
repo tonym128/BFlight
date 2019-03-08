@@ -26,10 +26,10 @@ void render(ScreenBuff *screenBuff, Point p)
     for(double z=1; z<p.distance; z+=deltaz)
     {
         // 90 degree field of view
-        double plx =  -cosang * z - sinang * z;
-        double ply =   sinang * z - cosang * z;
-        double prx =   cosang * z - sinang * z;
-        double pry =  -sinang * z - cosang * z;
+        double plx = -cosang * z - sinang * z;
+        double ply =  sinang * z - cosang * z;
+        double prx =  cosang * z - sinang * z;
+        double pry = -sinang * z - cosang * z;
         double dx = (prx - plx) / screenwidth;
         double dy = (pry - ply) / screenwidth;
         plx += p.x;
@@ -91,8 +91,8 @@ void voxelInput(byte buttonVals, Point *p)
 
     // Collision detection. Don't fly below the surface.
     int mapoffset = (((int)(floor(p->y/4)) & (map_width-1)) << p->shift) + (((int)floor(p->x/4)) & (map_height-1));
-    if ((map_data[mapoffset] +10) > p->height) 
-        p->height = map_data[mapoffset] + 10;
+    if ((map_data[mapoffset]/3 +10) > p->height)
+        p->height = map_data[mapoffset]/3 + 10;
 }
 
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
