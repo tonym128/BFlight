@@ -4,9 +4,7 @@
 struct Point
 {
     double x, y, height, angle;
-    int horizon;
-    int distance;
-    int shift;
+    int horizon, distance, shift;
 };
 
 Point p;
@@ -41,12 +39,12 @@ void render(ScreenBuff *screenBuff, Point p)
         {
             int mapoffset = (((((int)floor(ply/4)) & mapwidthperiod)) << p.shift) + (((int)floor(plx/4)) & mapheightperiod);
             int heightonscreen = (int)((p.height - map_data[mapoffset]/3) * invz + p.horizon);
-            drawVertLine2(screenBuff, i, heightonscreen / 3, hiddeny[i], map_colour[mapoffset]);
+            drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
             plx += dx;
             ply += dy;
         }
-        deltaz += 0.005;
+        deltaz += 0.05;
     }
 }
 
@@ -93,8 +91,8 @@ void voxelInput(byte buttonVals, Point *p)
 
     // Collision detection. Don't fly below the surface.
     int mapoffset = (((int)(floor(p->y/4)) & (map_width-1)) << p->shift) + (((int)floor(p->x/4)) & (map_height-1));
-    if ((map_data[mapoffset]/3 +10) > p->height) 
-        p->height = map_data[mapoffset]/3 + 10;
+    if ((map_data[mapoffset] +10) > p->height) 
+        p->height = map_data[mapoffset] + 10;
 }
 
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
@@ -113,9 +111,10 @@ void voxelInit()
 {
     p.x = 75;
     p.y = 75;
-    p.height = 52;
-    p.horizon = -36;
-    p.distance = 300;
-    p.shift = 7;
+    p.height = 30;
     p.angle = -0.4;
+
+    p.horizon = 0;
+    p.distance = 800;
+    p.shift = 7;
 }
