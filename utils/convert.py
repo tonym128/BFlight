@@ -4,7 +4,7 @@
 from PIL import Image
 
 # img = Image.open('image.png').convert('L')  # convert image to 8-bit grayscale
-img = Image.open('terrainbw.png').convert('1')  # convert image to 1-bit black and white
+img = Image.open('terraindc.png').convert('1')  # convert image to 1-bit black and white
 WIDTH, HEIGHT = img.size
 
 data = list(img.getdata()) # convert image data to a list of integers

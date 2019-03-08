@@ -1,11 +1,11 @@
 #define FPS 1
 #define ANALOG 1
-#define AUDIO 1
+// #define AUDIO 1
 
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
-int Game = 1;
+int Game = 6;
 
 #ifdef __EMSCRIPTEN__
 #include "platform/plat_emscripten.h"
