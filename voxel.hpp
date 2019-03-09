@@ -15,7 +15,7 @@ void voxelInit();
 #define map_width 128
 #define map_height 128
 #ifdef ARDUINO
-const static uint8_t map_data[map_height * map_width] = 
+const static uint8_t map_data[map_height * map_width] PROGMEM = 
 #else
 const static uint8_t map_data[map_height * map_width] =
 #endif
