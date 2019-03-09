@@ -19,9 +19,10 @@ int frame = 1;
 void render(ScreenBuff *screenBuff)
 {
 int cmapOffset = -1;
-int cmapOffValue = -1;
-int cmapOffColour = -1;
 int cachehit = 0;
+int cachemiss = 0;
+int8_t cmap[1024];
+bool ccolor[1024];
 
 #ifdef INTERLACE
     frame += 1;
@@ -65,17 +66,18 @@ int cachehit = 0;
 #endif
         {
             int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & p.mapheightperiod);
-            if (cmapOffset != mapoffset) {
-                cmapOffset = mapoffset;
-                cmapOffValue = map_data[mapoffset];
-                cmapOffColour = map_colour[mapoffset];
-            }
-            else {
+            if ((cmapOffset <= mapoffset) && (cmapOffset+1024 > mapoffset)) {
                 cachehit += 1;
             }
+            else {
+                cmapOffset = mapoffset;
+                memcpy(cmap, map_data + mapoffset*sizeof(int8_t), 1024*sizeof(int8_t)); 
+                memcpy(ccolor, map_colour + mapoffset*sizeof(bool), 1024*sizeof(bool));
+                cachemiss++;
+            }
 
-            int heightonscreen = (FIXP_TO_INT((p.height - cmapOffValue) * finvz) + p.horizon);
-            drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], cmapOffColour);
+            int heightonscreen = (FIXP_TO_INT((p.height - cmap[mapoffset-cmapOffset]) * finvz) + p.horizon);
+            drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], ccolor[mapoffset-cmapOffset]);
 
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
 
