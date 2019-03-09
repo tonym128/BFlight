@@ -4,7 +4,7 @@
 struct Point
 {
     FIXPOINT fx, fy, fangle, fmove, fturn, fdeltaMod, fdistance;
-    int height, horizon, shift, heightScaleFactor;
+    int height, horizon, shift;
     FIXPOINT mapScaleFactor;
 
     int mapwidthperiod, mapheightperiod;
@@ -61,7 +61,7 @@ void render(ScreenBuff *screenBuff)
 #endif
         {
             int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & p.mapheightperiod);
-            int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]/p.heightScaleFactor) * finvz) + p.horizon);
+            int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]) * finvz) + p.horizon);
 
             drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
 
@@ -118,8 +118,8 @@ void voxelInput(byte buttonVals, Point *p)
 
     // Collision detection. Don't fly below the surface.
     int mapoffset = (((int)(FIXP_INT_PART(p->fy/p->mapScaleFactor)) & (map_width-1)) << p->shift) + (((int)FIXP_INT_PART(p->fx/p->mapScaleFactor)) & (map_height-1));
-    if ((map_data[mapoffset]/p->heightScaleFactor +10) > p->height)
-        p->height = map_data[mapoffset]/p->heightScaleFactor + 10;
+    if ((map_data[mapoffset]+10) > p->height)
+        p->height = map_data[mapoffset] + 10;
 }
 
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
@@ -150,5 +150,4 @@ void voxelInit()
     p.horizon = 15;
     p.shift = 7;
     p.mapScaleFactor = INT_TO_FIXP(8);
-    p.heightScaleFactor = 3;
 }
