@@ -3,8 +3,8 @@
 
 struct Point
 {
-    double x, y, height, angle;
-    int horizon, distance, shift;
+    FIXPOINT fx, fy, fangle;
+    int height, horizon, distance, shift, mapScaleFactor, heightScaleFactor;
 };
 
 Point p;
@@ -14,62 +14,69 @@ void render(ScreenBuff *screenBuff, Point p)
     int mapwidthperiod = map_width - 1;
     int mapheightperiod = map_height - 1;
     int screenwidth = screenBuff->WIDTH;
-    double sinang = sin(p.angle);
-    double cosang = cos(p.angle);
+
+    FIXPOINT fdeltaMod = FLOAT_TO_FIXP(0.05);
+    FIXPOINT fsinang = FIXPOINT_SIN(p.fangle);
+    FIXPOINT fcosang = FIXPOINT_COS(p.fangle);
+
     int hiddeny[screenBuff->WIDTH];
     for(int i=0; i<screenBuff->WIDTH; i+=1) {
         hiddeny[i] = screenBuff->HEIGHT;
     }
 
-    double deltaz = 1.;
+    FIXPOINT fdeltaz = FLOAT_TO_FIXP(1.);
     // Draw from front to back
-    for(double z=1; z<p.distance; z+=deltaz)
+    for(FIXPOINT fz=INT_TO_FIXP(1); fz<INT_TO_FIXP(p.distance); fz+=fdeltaz)
     {
         // 90 degree field of view
-        double plx = -cosang * z - sinang * z;
-        double ply =  sinang * z - cosang * z;
-        double prx =  cosang * z - sinang * z;
-        double pry = -sinang * z - cosang * z;
-        double dx = (prx - plx) / screenwidth;
-        double dy = (pry - ply) / screenwidth;
-        plx += p.x;
-        ply += p.y;
-        double invz = 1.0f / z * 240.0f;
+        FIXPOINT fplx = FIXP_MULT(-fcosang , fz) - FIXP_MULT(fsinang , fz);
+        FIXPOINT fply = FIXP_MULT( fsinang , fz) - FIXP_MULT(fcosang , fz);
+        FIXPOINT fprx = FIXP_MULT( fcosang , fz) - FIXP_MULT(fsinang , fz);
+        FIXPOINT fpry = FIXP_MULT(-fsinang , fz) - FIXP_MULT(fcosang , fz);
+        FIXPOINT fdx = (fprx - fplx) / screenwidth;
+        FIXPOINT fdy = (fpry - fply) / screenwidth;
+        FIXPOINT finvz = FIXP_DIV(INT_TO_FIXP(1), fz) * 240;
+
+        fplx += p.fx;
+        fply += p.fy;
+
         for(int i=0; i<screenwidth; i+=1)
         {
-            int mapoffset = (((((int)floor(ply/4)) & mapwidthperiod)) << p.shift) + (((int)floor(plx/4)) & mapheightperiod);
-            int heightonscreen = (int)((p.height - map_data[mapoffset]/3) * invz + p.horizon);
+            int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,INT_TO_FIXP(p.mapScaleFactor))) & mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,INT_TO_FIXP(p.mapScaleFactor))) & mapheightperiod);
+            int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]/p.heightScaleFactor) * finvz) + p.horizon);
             drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
-            plx += dx;
-            ply += dy;
+
+            fplx += fdx;
+            fply += fdy;
         }
-        deltaz += 0.05;
+
+        fdeltaz += fdeltaMod;
     }
 }
 
 void voxelInput(byte buttonVals, Point *p)
 {
-    p->x -= sin(p->angle) * 0.5;
-    p->y -= cos(p->angle) * 0.5;
+    p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle) , FLOAT_TO_FIXP(0.5));
+    p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle) , FLOAT_TO_FIXP(0.5));
 
     if (processKey(buttonVals, P1_Top))
     {
-        p->x -= sin(p->angle) * 0.5;
-        p->y -= cos(p->angle) * 0.5;
+        p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle), FLOAT_TO_FIXP(0.5));
+        p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle), FLOAT_TO_FIXP(0.5));
     }
     if (processKey(buttonVals, P1_Bottom))
     {
-        p->x += sin(p->angle) * 0.5;
-        p->y += cos(p->angle) * 0.5;
+        p->fx += FIXP_MULT(FIXPOINT_SIN(p->fangle) , FLOAT_TO_FIXP(0.5));
+        p->fy += FIXP_MULT(FIXPOINT_COS(p->fangle) , FLOAT_TO_FIXP(0.5));
     }
     if (processKey(buttonVals, P1_Left))
     {
-        p->angle += 0.1;
+        p->fangle += FLOAT_TO_FIXP(0.1);
     }
     if (processKey(buttonVals, P1_Right))
     {
-        p->angle -= 0.1;
+        p->fangle -= FLOAT_TO_FIXP(0.1);
     }
 
     if (processKey(buttonVals, P2_Top))
@@ -90,9 +97,9 @@ void voxelInput(byte buttonVals, Point *p)
     }
 
     // Collision detection. Don't fly below the surface.
-    int mapoffset = (((int)(floor(p->y/4)) & (map_width-1)) << p->shift) + (((int)floor(p->x/4)) & (map_height-1));
-    if ((map_data[mapoffset]/3 +10) > p->height)
-        p->height = map_data[mapoffset]/3 + 10;
+    int mapoffset = (((int)(FIXP_INT_PART(p->fy/p->mapScaleFactor)) & (map_width-1)) << p->shift) + (((int)FIXP_INT_PART(p->fx/p->mapScaleFactor)) & (map_height-1));
+    if ((map_data[mapoffset]/p->heightScaleFactor +10) > p->height)
+        p->height = map_data[mapoffset]/p->heightScaleFactor + 10;
 }
 
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
@@ -109,12 +116,14 @@ bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
 
 void voxelInit()
 {
-    p.x = 75;
-    p.y = 75;
-    p.height = 30;
-    p.angle = -0.4;
+    p.fx = INT_TO_FIXP(75);
+    p.fy = INT_TO_FIXP(75);
+    p.fangle = FLOAT_TO_FIXP(-0.4);
 
+    p.height = 30;
     p.horizon = 0;
     p.distance = 800;
     p.shift = 7;
+    p.mapScaleFactor = 8;
+    p.heightScaleFactor = 3;
 }
