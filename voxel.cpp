@@ -13,11 +13,12 @@ struct Point
 Point p;
 
 // #define INTERLACE
+#define CACHE
 #ifdef INTERLACE
 int frame = 1;
 #endif
 
-#define CACHESIZE 64
+#define CACHESIZE 3
 #define MAPSIZE  map_height*map_width
 
 int8_t cmap[CACHESIZE];
