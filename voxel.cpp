@@ -12,7 +12,7 @@ struct Point
 
 Point p;
 
-#define INTERLACE
+// #define INTERLACE
 #ifdef INTERLACE
 int frame = 0;
 #endif
@@ -23,6 +23,7 @@ int frame = 0;
 int8_t cmap[CACHESIZE];
 bool ccolor[CACHESIZE];
 int cmapOffset = -1;
+
 void render(ScreenBuff *screenBuff)
 {
 int cachehit = 0;
@@ -79,7 +80,6 @@ int cachemiss = 0;
                 if (mapoffset + CACHESIZE > MAPSIZE) {
                     memcpy(cmap, map_data + mapoffset*sizeof(int8_t), (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t)); 
                     memcpy(ccolor, map_colour + mapoffset*sizeof(bool), (mapoffset + CACHESIZE - MAPSIZE)*sizeof(bool));
-
                     // memcpy(cmap + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_data, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(int8_t)); 
                     // memcpy(ccolor + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_colour, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(bool));
                 } else {
@@ -168,7 +168,7 @@ void voxelInit()
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
-    p.fdeltaMod = FLOAT_TO_FIXP(0.3);
+    p.fdeltaMod = FLOAT_TO_FIXP(0.2);
     p.fmove = FLOAT_TO_FIXP(1.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
