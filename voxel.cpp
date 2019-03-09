@@ -6,14 +6,17 @@ struct Point
     FIXPOINT fx, fy, fangle, fmove, fturn, fdeltaMod, fdistance;
     int height, horizon, shift, heightScaleFactor;
     FIXPOINT mapScaleFactor;
+
+    int mapwidthperiod, mapheightperiod;
 };
 
 Point p;
 
-#define INTERLACE
+// #define INTERLACE
 #ifdef INTERLACE
 int frame = 1;
 #endif
+
 void render(ScreenBuff *screenBuff)
 {
 #ifdef INTERLACE
@@ -21,16 +24,15 @@ void render(ScreenBuff *screenBuff)
     if (frame == 3) frame = 1;
 #endif
 
-    int mapwidthperiod = map_width - 1;
-    int mapheightperiod = map_height - 1;
-    int screenwidth = screenBuff->WIDTH;
-
     FIXPOINT fsinang = FIXPOINT_SIN(p.fangle);
     FIXPOINT fcosang = FIXPOINT_COS(p.fangle);
 
     int hiddeny[screenBuff->WIDTH];
     for(int i=0; i<screenBuff->WIDTH; i+=1) {
         hiddeny[i] = screenBuff->HEIGHT;
+#ifdef INTERLACE
+        drawVertLine2(screenBuff, i, 0, 64, 0);
+#endif
     }
 
     FIXPOINT fdeltaz = FIXP_1;
@@ -38,26 +40,31 @@ void render(ScreenBuff *screenBuff)
     for(FIXPOINT fz=FIXP_1; fz<p.fdistance; fz+=fdeltaz)
     {
         // 90 degree field of view
-        FIXPOINT fplx = FIXP_MULT(-fcosang , fz) - FIXP_MULT(fsinang , fz);
-        FIXPOINT fply = FIXP_MULT( fsinang , fz) - FIXP_MULT(fcosang , fz);
-        FIXPOINT fprx = FIXP_MULT( fcosang , fz) - FIXP_MULT(fsinang , fz);
-        FIXPOINT fpry = FIXP_MULT(-fsinang , fz) - FIXP_MULT(fcosang , fz);
-        FIXPOINT fdx = (fprx - fplx) / screenwidth;
-        FIXPOINT fdy = (fpry - fply) / screenwidth;
+        FIXPOINT fsinfz = FIXP_MULT(fsinang , fz);
+        FIXPOINT fcosfz = FIXP_MULT(fcosang , fz);
+
+        FIXPOINT fplx = FIXP_MULT(-fcosang , fz) - fsinfz;
+        FIXPOINT fply = fsinfz - fcosfz;
+        FIXPOINT fprx = fcosfz - fsinfz;
+        FIXPOINT fpry = FIXP_MULT(-fsinang , fz) - fcosfz;
+        FIXPOINT fdx = (fprx - fplx) / screenBuff->WIDTH;
+        FIXPOINT fdy = (fpry - fply) / screenBuff->WIDTH;
         FIXPOINT finvz = FIXP_DIV(FIXP_1, fz) * 240;
 
         fplx += p.fx;
         fply += p.fy;
 
 #ifdef INTERLACE
-        for(int i=frame; i<screenwidth; i+=2)
+        for(int i=frame; i<screenBuff->WIDTH; i+=2)
 #else
-        for(int i=0; i<screenwidth; i+=1)
+        for(int i=0; i<screenBuff->WIDTH; i+=1)
 #endif
         {
-            int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & mapheightperiod);
+            int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & p.mapheightperiod);
             int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]/p.heightScaleFactor) * finvz) + p.horizon);
+
             drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
+
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
 
             fplx += fdx;
@@ -118,13 +125,18 @@ void voxelInput(byte buttonVals, Point *p)
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
 {
     voxelInput(buttonVals, &p);
+#ifndef INTERLACE
     displayClear(screenBuff, 1, false);
+#endif
     render(screenBuff);
     return false; // Not done
 }
 
 void voxelInit()
 {
+    p.mapwidthperiod = map_width - 1;
+    p.mapheightperiod = map_height - 1;
+
     p.fdistance = INT_TO_FIXP(800);
     p.fx = INT_TO_FIXP(75);
     p.fy = INT_TO_FIXP(75);

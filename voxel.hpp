@@ -15,7 +15,7 @@ void voxelInit();
 #define map_width 128
 #define map_height 128
 #ifdef ARDUINO
-const static uint8_t map_data[map_height * map_width] PROGMEM = 
+const static uint8_t map_data[map_height * map_width] = 
 #else
 const static uint8_t map_data[map_height * map_width] =
 #endif
@@ -149,7 +149,7 @@ const static uint8_t map_data[map_height * map_width] =
  35, 32, 30, 28, 27, 27, 27, 28, 30, 34, 38, 41, 43, 46, 48, 50, 51, 51, 51, 50, 48, 42, 33, 21,  9,  2,  0,  0,  3, 13, 22, 31, 36, 41, 46, 49, 50, 50, 50, 48, 45, 40, 38, 41, 47, 55, 62, 73, 85, 91, 93, 92, 90, 83, 72, 59, 50, 43, 39, 34, 29, 25, 24, 23, 30, 33, 33, 31, 24, 16,  6,  1,  0,  3, 11, 19, 22, 24, 25, 25, 25, 24, 25, 25, 24, 23, 22, 20, 19, 18, 17, 15, 15, 14, 15, 19, 23, 29, 33, 33, 34, 36, 37, 38, 38, 38, 39, 40, 42, 44, 45, 45, 44, 43, 43, 43, 44, 46, 48, 49, 49, 49, 47, 45, 43, 40, 39, 37
  };
 #ifdef ARDUINO
-const static bool map_colour[map_height * map_width] PROGMEM = 
+const static bool map_colour[map_height * map_width] = 
 #else
 const static bool map_colour[map_height * map_width] =
 #endif

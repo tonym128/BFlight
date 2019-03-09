@@ -86,7 +86,19 @@ void flipObject(Dimensions, const bool*, bool*);
 void copyObject(Dimensions, const bool*, bool*);
 
 bool drawScroller(ScreenBuff*, int, char[9][17]);
-void drawVertLine2(ScreenBuff*, int, int, int, bool);
+
+static inline void drawVertLine2(ScreenBuff *screenBuff, int x, int y1, int y2, bool colour) {
+	if (y1<0) y1 = 0;
+	if (y1>y2) return;
+	int pixel = x + screenBuff->WIDTH * y1;
+	int end = x + screenBuff->WIDTH * y2;
+	if (end > screenBuff->MAXPIXEL) end = (screenBuff->HEIGHT-1) * screenBuff->WIDTH + x;
+	while (pixel <= end) {
+		screenBuff->consoleBuffer[pixel] = colour;
+		pixel += screenBuff->WIDTH;
+	}
+}
+
 void drawVertLine(ScreenBuff*, int, int, int, bool, int = 0);
 void drawBlock(ScreenBuff*, Dimensions, bool);
 void drawMoire(ScreenBuff*, Dimensions, bool);
