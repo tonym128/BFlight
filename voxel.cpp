@@ -10,8 +10,17 @@ struct Point
 
 Point p;
 
+#define INTERLACE
+#ifdef INTERLACE
+int frame = 1;
+#endif
 void render(ScreenBuff *screenBuff)
 {
+#ifdef INTERLACE
+    frame += 1;
+    if (frame == 3) frame = 1;
+#endif
+
     int mapwidthperiod = map_width - 1;
     int mapheightperiod = map_height - 1;
     int screenwidth = screenBuff->WIDTH;
@@ -40,7 +49,11 @@ void render(ScreenBuff *screenBuff)
         fplx += p.fx;
         fply += p.fy;
 
+#ifdef INTERLACE
+        for(int i=frame; i<screenwidth; i+=2)
+#else
         for(int i=0; i<screenwidth; i+=1)
+#endif
         {
             int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & mapheightperiod);
             int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]/p.heightScaleFactor) * finvz) + p.horizon);
