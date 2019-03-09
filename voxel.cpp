@@ -12,10 +12,9 @@ struct Point
 
 Point p;
 
-// #define INTERLACE
-#define CACHE
+#define INTERLACE
 #ifdef INTERLACE
-int frame = 1;
+int frame = 0;
 #endif
 
 #define CACHESIZE 3
@@ -31,7 +30,7 @@ int cachemiss = 0;
 
 #ifdef INTERLACE
     frame += 1;
-    if (frame == 3) frame = 1;
+    if (frame == 2) frame = 0;
 #endif
 
     FIXPOINT fsinang = FIXPOINT_SIN(p.fangle);
@@ -41,7 +40,7 @@ int cachemiss = 0;
     for(int i=0; i<screenBuff->WIDTH; i+=1) {
         hiddeny[i] = screenBuff->HEIGHT;
 #ifdef INTERLACE
-        drawVertLine2(screenBuff, i, 0, screenBuff->HEIGHT, 0);
+        if (i%2 == frame) drawVertLine2(screenBuff, i, 0, screenBuff->HEIGHT, 0);
 #endif
     }
 
@@ -169,7 +168,7 @@ void voxelInit()
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
-    p.fdeltaMod = FLOAT_TO_FIXP(0.2);
+    p.fdeltaMod = FLOAT_TO_FIXP(0.3);
     p.fmove = FLOAT_TO_FIXP(1.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
