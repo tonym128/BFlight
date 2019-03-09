@@ -123,9 +123,9 @@ void voxelInit()
     p.fmove = FLOAT_TO_FIXP(0.5);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
-    p.height = 30;
+    p.height = 50;
     p.horizon = 0;
-    p.distance = 300;
+    p.distance = 800;
     p.shift = 7;
     p.mapScaleFactor = 8;
     p.heightScaleFactor = 3;
