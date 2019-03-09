@@ -16,9 +16,13 @@ Point p;
 #ifdef INTERLACE
 int frame = 1;
 #endif
-
 void render(ScreenBuff *screenBuff)
 {
+int cmapOffset = -1;
+int cmapOffValue = -1;
+int cmapOffColour = -1;
+int cachehit = 0;
+
 #ifdef INTERLACE
     frame += 1;
     if (frame == 3) frame = 1;
@@ -61,9 +65,17 @@ void render(ScreenBuff *screenBuff)
 #endif
         {
             int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & p.mapheightperiod);
-            int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]) * finvz) + p.horizon);
+            if (cmapOffset != mapoffset) {
+                cmapOffset = mapoffset;
+                cmapOffValue = map_data[mapoffset];
+                cmapOffColour = map_colour[mapoffset];
+            }
+            else {
+                cachehit += 1;
+            }
 
-            drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
+            int heightonscreen = (FIXP_TO_INT((p.height - cmapOffValue) * finvz) + p.horizon);
+            drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], cmapOffColour);
 
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
 
