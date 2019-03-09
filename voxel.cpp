@@ -16,13 +16,17 @@ Point p;
 #ifdef INTERLACE
 int frame = 1;
 #endif
+
+#define CACHESIZE 64
+#define MAPSIZE  map_height*map_width
+
+int8_t cmap[CACHESIZE];
+bool ccolor[CACHESIZE];
+int cmapOffset = -1;
 void render(ScreenBuff *screenBuff)
 {
-int cmapOffset = -1;
 int cachehit = 0;
 int cachemiss = 0;
-int8_t cmap[1024];
-bool ccolor[1024];
 
 #ifdef INTERLACE
     frame += 1;
@@ -36,7 +40,7 @@ bool ccolor[1024];
     for(int i=0; i<screenBuff->WIDTH; i+=1) {
         hiddeny[i] = screenBuff->HEIGHT;
 #ifdef INTERLACE
-        drawVertLine2(screenBuff, i, 0, 64, 0);
+        drawVertLine2(screenBuff, i, 0, screenBuff->HEIGHT, 0);
 #endif
     }
 
@@ -66,19 +70,27 @@ bool ccolor[1024];
 #endif
         {
             int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & p.mapheightperiod);
-            if ((cmapOffset <= mapoffset) && (cmapOffset+1024 > mapoffset)) {
+            if (((cmapOffset <= mapoffset) && (cmapOffset+CACHESIZE > mapoffset))) // || ( cmapOffset+CACHESIZE % MAPSIZE > mapoffset && cmapOffset >= 0))
+            {
                 cachehit += 1;
             }
             else {
                 cmapOffset = mapoffset;
-                memcpy(cmap, map_data + mapoffset*sizeof(int8_t), 1024*sizeof(int8_t)); 
-                memcpy(ccolor, map_colour + mapoffset*sizeof(bool), 1024*sizeof(bool));
+                if (mapoffset + CACHESIZE > MAPSIZE) {
+                    memcpy(cmap, map_data + mapoffset*sizeof(int8_t), (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t)); 
+                    memcpy(ccolor, map_colour + mapoffset*sizeof(bool), (mapoffset + CACHESIZE - MAPSIZE)*sizeof(bool));
+
+                    // memcpy(cmap + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_data, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(int8_t)); 
+                    // memcpy(ccolor + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_colour, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(bool));
+                } else {
+                    memcpy(cmap, map_data + mapoffset*sizeof(int8_t), CACHESIZE*sizeof(int8_t)); 
+                    memcpy(ccolor, map_colour + mapoffset*sizeof(bool), CACHESIZE*sizeof(bool));
+                }
                 cachemiss++;
             }
-
+            
             int heightonscreen = (FIXP_TO_INT((p.height - cmap[mapoffset-cmapOffset]) * finvz) + p.horizon);
             drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], ccolor[mapoffset-cmapOffset]);
-
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
 
             fplx += fdx;
@@ -151,13 +163,13 @@ void voxelInit()
     p.mapwidthperiod = map_width - 1;
     p.mapheightperiod = map_height - 1;
 
-    p.fdistance = INT_TO_FIXP(800);
+    p.fdistance = INT_TO_FIXP(700);
     p.fx = INT_TO_FIXP(75);
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
-    p.fdeltaMod = FLOAT_TO_FIXP(0.05);
-    p.fmove = FLOAT_TO_FIXP(0.5);
+    p.fdeltaMod = FLOAT_TO_FIXP(0.2);
+    p.fmove = FLOAT_TO_FIXP(1.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
     p.height = 60;
