@@ -3,19 +3,18 @@
 
 struct Point
 {
-    FIXPOINT fx, fy, fangle;
+    FIXPOINT fx, fy, fangle, fmove, fturn, fdeltaMod;
     int height, horizon, distance, shift, mapScaleFactor, heightScaleFactor;
 };
 
 Point p;
 
-void render(ScreenBuff *screenBuff, Point p)
+void render(ScreenBuff *screenBuff)
 {
     int mapwidthperiod = map_width - 1;
     int mapheightperiod = map_height - 1;
     int screenwidth = screenBuff->WIDTH;
 
-    FIXPOINT fdeltaMod = FLOAT_TO_FIXP(0.05);
     FIXPOINT fsinang = FIXPOINT_SIN(p.fangle);
     FIXPOINT fcosang = FIXPOINT_COS(p.fangle);
 
@@ -24,7 +23,7 @@ void render(ScreenBuff *screenBuff, Point p)
         hiddeny[i] = screenBuff->HEIGHT;
     }
 
-    FIXPOINT fdeltaz = FLOAT_TO_FIXP(1.);
+    FIXPOINT fdeltaz = INT_TO_FIXP(1);
     // Draw from front to back
     for(FIXPOINT fz=INT_TO_FIXP(1); fz<INT_TO_FIXP(p.distance); fz+=fdeltaz)
     {
@@ -51,32 +50,32 @@ void render(ScreenBuff *screenBuff, Point p)
             fply += fdy;
         }
 
-        fdeltaz += fdeltaMod;
+        fdeltaz += p.fdeltaMod;
     }
 }
 
 void voxelInput(byte buttonVals, Point *p)
 {
-    p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle) , FLOAT_TO_FIXP(0.5));
-    p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle) , FLOAT_TO_FIXP(0.5));
+    p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle) , p->fmove);
+    p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle) , p->fmove);
 
     if (processKey(buttonVals, P1_Top))
     {
-        p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle), FLOAT_TO_FIXP(0.5));
-        p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle), FLOAT_TO_FIXP(0.5));
+        p->fx -= FIXP_MULT(FIXPOINT_SIN(p->fangle), p->fmove);
+        p->fy -= FIXP_MULT(FIXPOINT_COS(p->fangle), p->fmove);
     }
     if (processKey(buttonVals, P1_Bottom))
     {
-        p->fx += FIXP_MULT(FIXPOINT_SIN(p->fangle) , FLOAT_TO_FIXP(0.5));
-        p->fy += FIXP_MULT(FIXPOINT_COS(p->fangle) , FLOAT_TO_FIXP(0.5));
+        p->fx += FIXP_MULT(FIXPOINT_SIN(p->fangle) , p->fmove);
+        p->fy += FIXP_MULT(FIXPOINT_COS(p->fangle) , p->fmove);
     }
     if (processKey(buttonVals, P1_Left))
     {
-        p->fangle += FLOAT_TO_FIXP(0.1);
+        p->fangle += p->fturn;
     }
     if (processKey(buttonVals, P1_Right))
     {
-        p->fangle -= FLOAT_TO_FIXP(0.1);
+        p->fangle -= p->fturn;
     }
 
     if (processKey(buttonVals, P2_Top))
@@ -110,7 +109,7 @@ bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
     // scaling factor for the height, the largest distance,
     // screen width and the screen height parameter
     displayClear(screenBuff, 1, false);
-    render(screenBuff,p);
+    render(screenBuff);
     return false; // Not done
 }
 
@@ -118,11 +117,15 @@ void voxelInit()
 {
     p.fx = INT_TO_FIXP(75);
     p.fy = INT_TO_FIXP(75);
-    p.fangle = FLOAT_TO_FIXP(-0.4);
+    p.fangle = FLOAT_TO_FIXP(-0.5);
+
+    p.fdeltaMod = FLOAT_TO_FIXP(0.05);
+    p.fmove = FLOAT_TO_FIXP(0.5);
+    p.fturn = FLOAT_TO_FIXP(0.1);
 
     p.height = 30;
     p.horizon = 0;
-    p.distance = 800;
+    p.distance = 300;
     p.shift = 7;
     p.mapScaleFactor = 8;
     p.heightScaleFactor = 3;
