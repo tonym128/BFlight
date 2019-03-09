@@ -3,8 +3,9 @@
 
 struct Point
 {
-    FIXPOINT fx, fy, fangle, fmove, fturn, fdeltaMod;
-    int height, horizon, distance, shift, mapScaleFactor, heightScaleFactor;
+    FIXPOINT fx, fy, fangle, fmove, fturn, fdeltaMod, fdistance;
+    int height, horizon, shift, heightScaleFactor;
+    FIXPOINT mapScaleFactor;
 };
 
 Point p;
@@ -23,9 +24,9 @@ void render(ScreenBuff *screenBuff)
         hiddeny[i] = screenBuff->HEIGHT;
     }
 
-    FIXPOINT fdeltaz = INT_TO_FIXP(1);
+    FIXPOINT fdeltaz = FIXP_1;
     // Draw from front to back
-    for(FIXPOINT fz=INT_TO_FIXP(1); fz<INT_TO_FIXP(p.distance); fz+=fdeltaz)
+    for(FIXPOINT fz=FIXP_1; fz<p.fdistance; fz+=fdeltaz)
     {
         // 90 degree field of view
         FIXPOINT fplx = FIXP_MULT(-fcosang , fz) - FIXP_MULT(fsinang , fz);
@@ -34,14 +35,14 @@ void render(ScreenBuff *screenBuff)
         FIXPOINT fpry = FIXP_MULT(-fsinang , fz) - FIXP_MULT(fcosang , fz);
         FIXPOINT fdx = (fprx - fplx) / screenwidth;
         FIXPOINT fdy = (fpry - fply) / screenwidth;
-        FIXPOINT finvz = FIXP_DIV(INT_TO_FIXP(1), fz) * 240;
+        FIXPOINT finvz = FIXP_DIV(FIXP_1, fz) * 240;
 
         fplx += p.fx;
         fply += p.fy;
 
         for(int i=0; i<screenwidth; i+=1)
         {
-            int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,INT_TO_FIXP(p.mapScaleFactor))) & mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,INT_TO_FIXP(p.mapScaleFactor))) & mapheightperiod);
+            int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply,p.mapScaleFactor)) & mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx,p.mapScaleFactor)) & mapheightperiod);
             int heightonscreen = (FIXP_TO_INT((p.height - map_data[mapoffset]/p.heightScaleFactor) * finvz) + p.horizon);
             drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], map_colour[mapoffset]);
             if (heightonscreen < hiddeny[i]) hiddeny[i] = heightonscreen;
@@ -104,10 +105,6 @@ void voxelInput(byte buttonVals, Point *p)
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
 {
     voxelInput(buttonVals, &p);
-    // Call the render function with the camera parameters:
-    // position, viewing angle, height, horizon line position,
-    // scaling factor for the height, the largest distance,
-    // screen width and the screen height parameter
     displayClear(screenBuff, 1, false);
     render(screenBuff);
     return false; // Not done
@@ -115,18 +112,18 @@ bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
 
 void voxelInit()
 {
+    p.fdistance = INT_TO_FIXP(800);
     p.fx = INT_TO_FIXP(75);
     p.fy = INT_TO_FIXP(75);
-    p.fangle = FLOAT_TO_FIXP(-0.5);
+    p.fangle = FLOAT_TO_FIXP(-0.6);
 
     p.fdeltaMod = FLOAT_TO_FIXP(0.05);
     p.fmove = FLOAT_TO_FIXP(0.5);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
-    p.height = 50;
-    p.horizon = 0;
-    p.distance = 800;
+    p.height = 60;
+    p.horizon = 15;
     p.shift = 7;
-    p.mapScaleFactor = 8;
+    p.mapScaleFactor = INT_TO_FIXP(8);
     p.heightScaleFactor = 3;
 }

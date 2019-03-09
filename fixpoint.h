@@ -29,18 +29,20 @@ typedef int32_t FIXPOINT;
 #define FIXP_DIV(n,n2) (int32_t(((((int64_t)(n)) << FP_SHIFT) / (n2))))
 #define FIXEDPT_PI FLOAT_TO_FIXP(PI)
 #define FIXEDPT_HALF_PI FLOAT_TO_FIXP(PI/2)
+#define FIXP_1 INT_TO_FIXP(1)
 
 /* Returns the sine of the given fixedpt number. 
  * Note: the loss of precision is extraordinary! */
+const FIXPOINT SK[2] = {
+	FLOAT_TO_FIXP(7.61e-03),
+	FLOAT_TO_FIXP(1.6605e-01)
+};
+
 static inline FIXPOINT
 FIXPOINT_SIN(FIXPOINT fp)
 {
 	int sign = 1;
 	FIXPOINT sqr, result;
-	const FIXPOINT SK[2] = {
-		FLOAT_TO_FIXP(7.61e-03),
-		FLOAT_TO_FIXP(1.6605e-01)
-	};
 
 	fp %= 2 * FIXEDPT_PI;
 	if (fp < 0)
@@ -59,7 +61,7 @@ FIXPOINT_SIN(FIXPOINT fp)
 	result = FIXP_MULT(result, sqr);
 	result -= SK[1];
 	result = FIXP_MULT(result, sqr);
-	result += INT_TO_FIXP(1);
+	result += FIXP_1;
 	result = FIXP_MULT(result, fp);
 	return sign * result;
 }

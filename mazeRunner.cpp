@@ -264,7 +264,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		FIXPOINT fmapY = FIXP_FIXP_INT_PART(posY); 
 
 		//calculate ray position and direction
-		FIXPOINT fcameraX = FIXP_DIV(INT_TO_FIXP(2 * x), INT_TO_FIXP(screenBuff->WIDTH)) - INT_TO_FIXP(1); //x-coordinate in camera space
+		FIXPOINT fcameraX = FIXP_DIV(INT_TO_FIXP(2 * x), INT_TO_FIXP(screenBuff->WIDTH)) - FIXP_1; //x-coordinate in camera space
 		FIXPOINT frayDirX = dirX + FIXP_MULT(planeX, fcameraX);
 		FIXPOINT frayDirY = dirY + FIXP_MULT(planeY, fcameraX);
 
@@ -273,8 +273,8 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		FIXPOINT fsideDistY;
 
 		//length of ray from one x or y-side to next x or y-side
-		FIXPOINT fdeltaDistX = frayDirX == 0 ? INT32_MAX : FIXP_DIV(INT_TO_FIXP(1), frayDirX);
-		FIXPOINT fdeltaDistY = frayDirY == 0 ? INT32_MAX : FIXP_DIV(INT_TO_FIXP(1), frayDirY);
+		FIXPOINT fdeltaDistX = frayDirX == 0 ? INT32_MAX : FIXP_DIV(FIXP_1, frayDirX);
+		FIXPOINT fdeltaDistY = frayDirY == 0 ? INT32_MAX : FIXP_DIV(FIXP_1, frayDirY);
 
 		if (fdeltaDistX < 0) fdeltaDistX = -fdeltaDistX;
 		if (fdeltaDistY < 0) fdeltaDistY = -fdeltaDistY;
@@ -297,7 +297,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		else
 		{
 			stepX = 1;
-			fsideDistX = FIXP_MULT((fmapX + INT_TO_FIXP(1) - posX), fdeltaDistX);
+			fsideDistX = FIXP_MULT((fmapX + FIXP_1 - posX), fdeltaDistX);
 		}
 		if (frayDirY < 0)
 		{
@@ -307,7 +307,7 @@ void display(ScreenBuff* screenBuff, GameStateMaze* gameStateMaze) {
 		else
 		{
 			stepY = 1;
-			fsideDistY = FIXP_MULT((fmapY + INT_TO_FIXP(1) - posY), fdeltaDistY);
+			fsideDistY = FIXP_MULT((fmapY + FIXP_1 - posY), fdeltaDistY);
 		}
 
 		//perform DDA
