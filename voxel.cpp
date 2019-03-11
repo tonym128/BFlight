@@ -12,23 +12,23 @@ struct Point
 
 Point p;
 
-// #define INTERLACE
+#define INTERLACE
 #ifdef INTERLACE
 int frame = 0;
 #endif
 
-#define CACHESIZE 3
-#define MAPSIZE map_height *map_width
-
-int8_t cmap[CACHESIZE];
-bool ccolor[CACHESIZE];
+int8_t cmap;
+bool ccolor;
 int cmapOffset = -1;
+int cheight;
+int cheightonscreen;
 
 void render(ScreenBuff *screenBuff)
 {
     int cachehit = 0;
+    int cacheheighthit = 0;
     int cachemiss = 0;
-
+    int heightonscreen = 0;
 #ifdef INTERLACE
     frame += 1;
     if (frame == 2)
@@ -76,33 +76,31 @@ void render(ScreenBuff *screenBuff)
             if (hiddeny[i] >= -5)
             {
                 int mapoffset = ((FIXP_INT_PART(FIXP_DIV(fply, p.mapScaleFactor)) & p.mapwidthperiod) << p.shift) + (FIXP_INT_PART(FIXP_DIV(fplx, p.mapScaleFactor)) & p.mapheightperiod);
-                if (((cmapOffset <= mapoffset) && (cmapOffset + CACHESIZE > mapoffset))) // || ( cmapOffset+CACHESIZE % MAPSIZE > mapoffset && cmapOffset >= 0))
+                if (cmapOffset == mapoffset)
                 {
                     cachehit += 1;
                 }
                 else
                 {
                     cmapOffset = mapoffset;
-                    if (mapoffset + CACHESIZE > MAPSIZE)
-                    {
-                        memcpy(cmap, map_data + mapoffset * sizeof(int8_t), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(int8_t));
-                        memcpy(ccolor, map_colour + mapoffset * sizeof(bool), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(bool));
-                        // memcpy(cmap + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_data, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(int8_t));
-                        // memcpy(ccolor + (mapoffset + CACHESIZE - MAPSIZE)*sizeof(int8_t), map_colour, (MAPSIZE - mapoffset + CACHESIZE)*sizeof(bool));
-                    }
-                    else
-                    {
-                        memcpy(cmap, map_data + mapoffset * sizeof(int8_t), CACHESIZE * sizeof(int8_t));
-                        memcpy(ccolor, map_colour + mapoffset * sizeof(bool), CACHESIZE * sizeof(bool));
-                    }
+                    cmap = map_data[mapoffset];
+                    ccolor = map_colour[mapoffset];
+                    cheight = p.height;
+                    cheightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
                     cachemiss++;
                 }
 
-                int heightonscreen = (FIXP_TO_INT((p.height - cmap[mapoffset - cmapOffset]) * finvz) + p.horizon);
-                if (heightonscreen < hiddeny[i])
+                if (cheight == p.height) {
+                    cacheheighthit += 1;
+                } else {
+                    cheightonscreen = heightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
+                    cheight = p.height;
+                }
+
+                if (cheightonscreen < hiddeny[i])
                 {
-                    drawVertLine2(screenBuff, i, heightonscreen, hiddeny[i], ccolor[mapoffset - cmapOffset]);
-                    hiddeny[i] = heightonscreen;
+                    drawVertLine2(screenBuff, i, cheightonscreen, hiddeny[i], ccolor);
+                    hiddeny[i] = cheightonscreen;
                 }
 
                 fplx += fdx;
@@ -156,9 +154,11 @@ void voxelInput(byte buttonVals, Point *p)
     }
 
     // Collision detection. Don't fly below the surface.
+    /*
     int mapoffset = (((int)(FIXP_INT_PART(p->fy / p->mapScaleFactor)) & (map_width - 1)) << p->shift) + (((int)FIXP_INT_PART(p->fx / p->mapScaleFactor)) & (map_height - 1));
     if ((map_data[mapoffset] + 10) > p->height)
         p->height = map_data[mapoffset] + 10;
+    */
 }
 
 bool voxelLoop(ScreenBuff *screenBuff, byte buttonVals)
@@ -176,17 +176,17 @@ void voxelInit()
     p.mapwidthperiod = map_width - 1;
     p.mapheightperiod = map_height - 1;
 
-    p.fdistance = INT_TO_FIXP(600);
+    p.fdistance = INT_TO_FIXP(800);
     p.fx = INT_TO_FIXP(75);
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
     p.fdeltaMod = FLOAT_TO_FIXP(0.2);
-    p.fmove = FLOAT_TO_FIXP(1.);
+    p.fmove = FLOAT_TO_FIXP(4.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
     p.height = 60;
-    p.horizon = -30;
+    p.horizon = 15;
     p.shift = 7;
     p.mapScaleFactor = INT_TO_FIXP(8);
 }
