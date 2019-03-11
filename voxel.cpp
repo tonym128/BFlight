@@ -17,6 +17,13 @@ Point p;
 int frame = 0;
 #endif
 
+#define CACHESIZE 64
+#define MAPSIZE map_height *map_width
+
+int8_t ccmap[CACHESIZE];
+bool cccolor[CACHESIZE];
+int ccmapOffset = -1;
+
 int8_t cmap;
 bool ccolor;
 int cmapOffset = -1;
@@ -26,6 +33,7 @@ int cheightonscreen;
 void render(ScreenBuff *screenBuff)
 {
     int cachehit = 0;
+    int ccachehit = 0;
     int cacheheighthit = 0;
     int cachemiss = 0;
     int heightonscreen = 0;
@@ -79,22 +87,46 @@ void render(ScreenBuff *screenBuff)
                 if (cmapOffset == mapoffset)
                 {
                     cachehit += 1;
+                    if (cheight == p.height) {
+                        cacheheighthit += 1;
+                    } else {
+                        cheightonscreen = heightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
+                        cheight = p.height;
+                    }
+
+                }
+                else if ((mapoffset >= ccmapOffset) && (mapoffset < ccmapOffset+CACHESIZE)) {
+                    ccachehit += 1;
+                    cmapOffset = mapoffset;
+
+                    cmap = ccmap[mapoffset- ccmapOffset];
+                    ccolor = cccolor[mapoffset- ccmapOffset];
+
+                    cheight = p.height;
+                    cheightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
                 }
                 else
                 {
-                    cmapOffset = mapoffset;
-                    cmap = map_data[mapoffset];
-                    ccolor = map_colour[mapoffset];
+                    ccmapOffset = cmapOffset = mapoffset;
+                    
+                    if (mapoffset + CACHESIZE > MAPSIZE)
+                    {
+                        memcpy(ccmap, map_data + mapoffset * sizeof(int8_t), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(int8_t));
+                        memcpy(cccolor, map_colour + mapoffset * sizeof(bool), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(bool));
+                    }
+                    else
+                    {
+                        memcpy(ccmap, map_data + mapoffset * sizeof(int8_t), CACHESIZE * sizeof(int8_t));
+                        memcpy(cccolor, map_colour + mapoffset * sizeof(bool), CACHESIZE * sizeof(bool));
+                    }
+
+                    cmap = ccmap[mapoffset- ccmapOffset];
+                    ccolor = cccolor[mapoffset- ccmapOffset];
+
                     cheight = p.height;
                     cheightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
-                    cachemiss++;
-                }
 
-                if (cheight == p.height) {
-                    cacheheighthit += 1;
-                } else {
-                    cheightonscreen = heightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
-                    cheight = p.height;
+                    cachemiss++;
                 }
 
                 if (cheightonscreen < hiddeny[i])
@@ -103,8 +135,13 @@ void render(ScreenBuff *screenBuff)
                     hiddeny[i] = cheightonscreen;
                 }
 
+#ifdef INTERLACE
+                fplx += fdx * 2;
+                fply += fdy * 2;
+#else
                 fplx += fdx;
                 fply += fdy;
+#endif
             }
         }
 
