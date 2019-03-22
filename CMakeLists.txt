@@ -37,7 +37,7 @@ else (OPENAL_FOUND)
 endif (OPENAL_FOUND)
 
 if (WIN32)
-    find_package(SDL2 CONFIG REQUIRED)
+    find_package(SDL2 CONFIG)
 
     if (SDL2_FOUND)
         find_package(SDL2 CONFIG REQUIRED)

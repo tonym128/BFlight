@@ -1,3 +1,8 @@
+#define INTERLACE
+#define DETAIL_LEVEL FLOAT_TO_FIXP(0.2) //Smaller = higher detail
+#define CACHESIZE 64
+#define MAPSIZE map_height *map_width
+
 // https://github.com/s-macke/VoxelSpace
 #include "voxel.hpp"
 
@@ -12,10 +17,13 @@ struct Point
 
 Point p;
 
-#define INTERLACE
 #ifdef INTERLACE
 int frame = 0;
 #endif
+
+int8_t ccmap[CACHESIZE];
+bool cccolor[CACHESIZE];
+int ccmapOffset = -1;
 
 int8_t cmap;
 bool ccolor;
@@ -188,8 +196,8 @@ void voxelInit()
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
-    p.fdeltaMod = FLOAT_TO_FIXP(0.25);
-    p.fmove = FLOAT_TO_FIXP(12.);
+    p.fdeltaMod = DETAIL_LEVEL;
+    p.fmove = FLOAT_TO_FIXP(4.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
     p.height = 60;
