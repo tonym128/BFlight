@@ -5,7 +5,7 @@
 #include "game.hpp"
 ScreenBuff screenBuff;
 byte buttonVals;
-int Game = 1;
+int Game = 3;
 
 #ifdef __EMSCRIPTEN__
 #include "platform/plat_emscripten.h"
