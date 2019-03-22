@@ -17,13 +17,6 @@ Point p;
 int frame = 0;
 #endif
 
-#define CACHESIZE 64
-#define MAPSIZE map_height *map_width
-
-int8_t ccmap[CACHESIZE];
-bool cccolor[CACHESIZE];
-int ccmapOffset = -1;
-
 int8_t cmap;
 bool ccolor;
 int cmapOffset = -1;
@@ -95,33 +88,10 @@ void render(ScreenBuff *screenBuff)
                     }
 
                 }
-                else if ((mapoffset >= ccmapOffset) && (mapoffset < ccmapOffset+CACHESIZE)) {
-                    ccachehit += 1;
-                    cmapOffset = mapoffset;
-
-                    cmap = ccmap[mapoffset- ccmapOffset];
-                    ccolor = cccolor[mapoffset- ccmapOffset];
-
-                    cheight = p.height;
-                    cheightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
-                }
                 else
                 {
-                    ccmapOffset = cmapOffset = mapoffset;
-                    
-                    if (mapoffset + CACHESIZE > MAPSIZE)
-                    {
-                        memcpy(ccmap, map_data + mapoffset * sizeof(int8_t), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(int8_t));
-                        memcpy(cccolor, map_colour + mapoffset * sizeof(bool), (mapoffset + CACHESIZE - MAPSIZE) * sizeof(bool));
-                    }
-                    else
-                    {
-                        memcpy(ccmap, map_data + mapoffset * sizeof(int8_t), CACHESIZE * sizeof(int8_t));
-                        memcpy(cccolor, map_colour + mapoffset * sizeof(bool), CACHESIZE * sizeof(bool));
-                    }
-
-                    cmap = ccmap[mapoffset- ccmapOffset];
-                    ccolor = cccolor[mapoffset- ccmapOffset];
+                    cmap = map_data[mapoffset];
+                    ccolor = map_colour[mapoffset];
 
                     cheight = p.height;
                     cheightonscreen = (FIXP_TO_INT((p.height - cmap) * finvz) + p.horizon);
@@ -218,8 +188,8 @@ void voxelInit()
     p.fy = INT_TO_FIXP(75);
     p.fangle = FLOAT_TO_FIXP(-0.6);
 
-    p.fdeltaMod = FLOAT_TO_FIXP(0.2);
-    p.fmove = FLOAT_TO_FIXP(4.);
+    p.fdeltaMod = FLOAT_TO_FIXP(0.25);
+    p.fmove = FLOAT_TO_FIXP(12.);
     p.fturn = FLOAT_TO_FIXP(0.1);
 
     p.height = 60;

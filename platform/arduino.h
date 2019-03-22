@@ -34,26 +34,27 @@ byte getReadShiftAnalog()
     Serial.println("[.] Button Up pressed!");
     buttonVals = buttonVals | (1 << P1_Top);
   }
-  if (readAnalogSensor(D5))
+  if (readAnalogSensor(D7))
   {
     Serial.println("[.] Button Right pressed!");
     buttonVals = buttonVals | (1 << P1_Right);
   }
-  if (readAnalogSensor(D7))
+  if (readAnalogSensor(D5))
   {
     Serial.println("[.] Button Down pressed!");
     buttonVals = buttonVals | (1 << P1_Bottom);
   }
-  /*
-    if (readAnalogSensor(D5))
-      buttonVals = buttonVals | (1 << P2_Left);
-    if (readAnalogSensor(D6))
-      buttonVals = buttonVals | (1 << P2_Top);
-    if (readAnalogSensor(D7))
-      buttonVals = buttonVals | (1 << P2_Right);
-    if (readAnalogSensor(D8))
-      buttonVals = buttonVals | (1 << P2_Bottom);
-  */
+
+  if (readAnalogSensor(D2))
+  {
+    Serial.println("[.] Button B pressed!");
+    buttonVals = buttonVals | (1 << P2_Left);
+  }
+  if (readAnalogSensor(D3))
+  {
+    Serial.println("[.] Button A pressed!");
+    buttonVals = buttonVals | (1 << P2_Right);
+  }
 
   return buttonVals;
 }

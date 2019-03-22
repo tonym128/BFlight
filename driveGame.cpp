@@ -72,10 +72,8 @@ void processInput(GameStateDrive* gameStateDrive, byte buttonVals) {
 	gameStateDrive->p1keys.down = processKey(buttonVals, P1_Bottom);
 	gameStateDrive->p1keys.left = processKey(buttonVals, P1_Left);
 	gameStateDrive->p1keys.right = processKey(buttonVals, P1_Right);
-	gameStateDrive->p1keys.shoot = processKey(buttonVals, P2_Left);
-	gameStateDrive->p1keys.turbo = processKey(buttonVals, P2_Top);
-	gameStateDrive->p1keys.brake = processKey(buttonVals, P2_Right) || processKey(buttonVals, P1_Top);
-	gameStateDrive->p1keys.accelerate = processKey(buttonVals, P2_Bottom) || processKey(buttonVals, P1_Bottom);
+	gameStateDrive->p1keys.brake = processKey(buttonVals, P2_Left) || processKey(buttonVals, P1_Top);
+	gameStateDrive->p1keys.accelerate = processKey(buttonVals, P2_Right) || processKey(buttonVals, P1_Bottom);
 
 	if (processKey(buttonVals, P2_Top)) {
 		gameStateDrive->running = false;
