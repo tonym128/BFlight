@@ -18,6 +18,6 @@ Console - Should require nothing additional.
 SDL - I found https://github.com/Microsoft/vcpkg invaluable, the example install is even for SDL2.
 
 For emscipten, there is only a build file currently, but if there's more demand I can clean this up.
-emcc game.cpp gameCommon.cpp plasma.cpp bsideFly.cpp driveGame.cpp mazeRunner.cpp mazeGenerator.cpp myfont.cpp rotoZoomer.cpp platform_core.cpp -s WASM=1 -std=c++0x -DOPENAL_FOUND -s USE_SDL=2 -O3 --profiling -o index.html --preload-file data/startup.wav --preload-file data/cloud2.wav --preload-file data/walking.wav --preload-file data/carStart.wav -s ERROR_ON_UNDEFINED_SYMBOLS=0
+```emcc game.cpp gameCommon.cpp plasma.cpp bsideFly.cpp driveGame.cpp mazeRunner.cpp mazeGenerator.cpp myfont.cpp rotoZoomer.cpp platform_core.cpp -s WASM=1 -std=c++0x -DOPENAL_FOUND -s USE_SDL=2 -O3 --profiling -o index.html --preload-file data/startup.wav --preload-file data/cloud2.wav --preload-file data/walking.wav --preload-file data/carStart.wav -s ERROR_ON_UNDEFINED_SYMBOLS=0```
 
 There's no tests, tut - tut, but I did a lot of play testing :)
