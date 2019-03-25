@@ -1,6 +1,6 @@
 #define FPS 1
 #define ANALOG 1
-// #define AUDIO 1
+#define AUDIO 1
 
 #include "game.hpp"
 ScreenBuff screenBuff;
