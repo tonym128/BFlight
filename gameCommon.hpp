@@ -111,8 +111,8 @@ void drawFPS(ScreenBuff*);
 
 void setCurrentTime();
 void initTime();
-void updateMinTime(int);
-bool checkTime(int);
+void updateMinTime(unsigned int);
+bool checkTime(unsigned int);
 int getElapsedSeconds();
 
 #endif // !GAMECOMMON_H

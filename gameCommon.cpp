@@ -475,7 +475,7 @@ void calcFPS()
 	fpsTimer1 = getTimeInMillis();
 
 	// Calc Diff MS
-	int diff = (int)(abs(fpsTimer1) - abs(fpsTimer2));
+	int diff = fpsTimer1 - fpsTimer2;
 	if (diff > 0)
 	{
 		// Add Item to Array
@@ -507,7 +507,7 @@ void initTime()
 	frameTime = currentTime;
 }
 
-void updateMinTime(int sleepMiliseconds)
+void updateMinTime(unsigned int sleepMiliseconds)
 {
 	setCurrentTime();
 	if (currentTime - frameTime < sleepMiliseconds)
@@ -518,7 +518,7 @@ void updateMinTime(int sleepMiliseconds)
 	frameTime = currentTime;
 }
 
-bool checkTime(int Seconds)
+bool checkTime(unsigned int Seconds)
 {
 	return (currentTime - startTime > Seconds * 1000);
 }

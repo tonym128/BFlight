@@ -39,8 +39,8 @@ typedef uint8_t byte;     // BYTE = unsigned 8 bit value
 long getTimeInMillis();
 void gameSleep(int);
 
-static long frameTime = getTimeInMillis();
-static long startTime = getTimeInMillis();
-static long currentTime = getTimeInMillis();
-static long fpsTimer1 = getTimeInMillis();
-static long fpsTimer2 = getTimeInMillis();
+static unsigned long frameTime = getTimeInMillis();
+static unsigned long startTime = getTimeInMillis();
+static unsigned long currentTime = getTimeInMillis();
+static unsigned long fpsTimer1 = getTimeInMillis();
+static unsigned long fpsTimer2 = getTimeInMillis();
